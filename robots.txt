@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+# Reduce crawl noise on transactional/account pages
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+
+Sitemap: https://powerup.local/wp-sitemap.xml

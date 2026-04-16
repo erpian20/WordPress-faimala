@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="t d">
+  <title id="t">20V vs 40V Cordless Outdoor Tools</title>
+  <desc id="d">Orange and dark technical comparison cover.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111111"/>
+      <stop offset="100%" stop-color="#2d1506"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="190" cy="180" r="120" fill="#f26a1b" fill-opacity="0.22"/>
+  <circle cx="1020" cy="770" r="170" fill="#f26a1b" fill-opacity="0.18"/>
+  <rect x="110" y="140" width="980" height="620" rx="24" fill="#171717" stroke="#f26a1b" stroke-opacity="0.45"/>
+  <text x="160" y="290" fill="#f6f6f6" font-family="Arial, Helvetica, sans-serif" font-size="78" font-weight="700">20V vs 40V</text>
+  <text x="160" y="380" fill="#cfcfcf" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="600">Battery Platform Guide</text>
+  <rect x="160" y="460" width="330" height="110" rx="12" fill="#232323" stroke="#f26a1b"/>
+  <text x="250" y="530" fill="#f26a1b" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700">20V</text>
+  <rect x="520" y="460" width="330" height="110" rx="12" fill="#232323" stroke="#f26a1b"/>
+  <text x="610" y="530" fill="#f26a1b" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700">40V</text>
+</svg>

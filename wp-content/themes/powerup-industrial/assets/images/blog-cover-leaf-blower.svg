@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="t d">
+  <title id="t">Leaf Blower Buying Basics</title>
+  <desc id="d">Cover focused on airflow, runtime and weight.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#2b1607"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <rect x="110" y="140" width="980" height="620" rx="24" fill="#181818" stroke="#f26a1b" stroke-opacity="0.45"/>
+  <text x="160" y="270" fill="#f6f6f6" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="700">Leaf Blower</text>
+  <text x="160" y="340" fill="#cfcfcf" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="600">Buying Basics</text>
+  <g fill="#f26a1b" font-family="Arial, Helvetica, sans-serif" font-size="33" font-weight="700">
+    <text x="170" y="450">Airflow</text>
+    <text x="170" y="515">Runtime</text>
+    <text x="170" y="580">Weight</text>
+  </g>
+  <path d="M700 420 Q860 460 1000 410" stroke="#f26a1b" stroke-width="16" fill="none" stroke-linecap="round"/>
+  <path d="M700 500 Q860 540 1000 490" stroke="#f26a1b" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M700 580 Q860 620 1000 570" stroke="#f26a1b" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.65"/>
+  <rect x="720" y="610" width="220" height="70" rx="10" fill="#242424" stroke="#f26a1b"/>
+  <text x="755" y="656" fill="#f26a1b" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">Cordless</text>
+</svg>

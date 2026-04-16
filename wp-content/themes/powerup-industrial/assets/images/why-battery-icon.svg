@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 96" role="img" aria-label="Battery icon">
+  <!-- battery body & bars: round -->
+  <g fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="20" y="18" width="32" height="56" rx="5" ry="5"/>
+    <rect x="29" y="10" width="14" height="8" rx="2" ry="2"/>
+    <line x1="31" y1="56" x2="41" y2="56"></line>
+    <line x1="32" y1="61" x2="40" y2="61"></line>
+  </g>
+  <!-- lightning bolt: sharp -->
+  <path d="M38 26 L29 41 L37 41 L34 53 L43 38 L35 38 Z"
+        fill="#ffffff" stroke="none"/>
+</svg>
