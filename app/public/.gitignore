@@ -1,0 +1,7 @@
+# Local runtime logs
+wp-content/debug.log
+wp-content/debug.log.bak-*
+wp-content/uploads/wc-logs/
+
+# Optional macOS noise
+.DS_Store
