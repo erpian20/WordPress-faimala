@@ -1,0 +1,76 @@
+error_log "{{logs.errorLog}}";
+
+events {
+	worker_connections  1024;
+}
+
+http {
+	include includes/mime-types.conf;
+
+	server_names_hash_bucket_size 128;
+	server_tokens off;
+
+	client_max_body_size 1000M;
+	default_type       application/octet-stream;
+	access_log         off;
+	sendfile           off;
+	keepalive_timeout  15;
+
+	fastcgi_buffers 32 32k;
+    fastcgi_buffer_size 32k;
+    fastcgi_read_timeout 1800s;
+	fastcgi_cache_path /tmp/nginx-fastcgi-cache levels=1:2 keys_zone=WORDPRESS:100m inactive=60m max_size=1g use_temp_path=off;
+
+	map $http_x_forwarded_proto $resolved_scheme {
+        default "http";
+        "https" "https";
+    }
+
+	map $resolved_scheme $fastcgi_https {
+		default '';
+		https on;
+	}
+
+	map $request_method $skip_cache_method {
+		default 1;
+		GET 0;
+		HEAD 0;
+	}
+
+	map $query_string $skip_cache_query {
+		default 0;
+		~*(^|&)(add-to-cart|wc-ajax|preview|preview_id|preview_nonce|customize_changeset_uuid|s|orderby|filter_|min_price|max_price|rating_filter|nonce|_wpnonce|doing_wp_cron)= 1;
+	}
+
+	map $request_uri $skip_cache_uri {
+		default 0;
+		~^/wp-admin/ 1;
+		~^/wp-login\.php 1;
+		~^/wp-json/ 1;
+		~^/cart/? 1;
+		~^/checkout/? 1;
+		~^/my-account/? 1;
+		~^/wc-api/ 1;
+	}
+
+	map $http_cookie $skip_cache_cookie {
+		default 0;
+		~*(wordpress_logged_in_|wordpress_sec_|comment_author_|wp-postpass_|woocommerce_items_in_cart|woocommerce_cart_hash|PHPSESSID) 1;
+	}
+
+	map "$skip_cache_method$skip_cache_query$skip_cache_uri$skip_cache_cookie" $skip_fastcgi_cache {
+		default 1;
+		"0000" 0;
+	}
+
+	map "$request_uri:$request_method" $wp_login_limit_key {
+		default "";
+		"/wp-login.php:POST" $binary_remote_addr;
+	}
+
+	limit_req_zone $wp_login_limit_key zone=wp_login:10m rate=10r/m;
+	limit_req_status 429;
+	limit_req_log_level warn;
+
+	include site.conf;
+}
