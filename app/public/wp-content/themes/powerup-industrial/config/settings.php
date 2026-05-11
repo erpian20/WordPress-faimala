@@ -6,7 +6,6 @@
  * @subpackage Config
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -54,7 +53,6 @@ return array(
      * Image Size Settings
      */
     'image_sizes' => array(
-        // Default WordPress sizes
         'thumbnail' => array(
             'width'  => POWERUP_IMAGE_SIZE_THUMBNAIL_WIDTH,
             'height' => POWERUP_IMAGE_SIZE_THUMBNAIL_HEIGHT,
@@ -71,7 +69,6 @@ return array(
             'crop'   => false,
         ),
 
-        // Custom product image sizes for responsive images
         'product_large' => array(
             'width'  => POWERUP_IMAGE_SIZE_PRODUCT_LARGE_WIDTH,
             'height' => POWERUP_IMAGE_SIZE_PRODUCT_LARGE_HEIGHT,

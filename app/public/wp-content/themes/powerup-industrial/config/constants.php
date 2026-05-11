@@ -6,7 +6,6 @@
  * @subpackage Config
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -69,7 +68,6 @@ define('POWERUP_IMAGE_SIZE_MEDIUM_HEIGHT', 300);
 define('POWERUP_IMAGE_SIZE_LARGE_WIDTH', 1024);
 define('POWERUP_IMAGE_SIZE_LARGE_HEIGHT', 1024);
 
-// Custom image sizes for responsive images
 define('POWERUP_IMAGE_SIZE_PRODUCT_LARGE_WIDTH', 800);
 define('POWERUP_IMAGE_SIZE_PRODUCT_LARGE_HEIGHT', 800);
 define('POWERUP_IMAGE_SIZE_PRODUCT_MEDIUM_WIDTH', 600);

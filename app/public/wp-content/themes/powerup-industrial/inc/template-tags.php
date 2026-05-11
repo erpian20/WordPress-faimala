@@ -6,7 +6,6 @@
  * @subpackage Template_Tags
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -42,7 +41,6 @@ function powerup_post_meta($args = array()) {
 
     $meta_items = array();
 
-    // Author.
     if ($args['show_author']) {
         $meta_items[] = sprintf(
             '<span class="post-author">%s <a href="%s">%s</a></span>',
@@ -52,7 +50,6 @@ function powerup_post_meta($args = array()) {
         );
     }
 
-    // Date.
     if ($args['show_date']) {
         $time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time>';
         if (get_the_time('U') !== get_the_modified_time('U')) {
@@ -71,7 +68,6 @@ function powerup_post_meta($args = array()) {
         );
     }
 
-    // Category.
     if ($args['show_category'] && has_category()) {
         $categories = get_the_category();
         $category_links = array();
@@ -89,7 +85,6 @@ function powerup_post_meta($args = array()) {
         );
     }
 
-    // Comments.
     if ($args['show_comments'] && comments_open()) {
         $comments_number = get_comments_number();
         $comments_text = sprintf(
@@ -148,9 +143,7 @@ function powerup_post_thumbnail($size = 'post-thumbnail', $link = true, $attr = 
  * @return void
  */
 function powerup_entry_footer() {
-    // Hide category and tag text for pages.
     if ('post' === get_post_type()) {
-        // Tags.
         $tags_list = get_the_tag_list('', ', ');
         if ($tags_list) {
             printf(
@@ -161,7 +154,6 @@ function powerup_entry_footer() {
         }
     }
 
-    // Edit link.
     edit_post_link(
         sprintf(
             __('Edit %s', 'powerup-theme'),
@@ -215,7 +207,6 @@ function powerup_post_navigation($args = array()) {
         $args['taxonomy']
     );
 
-    // Only add markup if there's somewhere to navigate to.
     if ($previous || $next) {
         $navigation = _navigation_markup($previous . $next, 'post-navigation', $args['screen_reader_text']);
     }
@@ -246,7 +237,6 @@ function powerup_comments_template($args = array()) {
     );
     $args = wp_parse_args($args, $defaults);
 
-    // If comments are open or we have at least one comment, load up the comment template.
     if (comments_open() || get_comments_number()) {
         comments_template();
     }

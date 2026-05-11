@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-labelledby="title desc">
+  <title id="title">WhatsApp QR Placeholder</title>
+  <desc id="desc">Placeholder image for WhatsApp QR code upload.</desc>
+  <rect width="640" height="640" fill="#ffffff"/>
+  <rect x="24" y="24" width="592" height="592" rx="24" fill="#f6f7f9" stroke="#d5d9df" stroke-width="8"/>
+
+  <rect x="72" y="72" width="150" height="150" rx="18" fill="#202124"/>
+  <rect x="84" y="84" width="126" height="126" rx="10" fill="#ffffff"/>
+  <rect x="100" y="100" width="94" height="94" rx="6" fill="#202124"/>
+
+  <rect x="418" y="72" width="150" height="150" rx="18" fill="#202124"/>
+  <rect x="430" y="84" width="126" height="126" rx="10" fill="#ffffff"/>
+  <rect x="446" y="100" width="94" height="94" rx="6" fill="#202124"/>
+
+  <rect x="72" y="418" width="150" height="150" rx="18" fill="#202124"/>
+  <rect x="84" y="430" width="126" height="126" rx="10" fill="#ffffff"/>
+  <rect x="100" y="446" width="94" height="94" rx="6" fill="#202124"/>
+
+  <rect x="270" y="270" width="24" height="24" fill="#202124"/>
+  <rect x="306" y="270" width="24" height="24" fill="#202124"/>
+  <rect x="342" y="270" width="24" height="24" fill="#202124"/>
+  <rect x="378" y="270" width="24" height="24" fill="#202124"/>
+  <rect x="414" y="270" width="24" height="24" fill="#202124"/>
+
+  <rect x="270" y="306" width="24" height="24" fill="#202124"/>
+  <rect x="342" y="306" width="24" height="24" fill="#202124"/>
+  <rect x="378" y="306" width="24" height="24" fill="#202124"/>
+  <rect x="450" y="306" width="24" height="24" fill="#202124"/>
+
+  <rect x="270" y="342" width="24" height="24" fill="#202124"/>
+  <rect x="306" y="342" width="24" height="24" fill="#202124"/>
+  <rect x="414" y="342" width="24" height="24" fill="#202124"/>
+  <rect x="450" y="342" width="24" height="24" fill="#202124"/>
+
+  <rect x="270" y="378" width="24" height="24" fill="#202124"/>
+  <rect x="342" y="378" width="24" height="24" fill="#202124"/>
+  <rect x="378" y="378" width="24" height="24" fill="#202124"/>
+  <rect x="414" y="378" width="24" height="24" fill="#202124"/>
+
+  <rect x="486" y="378" width="24" height="24" fill="#202124"/>
+  <rect x="486" y="414" width="24" height="24" fill="#202124"/>
+  <rect x="522" y="414" width="24" height="24" fill="#202124"/>
+
+  <rect x="72" y="514" width="496" height="60" rx="14" fill="#20c659"/>
+  <text x="320" y="553" text-anchor="middle" font-size="28" font-family="Arial, sans-serif" fill="#ffffff">Upload your WhatsApp QR image</text>
+</svg>

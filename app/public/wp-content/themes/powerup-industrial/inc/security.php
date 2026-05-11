@@ -6,7 +6,6 @@
  * @subpackage Security
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -18,22 +17,16 @@ if (!defined('ABSPATH')) {
  * @return void
  */
 function powerup_security_headers() {
-    // Prevent clickjacking.
     header('X-Frame-Options: SAMEORIGIN');
 
-    // Prevent MIME type sniffing.
     header('X-Content-Type-Options: nosniff');
 
-    // Enable XSS protection.
     header('X-XSS-Protection: 1; mode=block');
 
-    // Referrer policy.
     header('Referrer-Policy: strict-origin-when-cross-origin');
 
-    // Permissions policy.
     header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 
-    // Content Security Policy (CSP) - adjust as needed.
     $csp = array(
         "default-src 'self'",
         "script-src 'self' 'unsafe-inline' https:",
@@ -132,13 +125,11 @@ function powerup_nonce_field($action = 'powerup_action', $name = 'powerup_nonce'
 function powerup_validate_upload($file) {
     $errors = new WP_Error();
 
-    // Check file size (max 5MB).
     $max_size = 5 * 1024 * 1024; // 5MB in bytes.
     if ($file['size'] > $max_size) {
         $errors->add('file_too_large', __('File is too large. Maximum size is 5MB.', 'powerup-theme'));
     }
 
-    // Check file type.
     $allowed_types = array(
         'jpg'  => 'image/jpeg',
         'jpeg' => 'image/jpeg',
@@ -154,7 +145,6 @@ function powerup_validate_upload($file) {
         $errors->add('invalid_file_type', __('Invalid file type.', 'powerup-theme'));
     }
 
-    // Check for PHP files disguised as images.
     $filename = $file['name'];
     if (preg_match('/\.php[0-9]*$/i', $filename)) {
         $errors->add('php_file_disguised', __('PHP files are not allowed.', 'powerup-theme'));
@@ -180,7 +170,6 @@ function powerup_sanitize_filename($filename) {
     $filename = strtolower($filename);
     $filename = preg_replace('/_+/', '_', $filename);
 
-    // Add timestamp to prevent overwriting.
     $info = pathinfo($filename);
     $name = $info['filename'];
     $ext = isset($info['extension']) ? '.' . $info['extension'] : '';
@@ -299,12 +288,10 @@ add_action('wp_login', 'powerup_reset_login_attempts', 10, 2);
  * @return void
  */
 function powerup_theme_activation_checks() {
-    // Check for required PHP version.
     if (version_compare(PHP_VERSION, '7.4', '<')) {
         wp_die(__('This theme requires PHP 7.4 or higher. Please upgrade your PHP version.', 'powerup-theme'));
     }
 
-    // Check for required WordPress version.
     global $wp_version;
     if (version_compare($wp_version, '5.8', '<')) {
         wp_die(__('This theme requires WordPress 5.8 or higher. Please upgrade WordPress.', 'powerup-theme'));
@@ -345,7 +332,6 @@ function powerup_log_security_event($event, $severity = 'info', $data = array())
  * @return string|bool Sanitized query or false.
  */
 function powerup_sanitize_sql_query($query) {
-    // Remove potentially dangerous SQL keywords.
     $dangerous_keywords = array(
         'DROP', 'DELETE', 'TRUNCATE', 'ALTER', 'CREATE', 'EXEC', 'EXECUTE',
         'INSERT', 'UPDATE', 'REPLACE', 'UNION', 'LOAD_FILE', 'OUTFILE',

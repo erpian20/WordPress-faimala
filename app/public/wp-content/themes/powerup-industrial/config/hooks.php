@@ -6,7 +6,6 @@
  * @subpackage Config
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -214,7 +213,6 @@ return array(
      * WooCommerce Hooks
      */
     'woocommerce' => array(
-        // Product image hooks
         array(
             'hook'     => 'woocommerce_product_get_image',
             'callback' => 'powerup_woocommerce_responsive_product_image',
@@ -228,7 +226,6 @@ return array(
             'args'     => 2,
         ),
 
-        // Loop hooks
         array(
             'hook'     => 'loop_shop_columns',
             'callback' => 'powerup_woocommerce_loop_columns',
@@ -248,7 +245,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Cart hooks
         array(
             'hook'     => 'woocommerce_before_calculate_totals',
             'callback' => 'powerup_theme_apply_tier_pricing_to_cart',
@@ -280,7 +276,6 @@ return array(
             'args'     => 3,
         ),
 
-        // Product page hooks
         array(
             'hook'     => 'woocommerce_single_product_summary',
             'callback' => 'powerup_theme_render_pdp_tier_pricing',
@@ -299,7 +294,6 @@ return array(
      * Filter Hooks
      */
     'filters' => array(
-        // Script and style filters
         array(
             'hook'     => 'script_loader_tag',
             'callback' => 'powerup_defer_scripts',
@@ -325,7 +319,6 @@ return array(
             'args'     => 1,
         ),
 
-        // WooCommerce style management
         array(
             'hook'     => 'woocommerce_enqueue_styles',
             'callback' => 'powerup_woocommerce_style_management',
@@ -333,7 +326,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Menu filters
         array(
             'hook'     => 'wp_nav_menu_items',
             'callback' => 'powerup_add_mobile_menu_toggle',
@@ -353,7 +345,6 @@ return array(
             'args'     => 2,
         ),
 
-        // Image filters
         array(
             'hook'     => 'wp_get_attachment_image',
             'callback' => 'powerup_ensure_image_alt',
@@ -361,7 +352,6 @@ return array(
             'args'     => 2,
         ),
 
-        // Search form filters
         array(
             'hook'     => 'get_search_form',
             'callback' => 'powerup_accessible_search_form',
@@ -369,7 +359,6 @@ return array(
             'args'     => 1,
         ),
 
-        // WooCommerce form field filters
         array(
             'hook'     => 'woocommerce_form_field',
             'callback' => 'powerup_form_field_accessible_labels',
@@ -377,7 +366,6 @@ return array(
             'args'     => 3,
         ),
 
-        // Pagination filters
         array(
             'hook'     => 'paginate_links',
             'callback' => 'powerup_accessible_pagination',
@@ -385,7 +373,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Content filters
         array(
             'hook'     => 'the_content',
             'callback' => 'powerup_accessible_videos',
@@ -399,7 +386,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Body class filters
         array(
             'hook'     => 'body_class',
             'callback' => 'powerup_body_aria_classes',
@@ -413,7 +399,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Excerpt filters
         array(
             'hook'     => 'excerpt_more',
             'callback' => 'powerup_excerpt_more',
@@ -421,7 +406,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Query filters
         array(
             'hook'     => 'query_vars',
             'callback' => 'powerup_prevent_username_enumeration',
@@ -429,7 +413,6 @@ return array(
             'args'     => 1,
         ),
 
-        // Authentication filters
         array(
             'hook'     => 'wp_authenticate_user',
             'callback' => 'powerup_limit_login_attempts',
@@ -588,7 +571,6 @@ function powerup_register_hooks() {
     }
 }
 
-// Register hooks
 if (!POWERUP_IS_ADMIN || (defined('DOING_AJAX') && DOING_AJAX)) {
     add_action('init', 'powerup_register_hooks', 1);
 }

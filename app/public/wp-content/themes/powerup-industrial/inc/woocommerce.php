@@ -6,7 +6,6 @@
  * @subpackage WooCommerce
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -39,7 +38,6 @@ function powerup_woocommerce_assets() {
         wp_get_theme()->get('Version')
     );
 
-    // Custom WooCommerce scripts.
     wp_enqueue_script(
         'powerup-woocommerce-script',
         get_template_directory_uri() . '/assets/js/woocommerce.js',
@@ -58,12 +56,10 @@ add_action('wp_enqueue_scripts', 'powerup_woocommerce_assets');
  * @return array Modified styles array.
  */
 function powerup_woocommerce_style_management($enqueue_styles) {
-    // Remove default WooCommerce styles.
     unset($enqueue_styles['woocommerce-general']);
     unset($enqueue_styles['woocommerce-layout']);
     unset($enqueue_styles['woocommerce-smallscreen']);
 
-    // Add our custom WooCommerce styles.
     $enqueue_styles['powerup-woocommerce'] = array(
         'src'     => get_template_directory_uri() . '/assets/css/woocommerce.css',
         'deps'    => '',
@@ -83,16 +79,13 @@ add_filter('woocommerce_enqueue_styles', 'powerup_woocommerce_style_management')
  * @return void
  */
 function powerup_woocommerce_image_sizes() {
-    // Single product image.
     update_option('woocommerce_single_image_width', 800);
 
-    // Product thumbnail image.
     update_option('woocommerce_thumbnail_image_width', 400);
     update_option('woocommerce_thumbnail_cropping', 'custom');
     update_option('woocommerce_thumbnail_cropping_custom_width', 4);
     update_option('woocommerce_thumbnail_cropping_custom_height', 5);
 
-    // Product gallery thumbnail.
     update_option('woocommerce_gallery_thumbnail_image_width', 200);
 }
 add_action('init', 'powerup_woocommerce_image_sizes');
@@ -163,7 +156,6 @@ function powerup_woocommerce_responsive_product_image($html, $product_id) {
         return $html;
     }
 
-    // Generate responsive image with srcset.
     $html = wp_get_attachment_image(
         $image_id,
         array('product_large', 'product_medium', 'product_small'),
@@ -193,7 +185,21 @@ function powerup_woocommerce_responsive_gallery_image($html, $attachment_id) {
     $full_size_image = wp_get_attachment_image_src($attachment_id, 'full');
     $thumbnail       = wp_get_attachment_image_src($attachment_id, 'shop_thumbnail');
 
-    $html = '<div data-thumb="' . esc_url($thumbnail[0]) . '" data-thumb-alt="' . esc_attr(get_post_meta($attachment_id, '_wp_attachment_image_alt', true)) . '">';
+    $full_url = (is_array($full_size_image) && !empty($full_size_image[0])) ? $full_size_image[0] : '';
+    $thumb_url = (is_array($thumbnail) && !empty($thumbnail[0])) ? $thumbnail[0] : '';
+
+    if ('' === $full_url) {
+        return $html;
+    }
+
+    if ('' === $thumb_url) {
+        $thumb_url = $full_url;
+    }
+
+    $full_width = (is_array($full_size_image) && !empty($full_size_image[1])) ? (int) $full_size_image[1] : 0;
+    $full_height = (is_array($full_size_image) && !empty($full_size_image[2])) ? (int) $full_size_image[2] : 0;
+
+    $html = '<div data-thumb="' . esc_url($thumb_url) . '" data-thumb-alt="' . esc_attr(get_post_meta($attachment_id, '_wp_attachment_image_alt', true)) . '">';
     $html .= wp_get_attachment_image(
         $attachment_id,
         array('product_large', 'product_medium', 'product_small'),
@@ -202,9 +208,9 @@ function powerup_woocommerce_responsive_gallery_image($html, $attachment_id) {
             'srcset' => wp_get_attachment_image_srcset($attachment_id),
             'sizes'  => '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
             'loading' => 'lazy',
-            'data-large_image'        => $full_size_image[0],
-            'data-large_image_width'  => $full_size_image[1],
-            'data-large_image_height' => $full_size_image[2],
+            'data-large_image'        => $full_url,
+            'data-large_image_width'  => $full_width,
+            'data-large_image_height' => $full_height,
         )
     );
     $html .= '</div>';
@@ -222,7 +228,6 @@ add_filter('woocommerce_single_product_image_thumbnail_html', 'powerup_woocommer
 function powerup_get_currency_switcher_items() {
     $items = array();
 
-    // WooCommerce Currency Switcher plugin support.
     if (class_exists('WOOCS')) {
         global $WOOCS;
         $currencies = $WOOCS->get_currencies();
@@ -284,7 +289,6 @@ function powerup_woocommerce_quick_view() {
         wp_die('Product not found');
     }
 
-    // Output quick view content.
     wc_get_template('quick-view.php', array('product' => $product));
 
     wp_die();

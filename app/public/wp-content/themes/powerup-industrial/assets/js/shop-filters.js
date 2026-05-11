@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     } catch (err) {
-      // Ignore storage errors and keep default browser behavior.
     }
   };
 
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
       );
     } catch (err) {
-      // Ignore storage errors and continue submitting.
     }
 
     window.location.assign(queryString ? targetUrl + '?' + queryString : targetUrl);

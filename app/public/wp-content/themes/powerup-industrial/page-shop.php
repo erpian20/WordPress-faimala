@@ -480,7 +480,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   sidebar.addEventListener('click', function (event) {
-    // 处理分类名称点击
     var labelText = event.target.closest('.shop-ref-cat-label-text');
     if (labelText) {
       event.preventDefault();
@@ -491,14 +490,11 @@ document.addEventListener('DOMContentLoaded', function () {
       var item = row ? row.closest('.shop-ref-check-item') : null;
 
       if (item && item.classList.contains('has-children')) {
-        // 有子分类：切换折叠状态
         toggleCategoryItem(item);
       } else if (label) {
-        // 没有子分类：手动切换复选框状态
         var checkbox = label.querySelector('input[type="checkbox"]');
         if (checkbox) {
           checkbox.checked = !checkbox.checked;
-          // 手动触发change事件，但延迟提交以避免立即跳转
           var changeEvent = new Event('change', { bubbles: true });
           checkbox.dispatchEvent(changeEvent);
         }
@@ -506,7 +502,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // 处理折叠按钮点击
     var toggle = event.target.closest('.shop-ref-cat-toggle');
     if (!toggle) {
       return;

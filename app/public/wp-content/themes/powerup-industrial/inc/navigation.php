@@ -6,7 +6,6 @@
  * @subpackage Navigation
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -96,33 +95,26 @@ function powerup_breadcrumbs($args = array()) {
     $breadcrumb = '';
     $home_link = home_url('/');
 
-    // Home link.
     $breadcrumb .= '<a href="' . esc_url($home_link) . '">' . esc_html($args['home']) . '</a>';
 
     if (is_category()) {
-        // Category archive.
         $cat = get_category(get_query_var('cat'), false);
         if ($cat->parent != 0) {
             $breadcrumb .= ' ' . $args['delimiter'] . ' ' . get_category_parents($cat->parent, true, ' ' . $args['delimiter'] . ' ');
         }
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . single_cat_title('', false) . $args['after'];
     } elseif (is_search()) {
-        // Search results.
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . __('Search results for:', 'powerup-theme') . ' "' . get_search_query() . '"' . $args['after'];
     } elseif (is_day()) {
-        // Daily archive.
         $breadcrumb .= ' ' . $args['delimiter'] . ' <a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>';
         $breadcrumb .= ' ' . $args['delimiter'] . ' <a href="' . get_month_link(get_the_time('Y'), get_the_time('m')) . '">' . get_the_time('F') . '</a>';
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_time('d') . $args['after'];
     } elseif (is_month()) {
-        // Monthly archive.
         $breadcrumb .= ' ' . $args['delimiter'] . ' <a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a>';
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_time('F') . $args['after'];
     } elseif (is_year()) {
-        // Yearly archive.
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_time('Y') . $args['after'];
     } elseif (is_single() && !is_attachment()) {
-        // Single post.
         if (get_post_type() != 'post') {
             $post_type = get_post_type_object(get_post_type());
             $slug = $post_type->rewrite;
@@ -141,13 +133,11 @@ function powerup_breadcrumbs($args = array()) {
             }
         }
     } elseif (!is_single() && !is_page() && get_post_type() != 'post' && !is_404()) {
-        // Custom post type archive.
         $post_type = get_post_type_object(get_post_type());
         if ($post_type) {
             $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . $post_type->labels->singular_name . $args['after'];
         }
     } elseif (is_attachment()) {
-        // Attachment.
         $parent = get_post($post->post_parent);
         $cat = get_the_category($parent->ID);
         if (!empty($cat)) {
@@ -159,12 +149,10 @@ function powerup_breadcrumbs($args = array()) {
             $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_title() . $args['after'];
         }
     } elseif (is_page() && !$post->post_parent) {
-        // Parent page.
         if ($args['show_current']) {
             $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_title() . $args['after'];
         }
     } elseif (is_page() && $post->post_parent) {
-        // Child page.
         $parent_id = $post->post_parent;
         $breadcrumbs = array();
         while ($parent_id) {
@@ -180,15 +168,12 @@ function powerup_breadcrumbs($args = array()) {
             $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . get_the_title() . $args['after'];
         }
     } elseif (is_tag()) {
-        // Tag archive.
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . __('Posts tagged', 'powerup-theme') . ' "' . single_tag_title('', false) . '"' . $args['after'];
     } elseif (is_author()) {
-        // Author archive.
         global $author;
         $userdata = get_userdata($author);
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . __('Articles by', 'powerup-theme') . ' ' . $userdata->display_name . $args['after'];
     } elseif (is_404()) {
-        // 404 page.
         $breadcrumb .= ' ' . $args['delimiter'] . ' ' . $args['before'] . __('Error 404', 'powerup-theme') . $args['after'];
     }
 
@@ -247,7 +232,6 @@ function powerup_pagination($args = array()) {
 function powerup_get_language_switcher_items() {
     $items = array();
 
-    // Polylang support.
     if (function_exists('pll_the_languages')) {
         $languages = pll_the_languages(array(
             'raw'                    => 1,
@@ -270,7 +254,6 @@ function powerup_get_language_switcher_items() {
             }
         }
     }
-    // WPML support.
     elseif (function_exists('icl_get_languages')) {
         $languages = icl_get_languages('skip_missing=0&orderby=code');
 

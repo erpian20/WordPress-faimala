@@ -6,7 +6,6 @@
  * @subpackage Accessibility
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -29,7 +28,6 @@ add_action('wp_body_open', 'powerup_skip_link');
  * @return void
  */
 function powerup_aria_landmarks() {
-    // These are added via template files, but we ensure they're present.
     add_filter('body_class', 'powerup_body_aria_classes');
 }
 add_action('after_setup_theme', 'powerup_aria_landmarks');
@@ -55,7 +53,6 @@ function powerup_body_aria_classes($classes) {
  * @return string Modified HTML.
  */
 function powerup_ensure_image_alt($html, $attachment_id) {
-    // If image has no alt attribute, add empty alt for decorative images.
     if (strpos($html, 'alt="') === false) {
         $html = str_replace('<img ', '<img alt="" ', $html);
     }
@@ -89,7 +86,6 @@ add_filter('woocommerce_form_field', 'powerup_form_field_accessible_labels', 10,
  * @return string Modified menu items.
  */
 function powerup_keyboard_navigation_menu($items, $args) {
-    // Add tabindex to menu items for keyboard navigation.
     $items = str_replace('<a ', '<a tabindex="0" ', $items);
     return $items;
 }
@@ -160,7 +156,6 @@ add_action('wp_head', 'powerup_keyboard_focus_styles');
  * @return string Modified title.
  */
 function powerup_accessible_title($title, $sep) {
-    // Ensure proper heading hierarchy in titles.
     return $title;
 }
 add_filter('wp_title', 'powerup_accessible_title', 10, 2);
@@ -213,15 +208,12 @@ function powerup_social_media_aria_labels($link, $platform) {
  * @return float Contrast ratio.
  */
 function powerup_color_contrast_ratio($color1, $color2) {
-    // Convert hex to RGB.
     $rgb1 = powerup_hex_to_rgb($color1);
     $rgb2 = powerup_hex_to_rgb($color2);
 
-    // Calculate relative luminance.
     $l1 = powerup_relative_luminance($rgb1);
     $l2 = powerup_relative_luminance($rgb2);
 
-    // Calculate contrast ratio.
     $ratio = ($l1 + 0.05) / ($l2 + 0.05);
     if ($l2 > $l1) {
         $ratio = ($l2 + 0.05) / ($l1 + 0.05);
@@ -261,17 +253,14 @@ function powerup_hex_to_rgb($hex) {
 function powerup_relative_luminance($rgb) {
     list($r, $g, $b) = $rgb;
 
-    // Convert to sRGB.
     $r = $r / 255;
     $g = $g / 255;
     $b = $b / 255;
 
-    // Apply gamma correction.
     $r = ($r <= 0.03928) ? $r / 12.92 : pow(($r + 0.055) / 1.055, 2.4);
     $g = ($g <= 0.03928) ? $g / 12.92 : pow(($g + 0.055) / 1.055, 2.4);
     $b = ($b <= 0.03928) ? $b / 12.92 : pow(($b + 0.055) / 1.055, 2.4);
 
-    // Calculate luminance.
     return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
 }
 
@@ -288,7 +277,6 @@ function powerup_relative_luminance($rgb) {
 function powerup_check_wcag_contrast($color1, $color2, $level = 'AA', $size = 'normal') {
     $ratio = powerup_color_contrast_ratio($color1, $color2);
 
-    // WCAG 2.1 contrast requirements.
     $requirements = array(
         'AA' => array(
             'normal' => 4.5,
@@ -328,7 +316,6 @@ add_action('wp_footer', 'powerup_accessibility_statement');
  * @return string Modified content.
  */
 function powerup_accessible_videos($content) {
-    // Add captions to embedded videos if not present.
     $content = preg_replace_callback(
         '/<iframe(.*?)><\/iframe>/',
         function($matches) {

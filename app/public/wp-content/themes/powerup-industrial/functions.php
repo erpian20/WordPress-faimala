@@ -459,7 +459,6 @@ function powerup_theme_get_post_reading_time_data( $post_id ) {
     $word_count = str_word_count( $text );
   }
 
-  // Average reading speed for article content.
   $minutes = max( 1, (int) ceil( $word_count / 220 ) );
 
   return array(
@@ -2720,19 +2719,31 @@ add_action( 'init', 'powerup_theme_sync_featured_blog_guide_once', 25 );
 function powerup_theme_scripts() {
   $theme_version = wp_get_theme()->get( 'Version' );
 
-  wp_enqueue_style( 'powerup-style', get_stylesheet_uri(), array(), wp_get_theme()->get( 'Version' ) );
-  wp_enqueue_style( 'powerup-main-style', get_template_directory_uri() . '/assets/css/style.css', array( 'powerup-style' ), $theme_version );
+  $asset_version = static function( $relative_path ) use ( $theme_version ) {
+    $full_path = trailingslashit( get_template_directory() ) . ltrim( $relative_path, '/' );
+    if ( file_exists( $full_path ) ) {
+      $mtime = filemtime( $full_path );
+      if ( false !== $mtime ) {
+        return (string) $mtime;
+      }
+    }
+
+    return $theme_version;
+  };
+
+  wp_enqueue_style( 'powerup-style', get_stylesheet_uri(), array(), $asset_version( 'style.css' ) );
+  wp_enqueue_style( 'powerup-main-style', get_template_directory_uri() . '/assets/css/style.css', array( 'powerup-style' ), $asset_version( 'assets/css/style.css' ) );
   wp_enqueue_style( 'powerup-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap', array(), null );
   if ( function_exists( 'is_product' ) && is_product() ) {
-    wp_enqueue_style( 'powerup-amazon-reviews', get_template_directory_uri() . '/assets/css/amazon-reviews.css', array( 'powerup-main-style' ), wp_get_theme()->get( 'Version' ) );
+    wp_enqueue_style( 'powerup-amazon-reviews', get_template_directory_uri() . '/assets/css/amazon-reviews.css', array( 'powerup-main-style' ), $asset_version( 'assets/css/amazon-reviews.css' ) );
   }
-  wp_enqueue_script( 'powerup-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), '1.0', true );
+  wp_enqueue_script( 'powerup-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), $asset_version( 'assets/js/navigation.js' ), true );
 
   wp_enqueue_script(
     'powerup-image-fallback',
     get_template_directory_uri() . '/assets/js/image-fallback.js',
     array(),
-    $theme_version,
+    $asset_version( 'assets/js/image-fallback.js' ),
     true
   );
 
@@ -3114,14 +3125,14 @@ function powerup_theme_enqueue_pdp_gallery_fallback_assets() {
     'powerup-theme-pdp-gallery-fallback',
     get_template_directory_uri() . '/assets/css/pdp-gallery-fallback.css',
     array(),
-    wp_get_theme()->get( 'Version' )
+    file_exists( get_template_directory() . '/assets/css/pdp-gallery-fallback.css' ) ? (string) filemtime( get_template_directory() . '/assets/css/pdp-gallery-fallback.css' ) : wp_get_theme()->get( 'Version' )
   );
 
   wp_enqueue_script(
     'powerup-theme-pdp-gallery-fallback',
     get_template_directory_uri() . '/assets/js/pdp-gallery-fallback.js',
     array(),
-    wp_get_theme()->get( 'Version' ),
+    file_exists( get_template_directory() . '/assets/js/pdp-gallery-fallback.js' ) ? (string) filemtime( get_template_directory() . '/assets/js/pdp-gallery-fallback.js' ) : wp_get_theme()->get( 'Version' ),
     true
   );
 }
@@ -3663,6 +3674,458 @@ function powerup_theme_save_product_video_meta_box( $post_id, $post ) {
 }
 add_action( 'save_post_product', 'powerup_theme_save_product_video_meta_box', 22, 2 );
 
+function powerup_theme_add_about_item_image_meta_box() {
+  add_meta_box(
+    'powerup-about-item-image',
+    'About this item 图片',
+    'powerup_theme_render_about_item_image_meta_box',
+    'product',
+    'side',
+    'default'
+  );
+}
+add_action( 'add_meta_boxes_product', 'powerup_theme_add_about_item_image_meta_box' );
+
+function powerup_theme_render_about_item_image_meta_box( $post ) {
+  if ( ! $post instanceof WP_Post ) {
+    return;
+  }
+
+  wp_enqueue_media();
+
+  $image_ids_raw = get_post_meta( $post->ID, '_powerup_about_item_image_ids', true );
+  $image_ids     = array();
+
+  if ( is_array( $image_ids_raw ) ) {
+    $image_ids = $image_ids_raw;
+  } elseif ( is_string( $image_ids_raw ) && '' !== trim( $image_ids_raw ) ) {
+    $image_ids = explode( ',', $image_ids_raw );
+  }
+
+  $image_ids = array_values( array_filter( array_unique( array_map( 'absint', $image_ids ) ) ) );
+
+  if ( empty( $image_ids ) ) {
+    $legacy_image_id = (int) get_post_meta( $post->ID, '_powerup_about_item_image_id', true );
+    if ( $legacy_image_id > 0 ) {
+      $image_ids[] = $legacy_image_id;
+    }
+  }
+
+  wp_nonce_field( 'powerup_about_item_image_save', 'powerup_about_item_image_nonce' );
+  ?>
+  <p>上传或选择多张图片，前台会显示在 About this item 标题下方。</p>
+  <input type="hidden" id="powerup-about-item-image-ids" name="powerup_about_item_image_ids" value="<?php echo esc_attr( implode( ',', $image_ids ) ); ?>" />
+  <p>
+    <button type="button" class="button" id="powerup-select-about-item-image">选择/上传图片</button>
+    <button type="button" class="button" id="powerup-remove-about-item-image" <?php echo empty( $image_ids ) ? 'style="display:none;"' : ''; ?>>清空图片</button>
+  </p>
+  <div id="powerup-about-item-image-preview" <?php echo empty( $image_ids ) ? 'style="display:none;"' : ''; ?>></div>
+  <p id="powerup-about-item-image-label" style="color:#555;word-break:break-word;margin-top:8px;">
+    <?php
+    /* translators: %d is selected image count. */
+    echo esc_html( sprintf( _n( '已选择 %d 张图片', '已选择 %d 张图片', count( $image_ids ), 'powerup-theme' ), count( $image_ids ) ) );
+    ?>
+  </p>
+  <script>
+    (function () {
+      var selectBtn = document.getElementById('powerup-select-about-item-image');
+      var removeBtn = document.getElementById('powerup-remove-about-item-image');
+      var input = document.getElementById('powerup-about-item-image-ids');
+      var preview = document.getElementById('powerup-about-item-image-preview');
+      var label = document.getElementById('powerup-about-item-image-label');
+      var frame;
+
+      if (!selectBtn || !removeBtn || !input || !preview || !label) {
+        return;
+      }
+
+      function getIds() {
+        if (!input.value) {
+          return [];
+        }
+
+        return input.value.split(',').map(function (v) {
+          return parseInt(v, 10);
+        }).filter(function (v) {
+          return Number.isInteger(v) && v > 0;
+        });
+      }
+
+      function setLabel(count) {
+        label.textContent = count > 0 ? ('已选择 ' + count + ' 张图片') : '未选择图片';
+      }
+
+      function setPreview(items) {
+        preview.innerHTML = '';
+
+        if (!items.length) {
+          preview.style.display = 'none';
+          removeBtn.style.display = 'none';
+          setLabel(0);
+          return;
+        }
+
+        items.forEach(function (item) {
+          if (!item || !item.id || !item.url) {
+            return;
+          }
+
+          var wrap = document.createElement('div');
+          wrap.setAttribute('data-id', String(item.id));
+          wrap.style.position = 'relative';
+          wrap.style.display = 'inline-block';
+          wrap.style.width = '96px';
+          wrap.style.height = '96px';
+          wrap.style.margin = '0 8px 8px 0';
+          wrap.style.border = '1px solid #ddd';
+          wrap.style.borderRadius = '6px';
+          wrap.style.overflow = 'hidden';
+          wrap.style.background = '#fff';
+
+          var img = document.createElement('img');
+          img.setAttribute('src', item.url);
+          img.setAttribute('alt', '');
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          img.style.display = 'block';
+
+          wrap.appendChild(img);
+          preview.appendChild(wrap);
+        });
+
+        preview.style.display = 'block';
+        removeBtn.style.display = '';
+        setLabel(items.length);
+      }
+
+      function clearImages() {
+        input.value = '';
+        setPreview([]);
+      }
+
+      selectBtn.addEventListener('click', function () {
+        if (frame) {
+          frame.open();
+          return;
+        }
+
+        frame = wp.media({
+          title: '选择 About this item 图片',
+          button: { text: '使用这些图片' },
+          library: { type: 'image' },
+          multiple: true
+        });
+
+        frame.on('open', function () {
+          var selection = frame.state().get('selection');
+          var ids = getIds();
+
+          selection.reset();
+          ids.forEach(function (id) {
+            var attachment = wp.media.attachment(id);
+            attachment.fetch();
+            selection.add(attachment);
+          });
+        });
+
+        frame.on('select', function () {
+          var attachments = frame.state().get('selection').toJSON();
+          var ids = [];
+          var items = [];
+
+          attachments.forEach(function (attachment) {
+            if (!attachment || !attachment.id || !attachment.url) {
+              return;
+            }
+
+            ids.push(String(attachment.id));
+            items.push({ id: attachment.id, url: attachment.url });
+          });
+
+          input.value = ids.join(',');
+          setPreview(items);
+        });
+
+        frame.open();
+      });
+
+      removeBtn.addEventListener('click', function () {
+        clearImages();
+      });
+
+      (function bootstrap() {
+        var ids = getIds();
+        if (!ids.length) {
+          setPreview([]);
+          return;
+        }
+
+        var requests = ids.map(function (id) {
+          return wp.media.attachment(id).fetch();
+        });
+
+        Promise.all(requests).then(function () {
+          var items = [];
+          ids.forEach(function (id) {
+            var attachment = wp.media.attachment(id).toJSON();
+            if (attachment && attachment.id && attachment.url) {
+              items.push({ id: attachment.id, url: attachment.url });
+            }
+          });
+          setPreview(items);
+        }).catch(function () {
+          setPreview([]);
+        });
+      })();
+    })();
+  </script>
+  <?php
+}
+
+function powerup_theme_save_about_item_image_meta_box( $post_id, $post ) {
+  if ( ! $post instanceof WP_Post || 'product' !== $post->post_type ) {
+    return;
+  }
+
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    return;
+  }
+
+  if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    return;
+  }
+
+  if ( empty( $_POST['powerup_about_item_image_nonce'] ) ) {
+    return;
+  }
+
+  $nonce = sanitize_text_field( wp_unslash( (string) $_POST['powerup_about_item_image_nonce'] ) );
+  if ( ! wp_verify_nonce( $nonce, 'powerup_about_item_image_save' ) ) {
+    return;
+  }
+
+  $posted_ids_raw = isset( $_POST['powerup_about_item_image_ids'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['powerup_about_item_image_ids'] ) ) : '';
+  $posted_ids     = '' !== trim( $posted_ids_raw ) ? explode( ',', $posted_ids_raw ) : array();
+  $valid_ids      = array();
+
+  foreach ( $posted_ids as $candidate ) {
+    $image_id = absint( $candidate );
+    if ( $image_id <= 0 ) {
+      continue;
+    }
+
+    $mime = (string) get_post_mime_type( $image_id );
+    if ( 0 !== strpos( $mime, 'image/' ) ) {
+      continue;
+    }
+
+    $valid_ids[] = $image_id;
+  }
+
+  $valid_ids = array_values( array_unique( $valid_ids ) );
+
+  if ( ! empty( $valid_ids ) ) {
+    $first_image_id  = (int) $valid_ids[0];
+    $first_image_url = wp_get_attachment_url( $first_image_id );
+
+    update_post_meta( $post_id, '_powerup_about_item_image_ids', $valid_ids );
+    update_post_meta( $post_id, '_powerup_about_item_image_id', $first_image_id );
+
+    if ( $first_image_url ) {
+      update_post_meta( $post_id, '_powerup_about_item_image_url', esc_url_raw( $first_image_url ) );
+    } else {
+      delete_post_meta( $post_id, '_powerup_about_item_image_url' );
+    }
+  } else {
+    delete_post_meta( $post_id, '_powerup_about_item_image_ids' );
+    delete_post_meta( $post_id, '_powerup_about_item_image_id' );
+    delete_post_meta( $post_id, '_powerup_about_item_image_url' );
+  }
+}
+add_action( 'save_post_product', 'powerup_theme_save_about_item_image_meta_box', 23, 2 );
+
+function powerup_theme_get_shipping_guarantee_defaults() {
+  return array(
+    'heading' => 'Shipping & Guarantee',
+    'item_1_title' => 'Free Shipping',
+    'item_1_desc' => 'Orders over $59 ship free.',
+    'item_2_title' => '1 Year Warranty',
+    'item_2_desc' => 'Quality issues covered with replacement support.',
+    'item_3_title' => 'Secure Checkout',
+    'item_3_desc' => 'Encrypted payment and buyer protection.',
+  );
+}
+
+function powerup_theme_get_shipping_guarantee_content( $product_id ) {
+  $product_id = absint( $product_id );
+  $defaults   = powerup_theme_get_shipping_guarantee_defaults();
+
+  if ( $product_id <= 0 ) {
+    return $defaults;
+  }
+
+  $content = array();
+  foreach ( $defaults as $key => $default_value ) {
+    $meta_key = '_powerup_shipping_guarantee_' . $key;
+    $value    = get_post_meta( $product_id, $meta_key, true );
+    $value    = is_string( $value ) ? trim( $value ) : '';
+    $content[ $key ] = '' !== $value ? $value : $default_value;
+  }
+
+  return $content;
+}
+
+function powerup_theme_add_shipping_guarantee_meta_box() {
+  add_meta_box(
+    'powerup-shipping-guarantee-copy',
+    'Shipping & Guarantee 文案',
+    'powerup_theme_render_shipping_guarantee_meta_box',
+    'product',
+    'normal',
+    'default'
+  );
+}
+add_action( 'add_meta_boxes_product', 'powerup_theme_add_shipping_guarantee_meta_box' );
+
+function powerup_theme_render_shipping_guarantee_meta_box( $post ) {
+  if ( ! $post instanceof WP_Post ) {
+    return;
+  }
+
+  $content = powerup_theme_get_shipping_guarantee_content( (int) $post->ID );
+
+  wp_nonce_field( 'powerup_shipping_guarantee_copy_save', 'powerup_shipping_guarantee_copy_nonce' );
+  ?>
+  <p>这里设置产品详情页 Shipping & Guarantee 区块文案。留空会自动使用默认文案。</p>
+  <input type="hidden" id="powerup-shipping-guarantee-reset" name="powerup_shipping_guarantee_reset" value="0" />
+  <table class="form-table" role="presentation" style="margin-top:8px;">
+    <tbody>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-heading">区块标题</label></th>
+        <td><input type="text" id="powerup-shipping-guarantee-heading" name="powerup_shipping_guarantee_heading" value="<?php echo esc_attr( $content['heading'] ); ?>" class="regular-text" /></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-1-title">卡片1标题</label></th>
+        <td><input type="text" id="powerup-shipping-guarantee-item-1-title" name="powerup_shipping_guarantee_item_1_title" value="<?php echo esc_attr( $content['item_1_title'] ); ?>" class="regular-text" /></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-1-desc">卡片1说明</label></th>
+        <td><textarea id="powerup-shipping-guarantee-item-1-desc" name="powerup_shipping_guarantee_item_1_desc" rows="3" class="large-text"><?php echo esc_textarea( $content['item_1_desc'] ); ?></textarea></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-2-title">卡片2标题</label></th>
+        <td><input type="text" id="powerup-shipping-guarantee-item-2-title" name="powerup_shipping_guarantee_item_2_title" value="<?php echo esc_attr( $content['item_2_title'] ); ?>" class="regular-text" /></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-2-desc">卡片2说明</label></th>
+        <td><textarea id="powerup-shipping-guarantee-item-2-desc" name="powerup_shipping_guarantee_item_2_desc" rows="3" class="large-text"><?php echo esc_textarea( $content['item_2_desc'] ); ?></textarea></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-3-title">卡片3标题</label></th>
+        <td><input type="text" id="powerup-shipping-guarantee-item-3-title" name="powerup_shipping_guarantee_item_3_title" value="<?php echo esc_attr( $content['item_3_title'] ); ?>" class="regular-text" /></td>
+      </tr>
+      <tr>
+        <th scope="row"><label for="powerup-shipping-guarantee-item-3-desc">卡片3说明</label></th>
+        <td><textarea id="powerup-shipping-guarantee-item-3-desc" name="powerup_shipping_guarantee_item_3_desc" rows="3" class="large-text"><?php echo esc_textarea( $content['item_3_desc'] ); ?></textarea></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="margin-top:8px;">
+    <button type="button" class="button" id="powerup-shipping-guarantee-reset-button">恢复默认文案</button>
+    <span id="powerup-shipping-guarantee-reset-tip" style="display:none;color:#2271b1;margin-left:8px;">已恢复默认，请点击右上角“更新”保存。</span>
+  </p>
+  <script>
+    (function () {
+      var resetBtn = document.getElementById('powerup-shipping-guarantee-reset-button');
+      var resetFlag = document.getElementById('powerup-shipping-guarantee-reset');
+      var tip = document.getElementById('powerup-shipping-guarantee-reset-tip');
+      var scope = resetBtn ? resetBtn.closest('.postbox') : null;
+
+      if (!resetBtn || !resetFlag || !scope) {
+        return;
+      }
+
+      resetBtn.addEventListener('click', function () {
+        var ok = window.confirm('确认恢复此产品的 Shipping & Guarantee 默认文案吗？');
+        if (!ok) {
+          return;
+        }
+
+        resetFlag.value = '1';
+
+        var fields = scope.querySelectorAll('input[type="text"], textarea');
+        fields.forEach(function (field) {
+          field.value = '';
+        });
+
+        if (tip) {
+          tip.style.display = 'inline';
+        }
+      });
+    })();
+  </script>
+  <?php
+}
+
+function powerup_theme_save_shipping_guarantee_meta_box( $post_id, $post ) {
+  if ( ! $post instanceof WP_Post || 'product' !== $post->post_type ) {
+    return;
+  }
+
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+    return;
+  }
+
+  if ( ! current_user_can( 'edit_post', $post_id ) ) {
+    return;
+  }
+
+  if ( empty( $_POST['powerup_shipping_guarantee_copy_nonce'] ) ) {
+    return;
+  }
+
+  $nonce = sanitize_text_field( wp_unslash( (string) $_POST['powerup_shipping_guarantee_copy_nonce'] ) );
+  if ( ! wp_verify_nonce( $nonce, 'powerup_shipping_guarantee_copy_save' ) ) {
+    return;
+  }
+
+  $fields = array(
+    'heading',
+    'item_1_title',
+    'item_1_desc',
+    'item_2_title',
+    'item_2_desc',
+    'item_3_title',
+    'item_3_desc',
+  );
+
+  $should_reset = isset( $_POST['powerup_shipping_guarantee_reset'] ) ? absint( wp_unslash( (string) $_POST['powerup_shipping_guarantee_reset'] ) ) : 0;
+
+  if ( 1 === $should_reset ) {
+    foreach ( $fields as $field ) {
+      delete_post_meta( $post_id, '_powerup_shipping_guarantee_' . $field );
+    }
+    return;
+  }
+
+  $defaults = powerup_theme_get_shipping_guarantee_defaults();
+
+  foreach ( $fields as $field ) {
+    $post_key = 'powerup_shipping_guarantee_' . $field;
+    $meta_key = '_powerup_shipping_guarantee_' . $field;
+    $value    = isset( $_POST[ $post_key ] ) ? sanitize_text_field( wp_unslash( (string) $_POST[ $post_key ] ) ) : '';
+
+    if ( '' === trim( $value ) || ( isset( $defaults[ $field ] ) && $value === $defaults[ $field ] ) ) {
+      delete_post_meta( $post_id, $meta_key );
+      continue;
+    }
+
+    update_post_meta( $post_id, $meta_key, $value );
+  }
+}
+add_action( 'save_post_product', 'powerup_theme_save_shipping_guarantee_meta_box', 24, 2 );
+
 function powerup_theme_get_applicable_tier_pricing_rule( $rules, $quantity ) {
   $rules    = powerup_theme_normalize_tier_pricing_rules( $rules );
   $quantity = absint( $quantity );
@@ -4014,20 +4477,29 @@ function powerup_theme_render_amazon_like_gallery() {
 
   $items = array();
   foreach ( $image_ids as $image_id ) {
+    $full  = wp_get_attachment_image_url( $image_id, 'full' );
+    $main  = wp_get_attachment_image_url( $image_id, 'large' );
     $thumb = wp_get_attachment_image_url( $image_id, 'thumbnail' );
-    $full  = wp_get_attachment_image_url( $image_id, 'large' );
-    $zoom  = wp_get_attachment_image_url( $image_id, 'full' );
+    $zoom  = $full;
     $alt   = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
 
-    if ( ! $thumb || ! $full ) {
+    if ( ! $main ) {
+      $main = $full;
+    }
+
+    if ( ! $thumb ) {
+      $thumb = $main ? $main : $full;
+    }
+
+    if ( ! $full ) {
       continue;
     }
 
     $items[] = array(
       'type'  => 'image',
       'thumb' => $thumb,
-      'full'  => $full,
-      'zoom'  => $zoom ? $zoom : $full,
+      'full'  => $main,
+      'zoom'  => $zoom,
       'alt'   => $alt,
     );
   }
@@ -4647,7 +5119,7 @@ function powerup_theme_enqueue_pdp_reference_assets() {
     'powerup-theme-pdp-reference-layout',
     get_template_directory_uri() . '/assets/css/pdp-reference-layout.css',
     array(),
-    wp_get_theme()->get( 'Version' )
+    file_exists( get_template_directory() . '/assets/css/pdp-reference-layout.css' ) ? (string) filemtime( get_template_directory() . '/assets/css/pdp-reference-layout.css' ) : wp_get_theme()->get( 'Version' )
   );
 }
 add_action( 'wp_enqueue_scripts', 'powerup_theme_enqueue_pdp_reference_assets', 31 );
@@ -4713,19 +5185,25 @@ function powerup_theme_render_pdp_amazon_choice_badge() {
   echo '<p class="powerup-pdp-choice-sub">' . esc_html__( 'for "cordless chainsaw 20v"', 'powerup-theme' ) . '</p>';
   echo '</div>';
 }
-add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_pdp_amazon_choice_badge', 4 );
 
 function powerup_theme_render_pdp_shipping_guarantee() {
   if ( ! function_exists( 'is_product' ) || ! is_product() ) {
     return;
   }
 
+  global $product;
+  if ( ! $product instanceof WC_Product ) {
+    return;
+  }
+
+  $content = powerup_theme_get_shipping_guarantee_content( (int) $product->get_id() );
+
   echo '<section class="powerup-pdp-shipping-guarantee" aria-label="Shipping and guarantee">';
-  echo '<h3>' . esc_html__( 'Shipping & Guarantee', 'powerup-theme' ) . '</h3>';
+  echo '<h3>' . esc_html( $content['heading'] ) . '</h3>';
   echo '<ul class="powerup-pdp-guarantee-list">';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--ship" aria-hidden="true">FS</span><strong>Free Shipping</strong><span>' . esc_html__( 'Orders over $59 ship free.', 'powerup-theme' ) . '</span></li>';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--warranty" aria-hidden="true">WR</span><strong>1 Year Warranty</strong><span>' . esc_html__( 'Quality issues covered with replacement support.', 'powerup-theme' ) . '</span></li>';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--secure" aria-hidden="true">SC</span><strong>Secure Checkout</strong><span>' . esc_html__( 'Encrypted payment and buyer protection.', 'powerup-theme' ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--ship" aria-hidden="true">FS</span><strong>' . esc_html( $content['item_1_title'] ) . '</strong><span>' . esc_html( $content['item_1_desc'] ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--warranty" aria-hidden="true">WR</span><strong>' . esc_html( $content['item_2_title'] ) . '</strong><span>' . esc_html( $content['item_2_desc'] ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--secure" aria-hidden="true">SC</span><strong>' . esc_html( $content['item_3_title'] ) . '</strong><span>' . esc_html( $content['item_3_desc'] ) . '</span></li>';
   echo '</ul>';
   echo '</section>';
 }
@@ -5106,7 +5584,6 @@ function powerup_theme_render_reference_series_nav() {
   echo '</div>';
   echo '</section>';
 }
-add_action( 'woocommerce_after_single_product_summary', 'powerup_theme_render_reference_series_nav', 5 );
 
 function powerup_theme_render_about_item_tab() {
   global $product;
@@ -5138,6 +5615,18 @@ function powerup_theme_render_about_item_tab() {
 }
 
 /**
+ * Open media stack wrapper before product gallery.
+ */
+function powerup_theme_open_media_stack_wrapper() {
+  if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+    return;
+  }
+
+  echo '<div class="powerup-pdp-media-stack">';
+}
+add_action( 'woocommerce_before_single_product_summary', 'powerup_theme_open_media_stack_wrapper', 15 );
+
+/**
  * Render About this item panel below product images on desktop only
  */
 function powerup_theme_render_about_item_panel() {
@@ -5162,16 +5651,68 @@ function powerup_theme_render_about_item_panel() {
     return;
   }
 
-  echo '<div class="powerup-pdp-about-item-panel">';
-  echo '<h3 class="powerup-pdp-about-item-panel__title">' . esc_html__( 'About this item', 'powerup-theme' ) . '</h3>';
-  echo '<ul class="powerup-pdp-about-item-panel__list">';
+  $about_image_ids_raw = get_post_meta( $product->get_id(), '_powerup_about_item_image_ids', true );
+  $about_image_ids     = array();
+  $about_image_urls    = array();
+
+  if ( is_array( $about_image_ids_raw ) ) {
+    $about_image_ids = $about_image_ids_raw;
+  } elseif ( is_string( $about_image_ids_raw ) && '' !== trim( $about_image_ids_raw ) ) {
+    $about_image_ids = explode( ',', $about_image_ids_raw );
+  }
+
+  $about_image_ids = array_values( array_filter( array_unique( array_map( 'absint', $about_image_ids ) ) ) );
+
+  foreach ( $about_image_ids as $about_image_id ) {
+    $about_image_url = wp_get_attachment_url( $about_image_id );
+    if ( $about_image_url ) {
+      $about_image_urls[] = (string) $about_image_url;
+    }
+  }
+
+  if ( empty( $about_image_urls ) ) {
+    $about_image_id  = (int) get_post_meta( $product->get_id(), '_powerup_about_item_image_id', true );
+    $about_image_url = $about_image_id > 0 ? wp_get_attachment_url( $about_image_id ) : '';
+    if ( '' === $about_image_url ) {
+      $about_image_url = (string) get_post_meta( $product->get_id(), '_powerup_about_item_image_url', true );
+    }
+
+    if ( '' !== $about_image_url ) {
+      $about_image_urls[] = $about_image_url;
+    }
+  }
+
+  echo '<div class="powerup-pdp-about-item-panel" style="background:#ffffff !important; display:block !important;">';
+  if ( ! empty( $about_image_urls ) ) {
+    echo '<div class="powerup-pdp-about-item-panel__images" style="margin:0 0 12px 0;display:grid;gap:10px;">';
+    foreach ( $about_image_urls as $about_image_url ) {
+      echo '<div class="powerup-pdp-about-item-panel__image">';
+      echo '<img src="' . esc_url( $about_image_url ) . '" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:8px;" />';
+      echo '</div>';
+    }
+    echo '</div>';
+  }
+  echo '<h3 class="powerup-pdp-about-item-panel__title" style="color:#000000 !important; opacity:1 !important; text-shadow:none !important;">' . esc_html__( 'About this item', 'powerup-theme' ) . '</h3>';
+  echo '<ul class="powerup-pdp-about-item-panel__list" style="color:#000000 !important; opacity:1 !important;">';
   foreach ( $points_array as $point ) {
-    echo '<li>' . esc_html( $point ) . '</li>';
+    echo '<li style="color:#000000 !important; opacity:1 !important; text-shadow:none !important;">' . esc_html( $point ) . '</li>';
   }
   echo '</ul>';
   echo '</div>';
 }
 add_action( 'woocommerce_before_single_product_summary', 'powerup_theme_render_about_item_panel', 25 );
+
+/**
+ * Close media stack wrapper after About panel.
+ */
+function powerup_theme_close_media_stack_wrapper() {
+  if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+    return;
+  }
+
+  echo '</div>';
+}
+add_action( 'woocommerce_before_single_product_summary', 'powerup_theme_close_media_stack_wrapper', 30 );
 
 
 function powerup_theme_render_shipping_delivery_tab() {

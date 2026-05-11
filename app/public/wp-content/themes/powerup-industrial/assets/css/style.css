@@ -456,8 +456,8 @@ button, input, textarea {
 
 .hero-feature-bar__icon-image--high-performance {
   background-color: currentColor;
-  -webkit-mask: url('../images/high-performance-icon.png') center/contain no-repeat;
-  mask: url('../images/high-performance-icon.png') center/contain no-repeat;
+  -webkit-mask: url('../images/high-performance-icon.svg') center/contain no-repeat;
+  mask: url('../images/high-performance-icon.svg') center/contain no-repeat;
 }
 
 .hero-feature-bar__text {
@@ -766,7 +766,7 @@ button, input, textarea {
 
 .home-series-showcase__inner {
   display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.35fr);
+  grid-template-columns: minmax(200px, 0.56fr) minmax(0, 2.14fr);
   gap: 1rem;
   align-items: start;
 }
@@ -820,20 +820,36 @@ button, input, textarea {
 }
 
 .home-series-card__media {
-  min-height: 220px;
+  aspect-ratio: 4 / 3;
+  min-height: clamp(380px, 34vw, 520px);
   border-radius: 16px;
   background: linear-gradient(180deg, #fff7e8 0%, #f8fafc 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem;
+  padding: clamp(0.2rem, 0.5vw, 0.4rem);
 }
 
 .home-series-card__media img {
   width: 100%;
-  max-width: 190px;
-  max-height: 190px;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 1024px) {
+  .home-series-card__media {
+    aspect-ratio: 5 / 4;
+    min-height: clamp(330px, 68vw, 470px);
+    padding: clamp(0.18rem, 0.9vw, 0.35rem);
+  }
+
+  .home-series-card__media img {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .home-series-card__body {
@@ -4273,6 +4289,12 @@ body.page-template-page-contact {
   font-weight: 600;
 }
 
+.footer-support-qr {
+  width: 108px;
+  height: 108px;
+  object-fit: contain;
+}
+
 .site-footer {
   background: url('../images/home-hero-custom.png') center bottom/cover no-repeat;
   padding: 2rem;
@@ -4564,7 +4586,7 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
 .shop-hero {
   position: relative;
   min-height: 520px;
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.72) 0%, rgba(10, 10, 10, 0.72)), url('../images/hero-chainsaw.jpg');
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.72) 0%, rgba(10, 10, 10, 0.72)), url('../images/shop-hero-custom.jpg');
   background-size: cover;
   background-position: center;
   color: #fff;
@@ -5176,6 +5198,38 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
 }
 
 
+.single-product .powerup-marketplace-links .marketplace-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  transition: filter 0.18s ease, transform 0.18s ease;
+}
+
+.single-product .powerup-marketplace-links .marketplace-btn:hover {
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.single-product .powerup-marketplace-links .marketplace-btn:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.28);
+  outline-offset: 1px;
+}
+
+
+.single-product .marketplace-amazon {
+  background: var(--accent);
+  color: #111;
+}
+
+
 .single-product .marketplace-walmart {
   background: #0071ce;
   color: #fff;
@@ -5681,12 +5735,15 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
 
 @media (max-width: 640px) {
   .home-series-card__media {
-    min-height: 180px;
+    aspect-ratio: 5 / 4;
+    min-height: clamp(280px, 72vw, 390px);
   }
 
   .home-series-card__media img {
-    max-width: 150px;
-    max-height: 150px;
+    width: auto;
+    height: auto;
+    max-width: 92%;
+    max-height: 92%;
   }
 
   .single-product .powerup-marketplace-links {
@@ -5737,3 +5794,7 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
   }
 }
 
+/* 强制让About this item区域背景为白色，优先级最高 */
+.powerup-pdp-about-item-panel {
+  background: #fff !important;
+}

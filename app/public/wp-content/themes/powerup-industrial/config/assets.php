@@ -6,7 +6,6 @@
  * @subpackage Config
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -119,7 +118,6 @@ return array(
             ),
         ),
         'images' => array(
-            // Critical images to preload
         ),
     ),
 
@@ -133,7 +131,6 @@ return array(
     ),
 
     'async_scripts' => array(
-        // Scripts to load asynchronously
     ),
 
     /**
@@ -173,7 +170,6 @@ return array(
         'google_fonts' => array(
             'enable' => false,
             'families' => array(
-                // Example: 'Open Sans:300,400,600,700'
             ),
             'display' => 'swap',
             'preconnect' => array(
@@ -188,7 +184,6 @@ return array(
                     'family' => 'System UI',
                     'fallback' => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                     'files' => array(
-                        // Local font files
                     ),
                 ),
             ),
@@ -265,10 +260,8 @@ return array(
             'fonts' => 'cache-first',
         ),
         'precache' => array(
-            // URLs to precache
         ),
         'runtime_caching' => array(
-            // Runtime caching rules
         ),
     ),
 
@@ -307,7 +300,6 @@ function powerup_check_asset_condition($condition) {
         return true;
     }
 
-    // Support for multiple conditions separated by :
     if (strpos($condition, ':') !== false) {
         $conditions = explode(':', $condition);
         $result = true;
@@ -328,34 +320,28 @@ function powerup_check_single_condition($condition) {
         return true;
     }
 
-    // File existence check
     if (strpos($condition, 'file_exists:') === 0) {
         $file = substr($condition, 12);
         return file_exists($file);
     }
 
-    // Class existence check
     if (strpos($condition, 'class_exists:') === 0) {
         $class = substr($condition, 13);
         return class_exists($class);
     }
 
-    // Function existence check
     if (strpos($condition, 'function_exists:') === 0) {
         $function = substr($condition, 16);
         return function_exists($function);
     }
 
-    // Conditional tag check
     if (strpos($condition, 'is_') === 0) {
         return call_user_func($condition);
     }
 
-    // Boolean check
     if ($condition === 'true' || $condition === 'false') {
         return $condition === 'true';
     }
 
-    // Default: assume it's a boolean constant or variable
     return (bool) $condition;
 }

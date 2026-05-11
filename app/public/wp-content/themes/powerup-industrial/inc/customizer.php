@@ -6,7 +6,6 @@
  * @subpackage Customizer
  */
 
-// Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -19,20 +18,17 @@ if (!defined('ABSPATH')) {
  * @return void
  */
 function powerup_customize_register($wp_customize) {
-    // Add theme options panel.
     $wp_customize->add_panel('powerup_theme_options', array(
         'title'    => __('Theme Options', 'powerup-theme'),
         'priority' => 30,
     ));
 
-    // Colors section.
     $wp_customize->add_section('powerup_colors', array(
         'title'    => __('Colors', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 10,
     ));
 
-    // Primary color.
     $wp_customize->add_setting('powerup_primary_color', array(
         'default'           => '#ff6200',
         'sanitize_callback' => 'sanitize_hex_color',
@@ -48,7 +44,6 @@ function powerup_customize_register($wp_customize) {
         )
     ));
 
-    // Secondary color.
     $wp_customize->add_setting('powerup_secondary_color', array(
         'default'           => '#333333',
         'sanitize_callback' => 'sanitize_hex_color',
@@ -64,7 +59,6 @@ function powerup_customize_register($wp_customize) {
         )
     ));
 
-    // Background color.
     $wp_customize->add_setting('powerup_background_color', array(
         'default'           => '#ffffff',
         'sanitize_callback' => 'sanitize_hex_color',
@@ -80,14 +74,12 @@ function powerup_customize_register($wp_customize) {
         )
     ));
 
-    // Typography section.
     $wp_customize->add_section('powerup_typography', array(
         'title'    => __('Typography', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 20,
     ));
 
-    // Base font size.
     $wp_customize->add_setting('powerup_base_font_size', array(
         'default'           => '16',
         'sanitize_callback' => 'absint',
@@ -104,7 +96,6 @@ function powerup_customize_register($wp_customize) {
         ),
     ));
 
-    // Font family.
     $wp_customize->add_setting('powerup_font_family', array(
         'default'           => 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         'sanitize_callback' => 'sanitize_text_field',
@@ -116,14 +107,12 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'text',
     ));
 
-    // Header section.
     $wp_customize->add_section('powerup_header', array(
         'title'    => __('Header', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 30,
     ));
 
-    // Show search in header.
     $wp_customize->add_setting('powerup_show_header_search', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -135,7 +124,6 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // Sticky header.
     $wp_customize->add_setting('powerup_sticky_header', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -147,14 +135,12 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // Footer section.
     $wp_customize->add_section('powerup_footer', array(
         'title'    => __('Footer', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 40,
     ));
 
-    // Footer copyright text.
     $wp_customize->add_setting('powerup_footer_copyright', array(
         'default'           => sprintf(__('© %s. All rights reserved.', 'powerup-theme'), date('Y')),
         'sanitize_callback' => 'wp_kses_post',
@@ -166,7 +152,6 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'textarea',
     ));
 
-    // Show social icons in footer.
     $wp_customize->add_setting('powerup_show_footer_social', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -178,14 +163,12 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // Blog section.
     $wp_customize->add_section('powerup_blog', array(
         'title'    => __('Blog', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 50,
     ));
 
-    // Show featured images on blog archive.
     $wp_customize->add_setting('powerup_show_blog_featured_image', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -197,7 +180,6 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // Show post meta.
     $wp_customize->add_setting('powerup_show_post_meta', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -209,7 +191,6 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // Show read more links.
     $wp_customize->add_setting('powerup_show_read_more', array(
         'default'           => true,
         'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -221,7 +202,6 @@ function powerup_customize_register($wp_customize) {
         'type'    => 'checkbox',
     ));
 
-    // WooCommerce section (if WooCommerce is active).
     if (class_exists('WooCommerce')) {
         $wp_customize->add_section('powerup_woocommerce', array(
             'title'    => __('WooCommerce', 'powerup-theme'),
@@ -229,7 +209,6 @@ function powerup_customize_register($wp_customize) {
             'priority' => 60,
         ));
 
-        // Products per row.
         $wp_customize->add_setting('powerup_products_per_row', array(
             'default'           => '4',
             'sanitize_callback' => 'powerup_sanitize_select',
@@ -248,7 +227,6 @@ function powerup_customize_register($wp_customize) {
             ),
         ));
 
-        // Products per page.
         $wp_customize->add_setting('powerup_products_per_page', array(
             'default'           => '12',
             'sanitize_callback' => 'absint',
@@ -265,7 +243,6 @@ function powerup_customize_register($wp_customize) {
             ),
         ));
 
-        // Show product quick view.
         $wp_customize->add_setting('powerup_show_quick_view', array(
             'default'           => true,
             'sanitize_callback' => 'powerup_sanitize_checkbox',
@@ -278,14 +255,12 @@ function powerup_customize_register($wp_customize) {
         ));
     }
 
-    // Advanced section.
     $wp_customize->add_section('powerup_advanced', array(
         'title'    => __('Advanced', 'powerup-theme'),
         'panel'    => 'powerup_theme_options',
         'priority' => 100,
     ));
 
-    // Custom CSS.
     $wp_customize->add_setting('powerup_custom_css', array(
         'default'           => '',
         'sanitize_callback' => 'wp_strip_all_tags',
@@ -298,7 +273,6 @@ function powerup_customize_register($wp_customize) {
         'description' => __('Add custom CSS code here. It will be included in the theme.', 'powerup-theme'),
     ));
 
-    // Custom JavaScript (head).
     $wp_customize->add_setting('powerup_custom_js_head', array(
         'default'           => '',
         'sanitize_callback' => 'wp_strip_all_tags',
@@ -311,7 +285,6 @@ function powerup_customize_register($wp_customize) {
         'description' => __('Add custom JavaScript code for the head section.', 'powerup-theme'),
     ));
 
-    // Custom JavaScript (footer).
     $wp_customize->add_setting('powerup_custom_js_footer', array(
         'default'           => '',
         'sanitize_callback' => 'wp_strip_all_tags',
@@ -352,7 +325,6 @@ add_action('customize_preview_init', 'powerup_customize_preview_js');
 function powerup_customizer_css() {
     echo '<style type="text/css">';
 
-    // Primary color.
     $primary_color = get_theme_mod('powerup_primary_color', '#ff6200');
     if ($primary_color !== '#ff6200') {
         echo ":root { --color-primary: {$primary_color}; }";
@@ -360,33 +332,28 @@ function powerup_customizer_css() {
         echo ".button-primary { background-color: {$primary_color}; }";
     }
 
-    // Secondary color.
     $secondary_color = get_theme_mod('powerup_secondary_color', '#333333');
     if ($secondary_color !== '#333333') {
         echo ":root { --color-secondary: {$secondary_color}; }";
         echo ".secondary-color { color: {$secondary_color}; }";
     }
 
-    // Background color.
     $background_color = get_theme_mod('powerup_background_color', '#ffffff');
     if ($background_color !== '#ffffff') {
         echo ":root { --color-background: {$background_color}; }";
         echo "body { background-color: {$background_color}; }";
     }
 
-    // Base font size.
     $base_font_size = get_theme_mod('powerup_base_font_size', '16');
     if ($base_font_size !== '16') {
         echo "html { font-size: {$base_font_size}px; }";
     }
 
-    // Font family.
     $font_family = get_theme_mod('powerup_font_family', 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
     if ($font_family !== 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif') {
         echo "body { font-family: {$font_family}; }";
     }
 
-    // Custom CSS.
     $custom_css = get_theme_mod('powerup_custom_css', '');
     if (!empty($custom_css)) {
         echo $custom_css;
@@ -403,13 +370,11 @@ add_action('wp_head', 'powerup_customizer_css');
  * @return void
  */
 function powerup_customizer_js() {
-    // Head JavaScript.
     $custom_js_head = get_theme_mod('powerup_custom_js_head', '');
     if (!empty($custom_js_head)) {
         echo '<script>' . $custom_js_head . '</script>';
     }
 
-    // Footer JavaScript.
     $custom_js_footer = get_theme_mod('powerup_custom_js_footer', '');
     if (!empty($custom_js_footer)) {
         echo '<script>' . $custom_js_footer . '</script>';
