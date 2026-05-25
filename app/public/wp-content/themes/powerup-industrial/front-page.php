@@ -16,23 +16,107 @@ $placeholder_image_url = get_template_directory_uri() . '/assets/images/product-
 $home_series_items = function_exists( 'powerup_theme_get_reference_series_nav_items' ) ? powerup_theme_get_reference_series_nav_items() : array();
 $home_series_slugs = function_exists( 'powerup_theme_get_reference_series_product_slugs' ) ? powerup_theme_get_reference_series_product_slugs() : array();
 $ordered_home_series_items = array();
+$home_featured_products = array();
 
 foreach ( $home_series_slugs as $home_series_slug ) {
   if ( ! empty( $home_series_items[ $home_series_slug ] ) ) {
     $ordered_home_series_items[] = $home_series_items[ $home_series_slug ];
   }
 }
+
+if ( class_exists( 'WooCommerce' ) ) {
+  foreach ( $home_series_slugs as $home_series_slug ) {
+    $home_product_post = get_page_by_path( $home_series_slug, OBJECT, 'product' );
+    if ( ! $home_product_post instanceof WP_Post ) {
+      continue;
+    }
+
+    $home_product = wc_get_product( $home_product_post->ID );
+    if ( ! $home_product instanceof WC_Product ) {
+      continue;
+    }
+
+    $home_featured_products[] = array(
+      'id'    => (int) $home_product_post->ID,
+      'title' => get_the_title( $home_product_post ),
+      'url'   => get_permalink( $home_product_post ),
+      'image' => get_the_post_thumbnail_url( $home_product_post->ID, 'woocommerce_thumbnail' ),
+      'price' => wp_strip_all_tags( (string) $home_product->get_price_html() ),
+      'note'  => has_excerpt( $home_product_post ) ? wp_trim_words( $home_product_post->post_excerpt, 10, '...' ) : __( 'Ready for fast outdoor cutting jobs.', 'powerup-theme' ),
+    );
+  }
+
+  if ( count( $home_featured_products ) < 4 ) {
+    $home_fallback_query = new WP_Query(
+      array(
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'posts_per_page' => 4,
+        'post__not_in'   => wp_list_pluck( $home_featured_products, 'id' ),
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+      )
+    );
+
+    while ( $home_fallback_query->have_posts() && count( $home_featured_products ) < 4 ) {
+      $home_fallback_query->the_post();
+      $home_product = wc_get_product( get_the_ID() );
+      if ( ! $home_product instanceof WC_Product ) {
+        continue;
+      }
+
+      $home_featured_products[] = array(
+        'id'    => (int) get_the_ID(),
+        'title' => get_the_title(),
+        'url'   => get_permalink(),
+        'image' => get_the_post_thumbnail_url( get_the_ID(), 'woocommerce_thumbnail' ),
+        'price' => wp_strip_all_tags( (string) $home_product->get_price_html() ),
+        'note'  => has_excerpt() ? wp_trim_words( get_the_excerpt(), 10, '...' ) : __( 'Popular cordless tool for home and outdoor work.', 'powerup-theme' ),
+      );
+    }
+    wp_reset_postdata();
+  }
+}
+
+if ( empty( $home_featured_products ) ) {
+  $home_featured_products = array(
+    array(
+      'id'    => 0,
+      'title' => __( '12-Inch 20V Cordless Chainsaw Kit', 'powerup-theme' ),
+      'url'   => $series_url,
+      'image' => $placeholder_image_url,
+      'price' => __( 'View latest price', 'powerup-theme' ),
+      'note'  => __( 'Battery-powered cutting kit for home, yard, and light-duty jobs.', 'powerup-theme' ),
+    ),
+    array(
+      'id'    => 0,
+      'title' => __( 'DeWalt-Compatible Chainsaw Tool', 'powerup-theme' ),
+      'url'   => $series_url,
+      'image' => $placeholder_image_url,
+      'price' => __( 'View latest price', 'powerup-theme' ),
+      'note'  => __( 'Tool-only option for buyers already using compatible batteries.', 'powerup-theme' ),
+    ),
+    array(
+      'id'    => 0,
+      'title' => __( 'Milwaukee M18-Compatible Chainsaw Tool', 'powerup-theme' ),
+      'url'   => $series_url,
+      'image' => $placeholder_image_url,
+      'price' => __( 'View latest price', 'powerup-theme' ),
+      'note'  => __( 'Cordless saw option built around common battery platforms.', 'powerup-theme' ),
+    ),
+  );
+}
 ?>
 <main class="hero">
   <div class="hero-inner">
     <div class="section-heading">
-      <span><?php esc_html_e( 'Unrivaled Power & Portability for Every Cut', 'powerup-theme' ); ?></span>
-      <h1 class="hero-title"><?php esc_html_e( 'POWER UP YOUR WORK', 'powerup-theme' ); ?></h1>
-      <p class="hero-subtitle"><?php esc_html_e( 'Professional lithium tools for every task — built for durability, speed, and cordless freedom.', 'powerup-theme' ); ?></p>
+      <span><?php esc_html_e( 'Cordless chainsaws and outdoor power tools', 'powerup-theme' ); ?></span>
+      <h1 class="hero-title"><?php esc_html_e( 'Cut Faster With Battery Freedom', 'powerup-theme' ); ?></h1>
+      <p class="hero-subtitle"><?php esc_html_e( 'Shop practical cordless chainsaw options, including ready-to-run 20V kits and tool-only models for popular battery platforms.', 'powerup-theme' ); ?></p>
     </div>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Shop Now', 'powerup-theme' ); ?></a>
-      <a class="btn btn-secondary" href="<?php echo esc_url( function_exists( 'powerup_theme_get_about_page_url' ) ? powerup_theme_get_about_page_url() : home_url( '/about-us/' ) ); ?>"><?php esc_html_e( 'Learn More', 'powerup-theme' ); ?></a>
+      <a class="btn btn-primary" href="<?php echo esc_url( $series_url ); ?>"><?php esc_html_e( 'Compare Chainsaw Models', 'powerup-theme' ); ?></a>
+      <a class="btn btn-secondary" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Browse All Tools', 'powerup-theme' ); ?></a>
     </div>
   </div>
 </main>
@@ -89,16 +173,16 @@ foreach ( $home_series_slugs as $home_series_slug ) {
     </div>
     <div class="feature-cards">
       <article class="feature-card">
-        <h3><?php esc_html_e( 'High Performance', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'Powerful, reliable motors engineered for heavy-duty cutting and trimming.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'Clear Battery Choices', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'Help buyers choose between a complete 20V kit and tool-only models for existing battery platforms.', 'powerup-theme' ); ?></p>
       </article>
       <article class="feature-card">
-        <h3><?php esc_html_e( 'Cordless Convenience', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'No cords, no limits — enjoy maximum mobility with long-lasting battery life.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'Ready For Outdoor Work', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'Compact cordless tools designed for yard cleanup, branch cutting, trimming, and everyday maintenance.', 'powerup-theme' ); ?></p>
       </article>
       <article class="feature-card">
-        <h3><?php esc_html_e( 'Durable Design', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'Rugged construction ready for professional use and tough outdoor conditions.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'Support After Purchase', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'Simple product guidance, warranty support, and responsive after-sales help when buyers need it.', 'powerup-theme' ); ?></p>
       </article>
     </div>
   </div>
@@ -107,34 +191,24 @@ foreach ( $home_series_slugs as $home_series_slug ) {
 <section class="site-section site-section-light">
   <div class="site-inner">
     <div class="section-heading">
-      <h2><?php esc_html_e( 'Featured Products', 'powerup-theme' ); ?></h2>
-      <p><?php esc_html_e( 'Browse our top-selling cordless chainsaws, trimmers, impact wrenches, and leaf blowers.', 'powerup-theme' ); ?></p>
+      <h2><?php esc_html_e( 'Featured Tools', 'powerup-theme' ); ?></h2>
+      <p><?php esc_html_e( 'Start with the models most buyers compare first, then jump into the full shop when you need more options.', 'powerup-theme' ); ?></p>
     </div>
     <div class="featured-products section-grid section-grid-products-home">
-      <article class="product-card">
-        <div class="product-image"><img src="<?php echo esc_url( $placeholder_image_url ); ?>" alt="Cordless Chainsaw" width="800" height="520" loading="eager" fetchpriority="high" decoding="async"></div>
-        <h3><?php esc_html_e( 'Cordless Chainsaw', 'powerup-theme' ); ?></h3>
-        <span class="price">$119.99</span>
-        <a class="btn btn-primary" href="<?php echo esc_url( $chainsaw_url ); ?>"><?php esc_html_e( 'View Product', 'powerup-theme' ); ?></a>
-      </article>
-      <article class="product-card">
-        <div class="product-image"><img src="<?php echo esc_url( $placeholder_image_url ); ?>" alt="Hedge Trimmer" width="800" height="520" loading="lazy" decoding="async"></div>
-        <h3><?php esc_html_e( 'Hedge Trimmer', 'powerup-theme' ); ?></h3>
-        <span class="price">$89.99</span>
-        <a class="btn btn-primary" href="<?php echo esc_url( $trimmer_url ); ?>"><?php esc_html_e( 'View Product', 'powerup-theme' ); ?></a>
-      </article>
-      <article class="product-card">
-        <div class="product-image"><img src="<?php echo esc_url( $placeholder_image_url ); ?>" alt="Impact Wrench" width="800" height="520" loading="lazy" decoding="async"></div>
-        <h3><?php esc_html_e( 'Impact Wrench', 'powerup-theme' ); ?></h3>
-        <span class="price">$69.99</span>
-        <a class="btn btn-primary" href="<?php echo esc_url( $wrench_url ); ?>"><?php esc_html_e( 'View Product', 'powerup-theme' ); ?></a>
-      </article>
-      <article class="product-card">
-        <div class="product-image"><img src="<?php echo esc_url( $placeholder_image_url ); ?>" alt="Leaf Blower" width="800" height="520" loading="lazy" decoding="async"></div>
-        <h3><?php esc_html_e( 'Leaf Blower', 'powerup-theme' ); ?></h3>
-        <span class="price">$59.99</span>
-        <a class="btn btn-primary" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'View Product', 'powerup-theme' ); ?></a>
-      </article>
+      <?php foreach ( $home_featured_products as $home_product_index => $home_featured_product ) : ?>
+        <?php $home_product_image = ! empty( $home_featured_product['image'] ) ? (string) $home_featured_product['image'] : $placeholder_image_url; ?>
+        <article class="product-card">
+          <a class="product-image" href="<?php echo esc_url( $home_featured_product['url'] ); ?>">
+            <img src="<?php echo esc_url( $home_product_image ); ?>" alt="<?php echo esc_attr( $home_featured_product['title'] ); ?>" width="800" height="520" loading="<?php echo 0 === $home_product_index ? 'eager' : 'lazy'; ?>" <?php echo 0 === $home_product_index ? 'fetchpriority="high"' : ''; ?> decoding="async">
+          </a>
+          <h3><?php echo esc_html( $home_featured_product['title'] ); ?></h3>
+          <?php if ( ! empty( $home_featured_product['note'] ) ) : ?>
+            <p><?php echo esc_html( $home_featured_product['note'] ); ?></p>
+          <?php endif; ?>
+          <span class="price"><?php echo esc_html( $home_featured_product['price'] ); ?></span>
+          <a class="btn btn-primary" href="<?php echo esc_url( $home_featured_product['url'] ); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
+        </article>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -176,21 +250,21 @@ foreach ( $home_series_slugs as $home_series_slug ) {
 <section class="site-section">
   <div class="site-inner">
     <div class="section-heading">
-      <h2><?php esc_html_e( 'Customer Feedback', 'powerup-theme' ); ?></h2>
-      <p><?php esc_html_e( 'Real reviews from buyers who trust our tools for every job.', 'powerup-theme' ); ?></p>
+      <h2><?php esc_html_e( 'Buyer Confidence', 'powerup-theme' ); ?></h2>
+      <p><?php esc_html_e( 'Make the purchase decision easier with clear support, shipping, and product-fit information.', 'powerup-theme' ); ?></p>
     </div>
     <div class="testimonial-grid testimonial-grid-home">
       <article class="testimonial-card">
-        <h3><?php esc_html_e( 'Powerful and Reliable', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'The chainsaw cuts through thick logs with ease and the battery lasts much longer than expected.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'Model Guidance', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'Clear product pages help buyers confirm battery fit, included accessories, and intended use before checkout.', 'powerup-theme' ); ?></p>
       </article>
       <article class="testimonial-card">
-        <h3><?php esc_html_e( 'Excellent Cordless Freedom', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'No cords to worry about during yard work, and the tool feels solid in hand.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'After-Sales Support', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'Support contact options stay visible so customers know where to go for setup, warranty, or order questions.', 'powerup-theme' ); ?></p>
       </article>
       <article class="testimonial-card">
-        <h3><?php esc_html_e( 'Professional Quality', 'powerup-theme' ); ?></h3>
-        <p><?php esc_html_e( 'Fast shipping and great support. The product quality is excellent for the price.', 'powerup-theme' ); ?></p>
+        <h3><?php esc_html_e( 'Practical Tool Selection', 'powerup-theme' ); ?></h3>
+        <p><?php esc_html_e( 'The shop highlights cordless tools for common outdoor jobs instead of making buyers search from scratch.', 'powerup-theme' ); ?></p>
       </article>
     </div>
   </div>

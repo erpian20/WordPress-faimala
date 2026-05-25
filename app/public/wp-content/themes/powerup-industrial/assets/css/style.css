@@ -3223,13 +3223,24 @@ button, input, textarea {
 .shop-ref-stars {
   margin: 0.12rem 0 0.2rem;
   color: #ee7618;
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   min-height: 0.9rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.24rem;
 }
 
-.shop-ref-stars span {
+.shop-ref-stars .star-rating {
+  float: none;
+  margin: 0;
+  font-size: 0.72rem;
+  width: 5.4em;
+}
+
+.shop-ref-stars > .shop-ref-product-price {
   color: #888;
-  margin-left: 0.35rem;
+  margin-left: 0;
 }
 
 .shop-ref-product-copy p {
@@ -3260,10 +3271,10 @@ button, input, textarea {
   border: 1px solid #ea6b18;
   background: #ea6b18;
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 700;
   border-radius: 3px;
-  padding: 0.1rem 0.34rem;
+  padding: 0.16rem 0.42rem;
   text-transform: uppercase;
 }
 
@@ -3277,7 +3288,7 @@ button, input, textarea {
   font-size: 0.62rem;
   font-weight: 700;
   border-radius: 3px;
-  padding: 0.1rem 0.34rem;
+  padding: 0.16rem 0.42rem;
   text-transform: uppercase;
 }
 
@@ -3329,6 +3340,26 @@ button, input, textarea {
   width: 100%;
   height: 90px;
   object-fit: cover;
+}
+
+.shop-ref-confidence-grid article {
+  padding: 0.85rem;
+  min-height: 150px;
+}
+
+.shop-ref-confidence-grid h3 {
+  margin: 0 0 0.45rem;
+  color: #242424;
+  font-family: "Barlow Condensed", "Impact", "Arial Narrow", sans-serif;
+  font-size: 1.24rem;
+  line-height: 1.05;
+}
+
+.shop-ref-confidence-grid p {
+  margin: 0;
+  color: #666;
+  font-size: 0.78rem;
+  line-height: 1.55;
 }
 
 .shop-ref-newsletter {

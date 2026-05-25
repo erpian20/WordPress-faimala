@@ -233,12 +233,6 @@ $price_ranges = array(
   3 => array( 'label' => __( '$300+', 'powerup-theme' ) ),
 );
 
-$review_images = array(
-  get_template_directory_uri() . '/assets/images/blog-cover-complete-guide.svg',
-  get_template_directory_uri() . '/assets/images/blog-cover-chainsaw-maintenance.svg',
-  get_template_directory_uri() . '/assets/images/blog-cover-20v-40v.svg',
-  get_template_directory_uri() . '/assets/images/blog-cover-leaf-blower.svg',
-);
 ?>
 
 <main class="shop-reference-page">
@@ -341,9 +335,15 @@ $review_images = array(
                 $price = __( 'Request Quote', 'powerup-theme' );
               }
 
-              $excerpt   = wp_trim_words( get_the_excerpt(), 12, '...' );
-              $star_seed = $product_id > 0 ? $product_id : strlen( get_the_title() );
-              $stars     = 4 + ( $star_seed % 2 );
+              $excerpt      = wp_trim_words( get_the_excerpt(), 12, '...' );
+              $average      = $product instanceof WC_Product ? (float) $product->get_average_rating() : 0.0;
+              $review_count = $product instanceof WC_Product ? (int) $product->get_review_count() : 0;
+              $rating_label = $review_count > 0 ? sprintf(
+                /* translators: 1: rating, 2: review count. */
+                __( '%1$s out of 5 from %2$s reviews', 'powerup-theme' ),
+                number_format_i18n( $average, 1 ),
+                number_format_i18n( $review_count )
+              ) : '';
               ?>
               <article class="shop-ref-product-card">
                 <a class="shop-ref-product-image" href="<?php the_permalink(); ?>">
@@ -351,11 +351,17 @@ $review_images = array(
                 </a>
                 <div class="shop-ref-product-copy">
                   <h3><?php echo esc_html( get_the_title() ); ?></h3>
-                  <div class="shop-ref-stars"><?php echo esc_html( str_repeat( '★', $stars ) . str_repeat( '☆', 5 - $stars ) ); ?> <span><?php echo esc_html( $price ); ?></span></div>
+                  <div class="shop-ref-stars">
+                    <?php if ( $review_count > 0 && function_exists( 'wc_get_rating_html' ) ) : ?>
+                      <?php echo wp_kses_post( wc_get_rating_html( $average, $review_count ) ); ?>
+                      <span class="screen-reader-text"><?php echo esc_html( $rating_label ); ?></span>
+                    <?php endif; ?>
+                    <span class="shop-ref-product-price"><?php echo esc_html( $price ); ?></span>
+                  </div>
                   <p><?php echo esc_html( $excerpt ); ?></p>
                   <div class="shop-ref-actions">
-                    <a class="shop-ref-read-btn" href="<?php the_permalink(); ?>"><?php esc_html_e( 'Add Cart', 'powerup-theme' ); ?></a>
-                    <a class="shop-ref-secondary-btn" href="<?php the_permalink(); ?>"><?php esc_html_e( 'Read More', 'powerup-theme' ); ?></a>
+                    <a class="shop-ref-read-btn" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
+                    <a class="shop-ref-secondary-btn" href="<?php echo esc_url( $shop_base_url ); ?>#shop-categories"><?php esc_html_e( 'Compare More', 'powerup-theme' ); ?></a>
                   </div>
                 </div>
               </article>
@@ -405,11 +411,24 @@ $review_images = array(
 
   <section class="shop-ref-featured-reviews">
     <div class="shop-ref-inner">
-      <h2><?php esc_html_e( 'FEATURED REVIEWS', 'powerup-theme' ); ?></h2>
-      <div class="shop-ref-reviews-grid">
-        <?php foreach ( $review_images as $review_image ) : ?>
-          <article><img src="<?php echo esc_url( $review_image ); ?>" alt="<?php esc_attr_e( 'Featured review', 'powerup-theme' ); ?>" loading="lazy"></article>
-        <?php endforeach; ?>
+      <h2><?php esc_html_e( 'BUYER CONFIDENCE', 'powerup-theme' ); ?></h2>
+      <div class="shop-ref-reviews-grid shop-ref-confidence-grid">
+        <article>
+          <h3><?php esc_html_e( 'Clear Product Fit', 'powerup-theme' ); ?></h3>
+          <p><?php esc_html_e( 'Product pages focus on battery platform, included parts, and practical use cases so buyers can choose with less guesswork.', 'powerup-theme' ); ?></p>
+        </article>
+        <article>
+          <h3><?php esc_html_e( 'Visible Support', 'powerup-theme' ); ?></h3>
+          <p><?php esc_html_e( 'Email and chat contact options stay available across the site for order questions, setup help, and warranty support.', 'powerup-theme' ); ?></p>
+        </article>
+        <article>
+          <h3><?php esc_html_e( 'Outdoor Tool Focus', 'powerup-theme' ); ?></h3>
+          <p><?php esc_html_e( 'The catalog is organized around common outdoor jobs, making it easier to compare chainsaws and cordless tools.', 'powerup-theme' ); ?></p>
+        </article>
+        <article>
+          <h3><?php esc_html_e( 'Checkout Confidence', 'powerup-theme' ); ?></h3>
+          <p><?php esc_html_e( 'Consistent product cards, pricing, and details reduce surprises before customers move from browsing to checkout.', 'powerup-theme' ); ?></p>
+        </article>
       </div>
     </div>
   </section>
@@ -418,8 +437,11 @@ $review_images = array(
     <div class="shop-ref-newsletter-inner">
       <h2><?php esc_html_e( 'SUBSCRIBE TO OUR NEWSLETTER', 'powerup-theme' ); ?></h2>
       <p><?php esc_html_e( 'Get latest updates and special deals.', 'powerup-theme' ); ?></p>
-      <form class="shop-ref-newsletter-form" action="#" method="post">
-        <input type="email" name="newsletter_email" placeholder="<?php esc_attr_e( 'Enter your email address', 'powerup-theme' ); ?>" required>
+      <?php if ( function_exists( 'powerup_render_form_notice' ) ) { powerup_render_form_notice( 'subscribe', 'is-inline-dark' ); } ?>
+      <form class="shop-ref-newsletter-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+        <?php wp_nonce_field( 'powerup_subscribe_submit', 'powerup_subscribe_nonce' ); ?>
+        <input type="email" name="subscriber_email" placeholder="<?php esc_attr_e( 'Enter your email address', 'powerup-theme' ); ?>" required>
+        <input type="hidden" name="action" value="powerup_subscribe">
         <button type="submit"><?php esc_html_e( 'SUBSCRIBE', 'powerup-theme' ); ?></button>
       </form>
     </div>
