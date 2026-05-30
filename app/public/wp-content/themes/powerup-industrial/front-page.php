@@ -25,7 +25,42 @@ foreach ( $home_series_slugs as $home_series_slug ) {
 }
 
 if ( class_exists( 'WooCommerce' ) ) {
+  $home_launch_product_ids = get_posts(
+    array(
+      'post_type'              => 'product',
+      'post_status'            => 'publish',
+      'posts_per_page'         => 3,
+      'fields'                 => 'ids',
+      'meta_key'               => '_powerup_launch_order',
+      'orderby'                => 'meta_value_num',
+      'order'                  => 'ASC',
+      'no_found_rows'          => true,
+      'update_post_meta_cache' => false,
+      'update_post_term_cache' => false,
+    )
+  );
+
+  foreach ( $home_launch_product_ids as $home_launch_product_id ) {
+    $home_product = wc_get_product( $home_launch_product_id );
+    if ( ! $home_product instanceof WC_Product ) {
+      continue;
+    }
+
+    $home_featured_products[] = array(
+      'id'    => (int) $home_launch_product_id,
+      'title' => get_the_title( $home_launch_product_id ),
+      'url'   => get_permalink( $home_launch_product_id ),
+      'image' => get_the_post_thumbnail_url( $home_launch_product_id, 'woocommerce_thumbnail' ),
+      'price' => wp_strip_all_tags( (string) $home_product->get_price_html() ),
+      'note'  => has_excerpt( $home_launch_product_id ) ? wp_trim_words( get_the_excerpt( $home_launch_product_id ), 10, '...' ) : __( 'Launch-ready cordless chainsaw product.', 'powerup-theme' ),
+    );
+  }
+
   foreach ( $home_series_slugs as $home_series_slug ) {
+    if ( count( $home_featured_products ) >= 3 ) {
+      break;
+    }
+
     $home_product_post = get_page_by_path( $home_series_slug, OBJECT, 'product' );
     if ( ! $home_product_post instanceof WP_Post ) {
       continue;
@@ -46,19 +81,19 @@ if ( class_exists( 'WooCommerce' ) ) {
     );
   }
 
-  if ( count( $home_featured_products ) < 4 ) {
+  if ( count( $home_featured_products ) < 3 ) {
     $home_fallback_query = new WP_Query(
       array(
         'post_type'      => 'product',
         'post_status'    => 'publish',
-        'posts_per_page' => 4,
+        'posts_per_page' => 3,
         'post__not_in'   => wp_list_pluck( $home_featured_products, 'id' ),
         'orderby'        => 'date',
         'order'          => 'DESC',
       )
     );
 
-    while ( $home_fallback_query->have_posts() && count( $home_featured_products ) < 4 ) {
+    while ( $home_fallback_query->have_posts() && count( $home_featured_products ) < 3 ) {
       $home_fallback_query->the_post();
       $home_product = wc_get_product( get_the_ID() );
       if ( ! $home_product instanceof WC_Product ) {
@@ -190,25 +225,29 @@ if ( empty( $home_featured_products ) ) {
 
 <section class="site-section site-section-light">
   <div class="site-inner">
-    <div class="section-heading">
-      <h2><?php esc_html_e( 'Featured Tools', 'powerup-theme' ); ?></h2>
-      <p><?php esc_html_e( 'Start with the models most buyers compare first, then jump into the full shop when you need more options.', 'powerup-theme' ); ?></p>
-    </div>
-    <div class="featured-products section-grid section-grid-products-home">
-      <?php foreach ( $home_featured_products as $home_product_index => $home_featured_product ) : ?>
-        <?php $home_product_image = ! empty( $home_featured_product['image'] ) ? (string) $home_featured_product['image'] : $placeholder_image_url; ?>
-        <article class="product-card">
-          <a class="product-image" href="<?php echo esc_url( $home_featured_product['url'] ); ?>">
-            <img src="<?php echo esc_url( $home_product_image ); ?>" alt="<?php echo esc_attr( $home_featured_product['title'] ); ?>" width="800" height="520" loading="<?php echo 0 === $home_product_index ? 'eager' : 'lazy'; ?>" <?php echo 0 === $home_product_index ? 'fetchpriority="high"' : ''; ?> decoding="async">
-          </a>
-          <h3><?php echo esc_html( $home_featured_product['title'] ); ?></h3>
-          <?php if ( ! empty( $home_featured_product['note'] ) ) : ?>
-            <p><?php echo esc_html( $home_featured_product['note'] ); ?></p>
-          <?php endif; ?>
-          <span class="price"><?php echo esc_html( $home_featured_product['price'] ); ?></span>
-          <a class="btn btn-primary" href="<?php echo esc_url( $home_featured_product['url'] ); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
-        </article>
-      <?php endforeach; ?>
+    <div class="home-featured-layout">
+      <div class="home-featured-intro">
+        <span class="powerup-series-badge"><?php esc_html_e( 'Core Chainsaws', 'powerup-theme' ); ?></span>
+        <h2><?php esc_html_e( 'Featured Tools', 'powerup-theme' ); ?></h2>
+        <p><?php esc_html_e( 'Choose a complete 20V kit or match a tool-only model to the battery platform you already use.', 'powerup-theme' ); ?></p>
+        <a class="btn btn-secondary" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'View All Tools', 'powerup-theme' ); ?></a>
+      </div>
+      <div class="featured-products section-grid section-grid-products-home">
+        <?php foreach ( $home_featured_products as $home_product_index => $home_featured_product ) : ?>
+          <?php $home_product_image = ! empty( $home_featured_product['image'] ) ? (string) $home_featured_product['image'] : $placeholder_image_url; ?>
+          <article class="product-card">
+            <a class="product-image" href="<?php echo esc_url( $home_featured_product['url'] ); ?>">
+              <img src="<?php echo esc_url( $home_product_image ); ?>" alt="<?php echo esc_attr( $home_featured_product['title'] ); ?>" width="800" height="520" loading="<?php echo 0 === $home_product_index ? 'eager' : 'lazy'; ?>" <?php echo 0 === $home_product_index ? 'fetchpriority="high"' : ''; ?> decoding="async">
+            </a>
+            <h3><?php echo esc_html( $home_featured_product['title'] ); ?></h3>
+            <?php if ( ! empty( $home_featured_product['note'] ) ) : ?>
+              <p><?php echo esc_html( $home_featured_product['note'] ); ?></p>
+            <?php endif; ?>
+            <span class="price"><?php echo esc_html( $home_featured_product['price'] ); ?></span>
+            <a class="btn btn-primary" href="<?php echo esc_url( $home_featured_product['url'] ); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
+          </article>
+        <?php endforeach; ?>
+      </div>
     </div>
   </div>
 </section>

@@ -1,0 +1,77 @@
+name: Deploy to Cloudways
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/public/wp-content/themes/powerup-industrial/**"
+      - "app/public/wp-content/mu-plugins/**"
+      - "app/public/wp-content/uploads/**"
+      - ".github/workflows/deploy-cloudways.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: cloudways-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure deployment key
+        env:
+          CLOUDWAYS_SSH_KEY: ${{ secrets.CLOUDWAYS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$CLOUDWAYS_SSH_KEY" > "$HOME/.ssh/cloudways_deploy"
+          chmod 600 "$HOME/.ssh/cloudways_deploy"
+          ssh-keyscan -H "66.135.1.115" >> "$HOME/.ssh/known_hosts"
+
+      - name: Publish theme, mu-plugins, and tracked media
+        run: |
+          set -euo pipefail
+          SSH="ssh -i $HOME/.ssh/cloudways_deploy -o IdentitiesOnly=yes"
+
+          rsync -az --delete -e "$SSH" \
+            app/public/wp-content/themes/powerup-industrial/ \
+            "master_qefuhpxtkf@66.135.1.115:/home/master/applications/uzwpaedhhg/public_html/wp-content/themes/powerup-industrial/"
+
+          rsync -az --delete -e "$SSH" \
+            app/public/wp-content/mu-plugins/ \
+            "master_qefuhpxtkf@66.135.1.115:/home/master/applications/uzwpaedhhg/public_html/wp-content/mu-plugins/"
+
+          rsync -az -e "$SSH" \
+            app/public/wp-content/uploads/ \
+            "master_qefuhpxtkf@66.135.1.115:/home/master/applications/uzwpaedhhg/public_html/wp-content/uploads/"
+
+      - name: Refresh WordPress and verify public pages
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/cloudways_deploy" -o IdentitiesOnly=yes \
+            "master_qefuhpxtkf@66.135.1.115" \
+            "APP='/home/master/applications/uzwpaedhhg/public_html' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP"
+
+          find wp-content/themes/powerup-industrial -type d -exec chmod 775 {} \;
+          find wp-content/themes/powerup-industrial -type f -exec chmod 664 {} \;
+          find wp-content/mu-plugins -type d -exec chmod 775 {} \;
+          find wp-content/mu-plugins -type f -exec chmod 664 {} \;
+
+          wp eval 'if ( function_exists( "powerup_seed_launch_products" ) ) { powerup_seed_launch_products(); }'
+          wp cache flush || true
+          wp rewrite flush
+
+          for path in / /shop/ /cart/; do
+            code=$(curl -ksS -o /dev/null -w '%{http_code}' "https://faimala.com${path}?deploy=$(date +%s)")
+            printf '%s => HTTP %s\n' "$path" "$code"
+            test "$code" = "200"
+          done
+          REMOTE

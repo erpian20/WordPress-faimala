@@ -204,14 +204,38 @@ if ( ! empty( $meta_query ) ) {
   $query_args['meta_query'] = $meta_query;
 }
 
+if ( ! $has_active_filters ) {
+  $launch_product_ids = get_posts(
+    array(
+      'post_type'              => 'product',
+      'post_status'            => 'publish',
+      'posts_per_page'         => 8,
+      'fields'                 => 'ids',
+      'meta_key'               => '_powerup_launch_order',
+      'orderby'                => 'meta_value_num',
+      'order'                  => 'ASC',
+      'no_found_rows'          => true,
+      'update_post_meta_cache' => false,
+      'update_post_term_cache' => false,
+    )
+  );
+
+  if ( ! empty( $launch_product_ids ) ) {
+    $query_args['post__in'] = array_map( 'absint', $launch_product_ids );
+    $query_args['orderby']  = 'post__in';
+    $query_args['paged']    = 1;
+  }
+}
+
 $products_query = new WP_Query( $query_args );
 
 $terms = get_terms(
   array(
     'taxonomy'   => 'product_cat',
-    'hide_empty' => false,
+    'hide_empty' => true,
     'orderby'    => 'name',
     'order'      => 'ASC',
+    'slug'       => array( 'chainsaw', 'chainsaw-guide-bar', 'chainsaw-chain' ),
   )
 );
 
@@ -330,9 +354,21 @@ $price_ranges = array(
                 $image_url = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
               }
 
-              $price = $product instanceof WC_Product ? wp_strip_all_tags( (string) $product->get_price_html() ) : '';
-              if ( '' === trim( $price ) ) {
-                $price = __( 'Request Quote', 'powerup-theme' );
+              $price_html = '';
+              if ( $product instanceof WC_Product ) {
+                $current_price = $product->get_price();
+                $regular_price = $product->get_regular_price();
+
+                if ( '' !== $current_price ) {
+                  $price_html = wc_price( (float) $current_price );
+                  if ( $product->is_on_sale() && '' !== $regular_price && (float) $regular_price > (float) $current_price ) {
+                    $price_html = '<del>' . wc_price( (float) $regular_price ) . '</del> <ins>' . $price_html . '</ins>';
+                  }
+                }
+              }
+
+              if ( '' === trim( wp_strip_all_tags( $price_html ) ) ) {
+                $price_html = esc_html__( 'Request Quote', 'powerup-theme' );
               }
 
               $excerpt      = wp_trim_words( get_the_excerpt(), 12, '...' );
@@ -356,7 +392,7 @@ $price_ranges = array(
                       <?php echo wp_kses_post( wc_get_rating_html( $average, $review_count ) ); ?>
                       <span class="screen-reader-text"><?php echo esc_html( $rating_label ); ?></span>
                     <?php endif; ?>
-                    <span class="shop-ref-product-price"><?php echo esc_html( $price ); ?></span>
+                    <span class="shop-ref-product-price"><?php echo wp_kses_post( $price_html ); ?></span>
                   </div>
                   <p><?php echo esc_html( $excerpt ); ?></p>
                   <div class="shop-ref-actions">

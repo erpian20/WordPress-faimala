@@ -20,7 +20,7 @@ if ( '' !== $whatsapp_digits ) {
 }
 
 if ( '' === $whatsapp_qr_url ) {
-  $whatsapp_qr_url = get_template_directory_uri() . '/assets/images/whatsapp-qr-placeholder.svg';
+  $whatsapp_qr_url = get_template_directory_uri() . '/assets/images/whatsapp-qr.jpg';
 }
 ?>
 <main class="site-section">

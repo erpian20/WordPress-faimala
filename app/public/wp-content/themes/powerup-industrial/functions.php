@@ -4504,48 +4504,50 @@ function powerup_theme_render_amazon_like_gallery() {
     );
   }
 
-  if ( count( $items ) < 7 ) {
+  if ( count( $items ) < 7 && function_exists( 'powerup_theme_is_reference_series_product' ) && powerup_theme_is_reference_series_product( $product ) ) {
+    $upload_dir      = wp_upload_dir();
+    $local_demo_base = trailingslashit( isset( $upload_dir['baseurl'] ) ? (string) $upload_dir['baseurl'] : home_url( '/wp-content/uploads' ) ) . '2026/04/';
     $demo_items = array(
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/71j-ADcAUoL-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/71j-ADcAUoL.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/71j-ADcAUoL-1536x1229.jpg',
+        'thumb' => $local_demo_base . '71j-ADcAUoL-300x300.jpg',
+        'full'  => $local_demo_base . '71j-ADcAUoL.jpg',
+        'zoom'  => $local_demo_base . '71j-ADcAUoL-1536x1229.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 1',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/81e02eBhrxL._AC_SL1500_-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81e02eBhrxL._AC_SL1500_.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81e02eBhrxL._AC_SL1500_.jpg',
+        'thumb' => $local_demo_base . '81e02eBhrxL._AC_SL1500_-300x300.jpg',
+        'full'  => $local_demo_base . '81e02eBhrxL._AC_SL1500_.jpg',
+        'zoom'  => $local_demo_base . '81e02eBhrxL._AC_SL1500_.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 2',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/81t5E9XZuxL._AC_SL1500_-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81t5E9XZuxL._AC_SL1500_.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81t5E9XZuxL._AC_SL1500_.jpg',
+        'thumb' => $local_demo_base . '81t5E9XZuxL._AC_SL1500_-300x300.jpg',
+        'full'  => $local_demo_base . '81t5E9XZuxL._AC_SL1500_.jpg',
+        'zoom'  => $local_demo_base . '81t5E9XZuxL._AC_SL1500_.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 3',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/8186lVmrS4L._AC_SL1500_-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/8186lVmrS4L._AC_SL1500_.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/8186lVmrS4L._AC_SL1500_.jpg',
+        'thumb' => $local_demo_base . '8186lVmrS4L._AC_SL1500_-300x300.jpg',
+        'full'  => $local_demo_base . '8186lVmrS4L._AC_SL1500_.jpg',
+        'zoom'  => $local_demo_base . '8186lVmrS4L._AC_SL1500_.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 4',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/81d4xNfYeBL._AC_SL1500_-1-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81d4xNfYeBL._AC_SL1500_-1.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81d4xNfYeBL._AC_SL1500_-1.jpg',
+        'thumb' => $local_demo_base . '81d4xNfYeBL._AC_SL1500_-1-300x300.jpg',
+        'full'  => $local_demo_base . '81d4xNfYeBL._AC_SL1500_-1.jpg',
+        'zoom'  => $local_demo_base . '81d4xNfYeBL._AC_SL1500_-1.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 5',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/81Fv4Nyb-tL._AC_SL1500_-1-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81Fv4Nyb-tL._AC_SL1500_-1.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81Fv4Nyb-tL._AC_SL1500_-1.jpg',
+        'thumb' => $local_demo_base . '81Fv4Nyb-tL._AC_SL1500_-1-300x300.jpg',
+        'full'  => $local_demo_base . '81Fv4Nyb-tL._AC_SL1500_-1.jpg',
+        'zoom'  => $local_demo_base . '81Fv4Nyb-tL._AC_SL1500_-1.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 6',
       ),
       array(
-        'thumb' => 'https://sopowerpro.com/wp-content/uploads/2026/03/81gLyT-e-lL._AC_SL1500_-300x300.jpg',
-        'full'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81gLyT-e-lL._AC_SL1500_.jpg',
-        'zoom'  => 'https://sopowerpro.com/wp-content/uploads/2026/03/81gLyT-e-lL._AC_SL1500_.jpg',
+        'thumb' => $local_demo_base . '81gLyT-e-lL._AC_SL1500_-300x300.jpg',
+        'full'  => $local_demo_base . '81gLyT-e-lL._AC_SL1500_.jpg',
+        'zoom'  => $local_demo_base . '81gLyT-e-lL._AC_SL1500_.jpg',
         'alt'   => '12-inch Electric Chainsaw - Image 7',
       ),
     );
@@ -4597,9 +4599,37 @@ function powerup_theme_render_amazon_like_gallery() {
     );
   }
 
+  $has_image_item = false;
+  foreach ( $items as $item ) {
+    if ( empty( $item['type'] ) || 'image' === $item['type'] ) {
+      $has_image_item = true;
+      break;
+    }
+  }
+
+  if ( ! $has_image_item ) {
+    $placeholder = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
+    array_unshift(
+      $items,
+      array(
+        'type'  => 'image',
+        'thumb' => $placeholder,
+        'full'  => $placeholder,
+        'zoom'  => $placeholder,
+        'alt'   => __( 'Product image coming soon', 'powerup-theme' ),
+      )
+    );
+  }
+
   if ( empty( $items ) ) {
-    echo '<div class="powerup-amz-gallery"><div class="powerup-amz-main"><div class="powerup-amz-empty">No product image available.</div></div></div>';
-    return;
+    $placeholder = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
+    $items[] = array(
+      'type'  => 'image',
+      'thumb' => $placeholder,
+      'full'  => $placeholder,
+      'zoom'  => $placeholder,
+      'alt'   => __( 'Product image coming soon', 'powerup-theme' ),
+    );
   }
 
   $first = $items[0];
