@@ -1,0 +1,1 @@
+<?php defined('ABSPATH')||exit;add_action('wp_head',function(){if(!is_front_page())return;?><style>@media(max-width:680px){.home-series-showcase__inner,.home-series-showcase__grid,.home-series-showcase__intro,.home-series-card{width:100%;min-width:0;max-width:100%;box-sizing:border-box}}</style><?php },35);
