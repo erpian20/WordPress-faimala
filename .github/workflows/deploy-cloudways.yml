@@ -8,6 +8,7 @@ on:
       - "app/public/wp-content/themes/powerup-industrial/**"
       - "app/public/wp-content/mu-plugins/**"
       - "app/public/wp-content/uploads/**"
+      - "app/public/robots.txt"
       - ".github/workflows/deploy-cloudways.yml"
   workflow_dispatch:
 
@@ -51,6 +52,10 @@ jobs:
             app/public/wp-content/uploads/ \
             "master_qefuhpxtkf@66.135.1.115:/home/master/applications/uzwpaedhhg/public_html/wp-content/uploads/"
 
+          rsync -az -e "$SSH" \
+            app/public/robots.txt \
+            "master_qefuhpxtkf@66.135.1.115:/home/master/applications/uzwpaedhhg/public_html/robots.txt"
+
       - name: Refresh WordPress and verify public pages
         run: |
           set -euo pipefail
@@ -67,11 +72,14 @@ jobs:
 
           wp eval 'if ( function_exists( "powerup_seed_launch_products" ) ) { powerup_seed_launch_products(); }'
           wp cache flush || true
+          wp eval 'if ( class_exists( "Breeze_PurgeCache" ) ) { Breeze_PurgeCache::breeze_cache_flush( true, true, true ); }' || true
           wp rewrite flush
 
-          for path in / /shop/ /cart/; do
+          for path in / /shop/ /blog/ /battery-compatibility/ /cart/; do
             code=$(curl -ksS -o /dev/null -w '%{http_code}' "https://faimala.com${path}?deploy=$(date +%s)")
             printf '%s => HTTP %s\n' "$path" "$code"
             test "$code" = "200"
           done
+
+          curl -ksS "https://faimala.com/robots.txt?deploy=$(date +%s)" | grep -F "Sitemap: https://faimala.com/wp-sitemap.xml"
           REMOTE

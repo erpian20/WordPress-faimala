@@ -8,6 +8,7 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class( 'feature-card' ); ?>>
   <?php
   $current_post_id   = get_the_ID();
+  $entry_author      = trim( (string) get_the_author() );
   $is_featured_guide = false;
   $faq_items         = array();
   $guide_toc_items   = array();
@@ -21,6 +22,10 @@
     if ( $featured_guide_post instanceof WP_Post && (int) $featured_guide_post->ID === (int) $current_post_id ) {
       $is_featured_guide = true;
     }
+  }
+
+  if ( '' === $entry_author ) {
+    $entry_author = 'PowerUp';
   }
 
   if ( $is_featured_guide && function_exists( 'powerup_theme_get_featured_blog_guide_faq_items' ) ) {
@@ -57,9 +62,9 @@
   <header class="entry-header">
     <h1 class="entry-title"><?php the_title(); ?></h1>
     <div class="entry-meta">
-      <span><?php echo get_the_date(); ?></span>
+      <span><?php echo esc_html( powerup_theme_format_english_post_date( $current_post_id ) ); ?></span>
       <span> · </span>
-      <span><?php echo esc_html( get_the_author() ); ?></span>
+      <span><?php echo esc_html( $entry_author ); ?></span>
       <span> · </span>
       <span class="entry-reading-time"><?php echo esc_html( $reading_data['label'] ?? __( '1 min read', 'powerup-theme' ) ); ?></span>
     </div>

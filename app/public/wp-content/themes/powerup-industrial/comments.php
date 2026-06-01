@@ -9,8 +9,9 @@ if ( post_password_required() ) {
 }
 
 $powerup_recent_product_reviews = array();
+$powerup_is_article_comments    = is_singular( 'post' );
 
-if ( class_exists( 'WooCommerce' ) && ! is_singular( 'product' ) ) {
+if ( class_exists( 'WooCommerce' ) && ! is_singular( 'product' ) && ! $powerup_is_article_comments ) {
   $powerup_recent_product_reviews = get_comments(
     array(
       'status'    => 'approve',
@@ -87,14 +88,14 @@ if ( class_exists( 'WooCommerce' ) && ! is_singular( 'product' ) ) {
       </ol>
     <?php else : ?>
       <h2 class="comments-title"><?php esc_html_e( 'No comments yet', 'powerup-theme' ); ?></h2>
-      <p><?php esc_html_e( 'Be the first to leave a product review.', 'powerup-theme' ); ?></p>
+      <p><?php echo esc_html( $powerup_is_article_comments ? __( 'Be the first to share a comment.', 'powerup-theme' ) : __( 'Be the first to leave a product review.', 'powerup-theme' ) ); ?></p>
     <?php endif; ?>
   <?php endif; ?>
 
   <?php
   comment_form( array(
     'class_form' => 'comment-form',
-    'title_reply' => esc_html__( 'Leave a Reply', 'powerup-theme' ),
+    'title_reply' => $powerup_is_article_comments ? esc_html__( 'Leave a Comment', 'powerup-theme' ) : esc_html__( 'Leave a Reply', 'powerup-theme' ),
   ) );
   ?>
 </section>

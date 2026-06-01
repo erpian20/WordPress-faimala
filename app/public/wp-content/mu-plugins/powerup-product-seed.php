@@ -73,7 +73,7 @@ function powerup_seed_launch_products() {
 		return;
 	}
 
-	$seed_version = '2026.05.30.4';
+	$seed_version = '2026.06.01.2';
 
 	if ( get_option( 'powerup_product_seed_version' ) === $seed_version ) {
 		return;
@@ -262,7 +262,7 @@ function powerup_seed_upsert_product( array $item, array $category_ids ) {
 	}
 	$product->set_category_ids( $product_category_ids );
 
-	$image_ids = powerup_seed_image_ids( $item['images'] );
+	$image_ids = powerup_seed_image_ids( $item['images'], $item['title'] );
 	if ( ! empty( $image_ids ) ) {
 		$product->set_image_id( $image_ids[0] );
 		$product->set_gallery_image_ids( array_slice( $image_ids, 1 ) );
@@ -320,7 +320,7 @@ function powerup_seed_long_description( array $item ) {
 	if ( ! empty( $item['aplus_images'] ) ) {
 		$html .= '<div class="powerup-product-aplus">';
 
-		foreach ( powerup_seed_image_ids( $item['aplus_images'] ) as $image_id ) {
+		foreach ( powerup_seed_image_ids( $item['aplus_images'], $item['title'] ) as $image_id ) {
 			$image_url = wp_get_attachment_image_url( $image_id, 'full' );
 
 			if ( $image_url ) {
@@ -336,13 +336,26 @@ function powerup_seed_long_description( array $item ) {
 	return $html;
 }
 
-function powerup_seed_image_ids( array $filenames ) {
+function powerup_seed_image_ids( array $filenames, $alt_prefix = '' ) {
 	$image_ids = array();
 
-	foreach ( $filenames as $filename ) {
+	foreach ( $filenames as $index => $filename ) {
 		$image_id = powerup_seed_attachment_id_for_upload( $filename );
 
 		if ( $image_id ) {
+			if ( '' !== trim( (string) $alt_prefix ) && '' === trim( (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ) ) ) {
+				update_post_meta(
+					$image_id,
+					'_wp_attachment_image_alt',
+					sprintf(
+						/* translators: 1: product name, 2: image position. */
+						__( '%1$s product image %2$d', 'powerup-theme' ),
+						$alt_prefix,
+						$index + 1
+					)
+				);
+			}
+
 			$image_ids[] = $image_id;
 		}
 	}
@@ -591,7 +604,7 @@ function powerup_seed_product_data() {
 			'categories'    => array( 'chainsaw' ),
 			'featured'      => true,
 			'images'        => powerup_seed_amazon_image_paths( array( '81YwQOPuGyL', '81G-M50BWtL', '81WNvdsr2fL', '81YX6iRkwGL', '81xMk1S7GKL', '81sKBKIS0JL', '81sOowhxYBL', '814zHIB1nZL' ) ),
-			'summary'       => 'A compact 8 inch brushless cordless chainsaw kit with 6 inch and 8 inch guide plates, compatible with Milwaukee M18 batteries and supplied with a 4.0Ah battery.',
+			'summary'       => 'Compact 8 inch brushless cordless chainsaw kit with 6 inch and 8 inch guide plates, Milwaukee M18 battery compatibility, and one included 4.0Ah battery.',
 			'highlights'    => array(
 				'Includes 6 inch and 8 inch guide plates for flexible trimming work.',
 				'Compatible with Milwaukee M18 18V battery platform.',
@@ -613,7 +626,7 @@ function powerup_seed_product_data() {
 			'categories'    => array( 'chainsaw' ),
 			'featured'      => true,
 			'images'        => powerup_seed_amazon_image_paths( array( '81uh0l4R0WL', '71NTHE5ehBL', '816CLjqkcJL', '81pB1hTORUL', '81h3CLEiwzL', '81sN8oe3DJL', '81-ixT0AwAL', '81XEexRNOAL' ) ),
-			'summary'       => 'A compact 8 inch brushless cordless chainsaw kit with 6 inch and 8 inch guide plates, compatible with DeWalt 20V MAX batteries and supplied with a 5.0Ah battery.',
+			'summary'       => 'Compact 8 inch brushless cordless chainsaw kit with 6 inch and 8 inch guide plates, DeWalt 20V MAX battery compatibility, and one included 5.0Ah battery.',
 			'highlights'    => array(
 				'Compact brushless saw for quick trimming and pruning jobs.',
 				'Compatible with DeWalt 20V MAX battery platform.',

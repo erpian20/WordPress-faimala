@@ -567,6 +567,11 @@ function powerup_theme_format_reading_time_label( $minutes ) {
   return sprintf( _n( '%d min read', '%d min read', $minutes, 'powerup-theme' ), $minutes );
 }
 
+function powerup_theme_format_english_post_date( $post_id = 0 ) {
+  $timestamp = get_post_time( 'U', false, $post_id ?: get_the_ID() );
+  return $timestamp ? gmdate( 'M j, Y', (int) $timestamp ) : '';
+}
+
 function powerup_theme_render_post_seo_meta_tags() {
   if ( is_admin() || ! is_singular( 'post' ) ) {
     return;
@@ -583,7 +588,7 @@ function powerup_theme_render_post_seo_meta_tags() {
   if ( ! $excerpt ) {
     $excerpt = wp_strip_all_tags( get_post_field( 'post_content', $post_id ) );
   }
-  $description = wp_trim_words( $excerpt, 34, '...' );
+  $description = powerup_theme_build_meta_description( $excerpt );
   $reading     = powerup_theme_get_post_reading_time_data( $post_id );
   $share_description = $description;
 
@@ -677,13 +682,23 @@ function powerup_theme_build_meta_description( $text, $fallback = '' ) {
   }
 
   if ( $was_truncated ) {
-    $last_sentence_end = strrpos( $text, '.' );
+    $last_sentence_end = max(
+      (int) strrpos( $text, '.' ),
+      (int) strrpos( $text, '!' ),
+      (int) strrpos( $text, '?' )
+    );
     if ( false !== $last_sentence_end && $last_sentence_end >= 90 ) {
       $text = substr( $text, 0, $last_sentence_end + 1 );
+      $was_truncated = false;
     }
   }
 
-  return rtrim( $text, " \t\n\r\0\x0B,.;:-" );
+  $text = rtrim( $text, " \t\n\r\0\x0B,;:-" );
+  if ( $was_truncated && ! preg_match( '/[.!?]$/u', $text ) ) {
+    $text .= '.';
+  }
+
+  return $text;
 }
 
 function powerup_theme_normalize_brand_name( $name ) {
@@ -1027,6 +1042,11 @@ function powerup_theme_render_home_organization_schema() {
   $site_name = wp_strip_all_tags( get_bloginfo( 'name' ) );
   $home_url  = home_url( '/' );
   $logo_url  = get_site_icon_url( 512 );
+  $emails    = powerup_theme_get_support_email_recipients();
+
+  if ( ! $logo_url ) {
+    $logo_url = get_template_directory_uri() . '/assets/images/faimala-logo.png';
+  }
 
   $schema = array(
     '@context' => 'https://schema.org',
@@ -1056,9 +1076,86 @@ function powerup_theme_render_home_organization_schema() {
     );
   }
 
+  if ( ! empty( $emails ) ) {
+    $schema['@graph'][0]['email'] = 'mailto:' . $emails[0];
+    $schema['@graph'][0]['contactPoint'] = array();
+
+    foreach ( $emails as $email ) {
+      $schema['@graph'][0]['contactPoint'][] = array(
+        '@type'             => 'ContactPoint',
+        'contactType'       => 'customer support',
+        'email'             => $email,
+        'areaServed'        => 'US',
+        'availableLanguage' => array( 'English' ),
+      );
+    }
+  }
+
   echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 }
 add_action( 'wp_head', 'powerup_theme_render_home_organization_schema', 4 );
+
+function powerup_theme_render_favicon_links() {
+  if ( has_site_icon() ) {
+    return;
+  }
+
+  $favicon_url = get_template_directory_uri() . '/assets/images/faimala-favicon.png';
+  echo '<link rel="icon" href="' . esc_url( $favicon_url ) . '" type="image/png">' . "\n";
+  echo '<link rel="apple-touch-icon" href="' . esc_url( $favicon_url ) . '">' . "\n";
+}
+add_action( 'wp_head', 'powerup_theme_render_favicon_links', 2 );
+
+function powerup_theme_render_shop_collection_schema() {
+  if ( is_admin() || ! function_exists( 'is_shop' ) || ! is_shop() || ! class_exists( 'WooCommerce' ) ) {
+    return;
+  }
+
+  $product_ids = get_posts(
+    array(
+      'post_type'      => 'product',
+      'post_status'    => 'publish',
+      'posts_per_page' => 12,
+      'meta_key'       => '_powerup_launch_order',
+      'orderby'        => 'meta_value_num',
+      'order'          => 'ASC',
+      'fields'         => 'ids',
+    )
+  );
+  $items = array();
+
+  foreach ( $product_ids as $index => $product_id ) {
+    $product = wc_get_product( $product_id );
+    if ( ! $product instanceof WC_Product ) {
+      continue;
+    }
+
+    $items[] = array(
+      '@type'    => 'ListItem',
+      'position' => $index + 1,
+      'url'      => get_permalink( $product_id ),
+      'name'     => $product->get_name(),
+    );
+  }
+
+  if ( empty( $items ) ) {
+    return;
+  }
+
+  $schema = array(
+    '@context'   => 'https://schema.org',
+    '@type'      => 'CollectionPage',
+    'name'       => wp_strip_all_tags( wp_get_document_title() ),
+    'url'        => get_permalink( wc_get_page_id( 'shop' ) ),
+    'mainEntity' => array(
+      '@type'           => 'ItemList',
+      'itemListElement' => $items,
+    ),
+  );
+
+  echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'powerup_theme_render_shop_collection_schema', 6 );
 
 function powerup_theme_render_chainsaw_series_faq_schema() {
   if ( ! is_page( 'chainsaw-series' ) ) {
@@ -1378,7 +1475,7 @@ function powerup_theme_get_related_posts_for_post( $post_id, $limit = 3 ) {
         'id'      => $related_id,
         'url'     => $related_url,
         'title'   => $related_title,
-        'date'    => get_the_date( '', $related_id ),
+        'date'    => powerup_theme_format_english_post_date( $related_id ),
         'excerpt' => wp_trim_words( get_the_excerpt( $related_id ), 18, '...' ),
         'image'   => $thumb_url,
         'reading' => isset( $reading_data['label'] ) ? (string) $reading_data['label'] : powerup_theme_format_reading_time_label( 1 ),
@@ -1537,7 +1634,7 @@ function powerup_theme_render_post_schema_json_ld() {
   if ( ! $excerpt ) {
     $excerpt = wp_strip_all_tags( get_post_field( 'post_content', $post_id ) );
   }
-  $description = wp_trim_words( $excerpt, 34, '...' );
+  $description = powerup_theme_build_meta_description( $excerpt );
 
   if ( ! $canonical || ! $title || ! $description ) {
     return;
@@ -1550,6 +1647,9 @@ function powerup_theme_render_post_schema_json_ld() {
 
   $site_name = wp_strip_all_tags( get_bloginfo( 'name' ) );
   $logo_url  = get_site_icon_url( 512 );
+  if ( ! $logo_url ) {
+    $logo_url = get_template_directory_uri() . '/assets/images/faimala-logo.png';
+  }
   $reading    = powerup_theme_get_post_reading_time_data( $post_id );
 
   $article_schema = array(
@@ -5002,7 +5102,16 @@ function powerup_theme_render_amazon_like_gallery() {
     $main  = wp_get_attachment_image_url( $image_id, 'large' );
     $thumb = wp_get_attachment_image_url( $image_id, 'thumbnail' );
     $zoom  = $full;
-    $alt   = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+    $alt   = trim( (string) get_post_meta( $image_id, '_wp_attachment_image_alt', true ) );
+
+    if ( '' === $alt ) {
+      $alt = sprintf(
+        /* translators: 1: product name, 2: image position. */
+        __( '%1$s product image %2$d', 'powerup-theme' ),
+        $product->get_name(),
+        count( $items ) + 1
+      );
+    }
 
     if ( ! $main ) {
       $main = $full;
@@ -5232,7 +5341,7 @@ function powerup_theme_get_reviewable_products_for_comments() {
 }
 
 function powerup_theme_get_comment_review_fields_markup() {
-  if ( ! is_singular() || is_singular( 'product' ) || ! class_exists( 'WooCommerce' ) ) {
+  if ( ! is_singular() || is_singular( array( 'product', 'post' ) ) || ! class_exists( 'WooCommerce' ) ) {
     return '';
   }
 
@@ -5289,6 +5398,10 @@ function powerup_theme_get_comment_review_fields_markup() {
 }
 
 function powerup_theme_comment_form_link_product_review( $defaults ) {
+  if ( is_singular( 'post' ) ) {
+    return $defaults;
+  }
+
   $defaults['submit_button'] = '<button name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" formenctype="multipart/form-data">%4$s</button>';
   return $defaults;
 }

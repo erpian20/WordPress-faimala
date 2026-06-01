@@ -45,7 +45,7 @@ if ($blog_query->have_posts()) {
       'excerpt' => wp_trim_words(get_the_excerpt(), 18, '...'),
       'url'     => get_permalink(),
       'image'   => $thumb_url ? $thumb_url : $fallback_images[$image_index % count($fallback_images)],
-      'date'    => get_the_date( 'M j, Y' ),
+      'date'    => powerup_theme_format_english_post_date( get_the_ID() ),
       'reading' => isset( $reading_data['label'] ) ? (string) $reading_data['label'] : __( '1 min read', 'powerup-theme' ),
     );
     $image_index++;
@@ -108,7 +108,7 @@ if ( $blog_is_draft ) {
             <div class="blog-ref-guide__header">
               <span class="powerup-series-badge"><?php esc_html_e( 'Featured Guide', 'powerup-theme' ); ?></span>
               <h3><a href="<?php echo esc_url( get_permalink( $featured_guide_post ) ); ?>"><?php echo esc_html( get_the_title( $featured_guide_post ) ); ?></a></h3>
-              <p class="blog-ref-guide__meta"><?php echo esc_html( get_the_date( 'M j, Y', $featured_guide_post ) ); ?> | <?php echo esc_html( wp_strip_all_tags( get_the_category_list( ', ', '', $featured_guide_post->ID ) ) ); ?> | <span class="blog-ref-reading-time"><?php echo esc_html( $featured_guide_reading['label'] ?? __( '1 min read', 'powerup-theme' ) ); ?></span></p>
+              <p class="blog-ref-guide__meta"><?php echo esc_html( powerup_theme_format_english_post_date( $featured_guide_post->ID ) ); ?> | <?php echo esc_html( wp_strip_all_tags( get_the_category_list( ', ', '', $featured_guide_post->ID ) ) ); ?> | <span class="blog-ref-reading-time"><?php echo esc_html( $featured_guide_reading['label'] ?? __( '1 min read', 'powerup-theme' ) ); ?></span></p>
               <?php if ( has_excerpt( $featured_guide_post ) ) : ?>
                 <p><?php echo esc_html( get_the_excerpt( $featured_guide_post ) ); ?></p>
               <?php endif; ?>
