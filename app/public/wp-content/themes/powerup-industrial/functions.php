@@ -125,6 +125,10 @@ function powerup_theme_get_blog_page_url() {
   return powerup_theme_get_page_url_by_template_or_path( 'page-blog.php', 'blog', '/blog/' );
 }
 
+function powerup_theme_get_battery_compatibility_page_url() {
+  return powerup_theme_get_page_url_by_template_or_path( 'page-battery-compatibility.php', 'battery-compatibility', '/battery-compatibility/' );
+}
+
 function powerup_theme_get_language_switcher_items() {
   $items = array();
 
@@ -214,7 +218,7 @@ function powerup_theme_get_runtime_config() {
       'whatsapp_number' => '',
       'whatsapp_qr_image_url' => '',
       'support_email' => 'randian5757@gmail.com',
-      'support_hours' => '9:00 - 18:00',
+      'support_hours' => '24/7 Customer Support',
     ),
     'about' => array(
       'prompts' => array(
@@ -230,9 +234,9 @@ function powerup_theme_get_runtime_config() {
       'generated_image_base_url' => '',
     ),
     'seo' => array(
-      'home_description' => 'PowerUp offers cordless chainsaws, paint sprayers, trimmers, and accessories with practical buying guides and support.',
-      'shop_description' => 'Browse PowerUp product categories including electric chainsaws, paint sprayers, hedge trimmers, and compatible accessories.',
-      'blog_description' => 'Read practical guides about cordless outdoor tools, maintenance tips, and battery platform selection for everyday work.',
+      'home_description' => 'Shop PowerUp cordless chainsaws, guide bars, and replacement chains with clear battery compatibility guidance and practical after-sales support.',
+      'shop_description' => 'Browse PowerUp cordless chainsaws, chainsaw guide bars, and replacement chains for pruning, yard cleanup, and everyday property maintenance.',
+      'blog_description' => 'Read practical cordless chainsaw guides covering battery compatibility, replacement parts, maintenance, and safer everyday yard work.',
     ),
   );
 
@@ -295,6 +299,87 @@ function powerup_theme_get_support_email_recipients() {
   return array_values( array_unique( $recipients ) );
 }
 
+function powerup_theme_get_policy_page_content( $slug ) {
+  $email_links = array();
+  foreach ( powerup_theme_get_support_email_recipients() as $support_email ) {
+    $email_links[] = '<a href="mailto:' . esc_attr( $support_email ) . '">' . esc_html( $support_email ) . '</a>';
+  }
+  $support_email_html = implode( ' / ', $email_links );
+
+  $policies = array(
+    'shipping-policy' => array(
+      'title'       => 'Shipping Policy',
+      'description' => 'Read the PowerUp shipping policy for U.S. orders, free delivery, estimated arrival times, and delivery-delay support.',
+      'intro'       => 'Clear delivery information for PowerUp orders shipped within the United States.',
+      'content'     => '<h2>U.S. Shipping</h2><p>PowerUp orders ship from within the United States. Standard shipping is free for U.S. orders.</p><h2>Estimated Delivery Time</h2><p>Estimated delivery time is 2-5 days. Delivery estimates may be affected by the destination, carrier conditions, severe weather, or other circumstances outside our control.</p><h2>Delivery Delays</h2><p>If we learn that an order cannot be delivered within the stated estimate, we will contact you with an update and help you review the available options.</p><h2>Questions</h2><p>For shipping questions, contact ' . $support_email_html . '.</p>',
+    ),
+    'returns-policy' => array(
+      'title'       => 'Returns Policy',
+      'description' => 'Read the PowerUp 30-day returns policy, including return-shipping coverage and how to request return support.',
+      'intro'       => 'A straightforward 30-day return process for PowerUp orders.',
+      'content'     => '<h2>30-Day Return Window</h2><p>You may request a return within 30 days of delivery.</p><h2>Return Shipping</h2><p>Return shipping costs are covered by us. Please contact our support team before sending a product back so we can provide the correct return instructions.</p><h2>Return Condition</h2><p>Please return the product with its included parts and accessories. If an item arrives damaged, incorrect, or incomplete, let us know when you contact support.</p><h2>Request A Return</h2><p>To start a return, contact ' . $support_email_html . ' and include your order number and the reason for the return.</p>',
+    ),
+    'warranty-policy' => array(
+      'title'       => 'Warranty Policy',
+      'description' => 'Read the PowerUp 180-day warranty policy and learn how to request product-support assistance.',
+      'intro'       => 'Warranty support for PowerUp products during the first 180 days after purchase.',
+      'content'     => '<h2>180-Day Warranty</h2><p>PowerUp products include warranty support for 180 days from the purchase date.</p><h2>Request Warranty Support</h2><p>Contact our support team with your order number, product name, and a clear description of the issue. Photos or a short video may help us understand the problem more quickly.</p><h2>Support Review</h2><p>Our team will review the information you provide and explain the next steps based on the product and issue.</p><h2>Contact</h2><p>For warranty questions, contact ' . $support_email_html . '.</p>',
+    ),
+    'privacy-policy' => array(
+      'title'       => 'Privacy Policy',
+      'description' => 'Read how PowerUp handles order, support, newsletter, and website-usage information.',
+      'intro'       => 'How PowerUp handles information submitted through this website.',
+      'content'     => '<h2>Information We Collect</h2><p>We may collect information you provide when placing an order, contacting support, submitting a form, or subscribing to updates. This may include your name, email address, phone number, order details, shipping information, and message content.</p><h2>How We Use Information</h2><p>We use this information to process orders, provide customer support, respond to questions, manage returns and warranty requests, improve the website, and send updates when you choose to subscribe.</p><h2>Service Providers</h2><p>We may share information with service providers when needed to operate the store, process payments, deliver orders, maintain the website, or provide support. We do not sell personal information through this website.</p><h2>Cookies</h2><p>The website may use cookies and similar technologies for shopping-cart functionality, account access, security, and website performance.</p><h2>Contact</h2><p>For privacy questions, contact ' . $support_email_html . '.</p>',
+    ),
+    'terms-conditions' => array(
+      'title'       => 'Terms & Conditions',
+      'description' => 'Read the PowerUp website terms covering orders, product information, shipping, returns, warranty, and support.',
+      'intro'       => 'Basic terms for using the PowerUp website and purchasing products.',
+      'content'     => '<h2>Website Use</h2><p>By using this website, you agree to use it lawfully and not interfere with its operation or security.</p><h2>Product Information</h2><p>We work to keep product descriptions, compatibility notes, images, and prices accurate. Please review the product page carefully before ordering, especially for tool-only products and battery-platform compatibility.</p><h2>Orders</h2><p>Orders are subject to availability and successful checkout. If we cannot fulfill an order, we will contact you and provide the appropriate next steps.</p><h2>Shipping, Returns, And Warranty</h2><p>Please review our <a href="' . esc_url( home_url( '/shipping-policy/' ) ) . '">Shipping Policy</a>, <a href="' . esc_url( home_url( '/returns-policy/' ) ) . '">Returns Policy</a>, and <a href="' . esc_url( home_url( '/warranty-policy/' ) ) . '">Warranty Policy</a> for the current terms.</p><h2>Contact</h2><p>For questions about these terms, contact ' . $support_email_html . '.</p>',
+    ),
+  );
+
+  return $policies[ (string) $slug ] ?? array();
+}
+
+function powerup_theme_get_policy_page_url( $slug ) {
+  return home_url( '/' . sanitize_title( $slug ) . '/' );
+}
+
+function powerup_theme_ensure_policy_pages() {
+  if ( wp_installing() || wp_doing_ajax() ) {
+    return;
+  }
+
+  $slugs = array( 'shipping-policy', 'returns-policy', 'warranty-policy', 'privacy-policy', 'terms-conditions' );
+  foreach ( $slugs as $slug ) {
+    $policy = powerup_theme_get_policy_page_content( $slug );
+    $page   = get_page_by_path( $slug, OBJECT, 'page' );
+    $page_data = array(
+      'post_type'    => 'page',
+      'post_status'  => 'publish',
+      'post_title'   => (string) ( $policy['title'] ?? ucwords( str_replace( '-', ' ', $slug ) ) ),
+      'post_name'    => $slug,
+    );
+
+    if ( $page instanceof WP_Post ) {
+      $page_data['ID'] = (int) $page->ID;
+      $page_id = wp_update_post( $page_data, true );
+    } else {
+      $page_data['post_content'] = '';
+      $page_id = wp_insert_post(
+        $page_data,
+        true
+      );
+    }
+
+    if ( ! is_wp_error( $page_id ) ) {
+      update_post_meta( (int) $page_id, '_wp_page_template', 'page-policy.php' );
+    }
+  }
+}
+add_action( 'init', 'powerup_theme_ensure_policy_pages', 30 );
+
 function powerup_theme_get_runtime_config_defaults() {
   $runtime_config = powerup_theme_get_runtime_config();
 
@@ -317,7 +402,7 @@ function powerup_theme_sanitize_runtime_config( $input ) {
       'whatsapp_number' => '',
       'whatsapp_qr_image_url' => '',
       'support_email' => 'randian5757@gmail.com',
-      'support_hours' => '9:00 - 18:00',
+      'support_hours' => '24/7 Customer Support',
     ),
     'about' => array(
       'prompts' => array(
@@ -333,9 +418,9 @@ function powerup_theme_sanitize_runtime_config( $input ) {
       'generated_image_base_url' => '',
     ),
     'seo' => array(
-      'home_description' => 'PowerUp offers cordless chainsaws, paint sprayers, trimmers, and accessories with practical buying guides and support.',
-      'shop_description' => 'Browse PowerUp product categories including electric chainsaws, paint sprayers, hedge trimmers, and compatible accessories.',
-      'blog_description' => 'Read practical guides about cordless outdoor tools, maintenance tips, and battery platform selection for everyday work.',
+      'home_description' => 'Shop PowerUp cordless chainsaws, guide bars, and replacement chains with clear battery compatibility guidance and practical after-sales support.',
+      'shop_description' => 'Browse PowerUp cordless chainsaws, chainsaw guide bars, and replacement chains for pruning, yard cleanup, and everyday property maintenance.',
+      'blog_description' => 'Read practical cordless chainsaw guides covering battery compatibility, replacement parts, maintenance, and safer everyday yard work.',
     ),
   );
 
@@ -407,6 +492,14 @@ function powerup_theme_migrate_runtime_config_placeholders() {
   }
 
   if (
+    isset( $config['contact']['support_hours'] ) &&
+    '9:00 - 18:00' === $config['contact']['support_hours']
+  ) {
+    $config['contact']['support_hours'] = '24/7 Customer Support';
+    $did_change = true;
+  }
+
+  if (
     isset( $config['media']['generated_image_base_url'] ) &&
     'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image' === $config['media']['generated_image_base_url']
   ) {
@@ -433,7 +526,7 @@ function powerup_theme_get_seo_meta_image_url( $post_id ) {
   }
 
   if ( ! $image ) {
-    $image = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
+    $image = get_template_directory_uri() . '/assets/images/home-powerup-hero-v2.jpg';
   }
 
   return esc_url( $image );
@@ -564,29 +657,240 @@ function powerup_theme_render_post_seo_meta_tags() {
 }
 add_action( 'wp_head', 'powerup_theme_render_post_seo_meta_tags', 1 );
 
+function powerup_theme_build_meta_description( $text, $fallback = '' ) {
+  $text = preg_replace( '/<\s*br\s*\/?>|<\/\s*(?:p|li|div|h[1-6])\s*>/i', ' ', (string) $text );
+  $text = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $text ) ) );
+  if ( '' === $text ) {
+    $fallback = preg_replace( '/<\s*br\s*\/?>|<\/\s*(?:p|li|div|h[1-6])\s*>/i', ' ', (string) $fallback );
+    $text = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $fallback ) ) );
+  }
+
+  $was_truncated = false;
+  if ( function_exists( 'mb_strlen' ) && mb_strlen( $text ) > 158 ) {
+    $text = mb_substr( $text, 0, 158 );
+    $text = preg_replace( '/\s+\S*$/u', '', $text );
+    $was_truncated = true;
+  } elseif ( strlen( $text ) > 158 ) {
+    $text = substr( $text, 0, 158 );
+    $text = preg_replace( '/\s+\S*$/', '', $text );
+    $was_truncated = true;
+  }
+
+  if ( $was_truncated ) {
+    $last_sentence_end = strrpos( $text, '.' );
+    if ( false !== $last_sentence_end && $last_sentence_end >= 90 ) {
+      $text = substr( $text, 0, $last_sentence_end + 1 );
+    }
+  }
+
+  return rtrim( $text, " \t\n\r\0\x0B,.;:-" );
+}
+
+function powerup_theme_normalize_brand_name( $name ) {
+  $name = (string) $name;
+  return 'powerup' === strtolower( trim( $name ) ) ? 'PowerUp' : $name;
+}
+add_filter( 'option_blogname', 'powerup_theme_normalize_brand_name' );
+
+function powerup_theme_get_official_shipping_policy_summary() {
+  return __( 'Orders ship from within the United States with free delivery. Estimated delivery time is 2-5 days. Returns are accepted within 30 days, and return shipping is covered by us. Warranty support is available for 180 days from purchase.', 'powerup-theme' );
+}
+
+function powerup_theme_get_public_shipping_delivery_text( $product_id ) {
+  $content = trim( (string) get_post_meta( (int) $product_id, '_powerup_shipping_delivery', true ) );
+  $legacy  = 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.';
+  return '' === $content || $legacy === $content ? powerup_theme_get_official_shipping_policy_summary() : $content;
+}
+
+function powerup_theme_enforce_free_us_shipping_rates( $rates, $package ) {
+  $country = strtoupper( (string) ( $package['destination']['country'] ?? '' ) );
+  if ( 'US' !== $country ) {
+    return $rates;
+  }
+
+  foreach ( $rates as $rate ) {
+    if ( ! $rate instanceof WC_Shipping_Rate ) {
+      continue;
+    }
+    $rate->set_label( __( 'Free U.S. Shipping', 'powerup-theme' ) );
+    $rate->set_cost( 0 );
+    $rate->set_taxes( array() );
+  }
+
+  if ( empty( $rates ) && class_exists( 'WC_Shipping_Rate' ) ) {
+    $rates['powerup_free_us_shipping'] = new WC_Shipping_Rate(
+      'powerup_free_us_shipping',
+      __( 'Free U.S. Shipping', 'powerup-theme' ),
+      0,
+      array(),
+      'powerup_free_us_shipping'
+    );
+  }
+
+  return $rates;
+}
+add_filter( 'woocommerce_package_rates', 'powerup_theme_enforce_free_us_shipping_rates', 100, 2 );
+
+function powerup_theme_refine_woocommerce_product_schema( $markup, $product ) {
+  if ( ! is_array( $markup ) || ! $product instanceof WC_Product ) {
+    return $markup;
+  }
+
+  $description = powerup_theme_build_meta_description( $product->get_short_description(), $product->get_description() );
+  if ( '' !== $description ) {
+    $markup['description'] = $description;
+  }
+
+  $markup['brand'] = array(
+    '@type' => 'Brand',
+    'name'  => 'PowerUp',
+  );
+
+  $image_ids = array_filter(
+    array_merge(
+      array( (int) $product->get_image_id() ),
+      array_map( 'absint', $product->get_gallery_image_ids() )
+    )
+  );
+  $images = array();
+  foreach ( array_values( array_unique( $image_ids ) ) as $image_id ) {
+    $image_url = wp_get_attachment_image_url( $image_id, 'full' );
+    if ( $image_url ) {
+      $images[] = esc_url_raw( $image_url );
+    }
+  }
+  if ( ! empty( $images ) ) {
+    $markup['image'] = $images;
+  }
+
+  $approved_reviews = get_comments(
+    array(
+      'post_id' => (int) $product->get_id(),
+      'status'  => 'approve',
+      'type'    => 'review',
+      'number'  => 5,
+      'orderby' => 'comment_date_gmt',
+      'order'   => 'DESC',
+    )
+  );
+  $review_markup = array();
+
+  foreach ( $approved_reviews as $approved_review ) {
+    $rating = (int) get_comment_meta( $approved_review->comment_ID, 'rating', true );
+    if ( $rating < 1 || $rating > 5 ) {
+      continue;
+    }
+
+    $review_markup[] = array(
+      '@type'         => 'Review',
+      'author'        => array(
+        '@type' => 'Person',
+        'name'  => (string) $approved_review->comment_author,
+      ),
+      'datePublished' => mysql2date( 'Y-m-d', $approved_review->comment_date_gmt ?: $approved_review->comment_date ),
+      'reviewBody'    => wp_strip_all_tags( (string) $approved_review->comment_content ),
+      'reviewRating'  => array(
+        '@type'       => 'Rating',
+        'ratingValue' => (string) $rating,
+        'bestRating'  => '5',
+        'worstRating' => '1',
+      ),
+    );
+  }
+
+  if ( ! empty( $review_markup ) ) {
+    $markup['review'] = $review_markup;
+  }
+
+  $markup['offers'] = isset( $markup['offers'] ) && is_array( $markup['offers'] ) ? $markup['offers'] : array();
+  $offers = isset( $markup['offers'][0] ) && is_array( $markup['offers'][0] ) ? $markup['offers'] : array( $markup['offers'] );
+  foreach ( $offers as $index => $offer ) {
+    if ( ! is_array( $offer ) ) {
+      continue;
+    }
+    $offers[ $index ]['shippingDetails'] = array(
+      '@type' => 'OfferShippingDetails',
+      'shippingRate' => array(
+        '@type'    => 'MonetaryAmount',
+        'value'    => '0',
+        'currency' => 'USD',
+      ),
+      'shippingDestination' => array(
+        '@type'          => 'DefinedRegion',
+        'addressCountry' => 'US',
+      ),
+      'deliveryTime' => array(
+        '@type' => 'ShippingDeliveryTime',
+        'transitTime' => array(
+          '@type'    => 'QuantitativeValue',
+          'minValue' => 2,
+          'maxValue' => 5,
+          'unitCode' => 'DAY',
+        ),
+      ),
+    );
+    $offers[ $index ]['hasMerchantReturnPolicy'] = array(
+      '@type'                => 'MerchantReturnPolicy',
+      'applicableCountry'    => 'US',
+      'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      'merchantReturnDays'   => 30,
+      'returnMethod'         => 'https://schema.org/ReturnByMail',
+      'returnFees'           => 'https://schema.org/FreeReturn',
+    );
+  }
+  $markup['offers'] = $offers;
+
+  return $markup;
+}
+add_filter( 'woocommerce_structured_data_product', 'powerup_theme_refine_woocommerce_product_schema', 20, 2 );
+
+function powerup_theme_get_public_seo_description( $path, $fallback ) {
+  $description = (string) powerup_theme_get_config_value( $path, $fallback );
+  $legacy_descriptions = array(
+    'PowerUp offers cordless chainsaws, paint sprayers, trimmers, and accessories with practical buying guides and support.',
+    'Browse PowerUp product categories including electric chainsaws, paint sprayers, hedge trimmers, and compatible accessories.',
+    'Read practical guides about cordless outdoor tools, maintenance tips, and battery platform selection for everyday work.',
+  );
+
+  return in_array( $description, $legacy_descriptions, true ) ? (string) $fallback : $description;
+}
+
+function powerup_theme_refine_document_title_parts( $title ) {
+  if ( is_front_page() || is_home() ) {
+    return array( 'title' => __( 'PowerUp Cordless Chainsaws and Replacement Parts', 'powerup-theme' ) );
+  }
+
+  if ( function_exists( 'is_shop' ) && is_shop() ) {
+    return array( 'title' => __( 'Cordless Chainsaws, Guide Bars, and Replacement Chains', 'powerup-theme' ) );
+  }
+
+  return $title;
+}
+add_filter( 'document_title_parts', 'powerup_theme_refine_document_title_parts' );
+
 function powerup_theme_get_sitewide_seo_context() {
   $context = array(
     'canonical'   => '',
     'title'       => wp_strip_all_tags( wp_get_document_title() ),
     'description' => '',
-    'image'       => get_template_directory_uri() . '/assets/images/product-placeholder.svg',
+    'image'       => get_template_directory_uri() . '/assets/images/home-powerup-hero-v2.jpg',
     'og_type'     => 'website',
   );
 
   if ( is_front_page() || is_home() ) {
     $context['canonical'] = home_url( '/' );
-    $context['description'] = (string) powerup_theme_get_config_value(
+    $context['description'] = powerup_theme_get_public_seo_description(
       'seo.home_description',
-      __( 'PowerUp offers cordless chainsaws, paint sprayers, trimmers, and accessories with practical buying guides and support.', 'powerup-theme' )
+      __( 'Shop PowerUp cordless chainsaws, guide bars, and replacement chains with clear battery compatibility guidance and practical after-sales support.', 'powerup-theme' )
     );
     return $context;
   }
 
   if ( is_page( 'blog' ) ) {
     $context['canonical'] = get_permalink( get_queried_object_id() );
-    $context['description'] = (string) powerup_theme_get_config_value(
+    $context['description'] = powerup_theme_get_public_seo_description(
       'seo.blog_description',
-      __( 'Read practical guides about cordless outdoor tools, maintenance tips, and battery platform selection for everyday work.', 'powerup-theme' )
+      __( 'Read practical cordless chainsaw guides covering battery compatibility, replacement parts, maintenance, and safer everyday yard work.', 'powerup-theme' )
     );
     return $context;
   }
@@ -594,10 +898,25 @@ function powerup_theme_get_sitewide_seo_context() {
   if ( function_exists( 'is_shop' ) && is_shop() ) {
     $shop_page_id = function_exists( 'wc_get_page_id' ) ? (int) wc_get_page_id( 'shop' ) : 0;
     $context['canonical'] = $shop_page_id > 0 ? get_permalink( $shop_page_id ) : home_url( '/shop/' );
-    $context['description'] = (string) powerup_theme_get_config_value(
+    $context['description'] = powerup_theme_get_public_seo_description(
       'seo.shop_description',
-      __( 'Browse PowerUp product categories including electric chainsaws, paint sprayers, hedge trimmers, and compatible accessories.', 'powerup-theme' )
+      __( 'Browse PowerUp cordless chainsaws, chainsaw guide bars, and replacement chains for pruning, yard cleanup, and everyday property maintenance.', 'powerup-theme' )
     );
+    return $context;
+  }
+
+  if ( function_exists( 'is_product_category' ) && is_product_category() ) {
+    $term = get_queried_object();
+    if ( $term instanceof WP_Term ) {
+      $term_descriptions = array(
+        'chainsaw'           => __( 'Browse PowerUp cordless chainsaws, including complete kits and tool-only options for compatible battery platforms.', 'powerup-theme' ),
+        'chainsaw-guide-bar' => __( 'Shop PowerUp replacement chainsaw guide bars for compatible compact and 12-inch cordless chainsaw setups.', 'powerup-theme' ),
+        'chainsaw-chain'     => __( 'Shop PowerUp replacement chainsaw chains with clear pitch, drive-link, and compatibility information.', 'powerup-theme' ),
+      );
+      $term_link = get_term_link( $term );
+      $context['canonical'] = is_wp_error( $term_link ) ? '' : $term_link;
+      $context['description'] = $term_descriptions[ $term->slug ] ?? powerup_theme_build_meta_description( term_description( $term ) );
+    }
     return $context;
   }
 
@@ -608,11 +927,28 @@ function powerup_theme_get_sitewide_seo_context() {
       $context['og_type']   = 'product' === get_post_type( $post_id ) ? 'product' : 'article';
       $context['image']     = powerup_theme_get_seo_meta_image_url( $post_id );
 
+      $page_descriptions = array(
+        'about-us'        => __( 'Learn how PowerUp helps homeowners choose practical cordless chainsaws, guide bars, and replacement chains for everyday yard work.', 'powerup-theme' ),
+        'contact-us'      => __( 'Contact PowerUp for cordless chainsaw product fit, battery compatibility, replacement part, order, setup, and after-sales questions.', 'powerup-theme' ),
+        'chainsaw-series' => __( 'Compare PowerUp 12-inch cordless chainsaws: a complete 20V kit and tool-only options for compatible DeWalt and Milwaukee battery platforms.', 'powerup-theme' ),
+        'battery-compatibility' => __( 'Compare PowerUp cordless chainsaw battery options, including complete PowerUp kits and tool-only models compatible with DeWalt 20V MAX, DeWalt 60V, and Milwaukee M18 batteries.', 'powerup-theme' ),
+      );
+      $post_slug = (string) get_post_field( 'post_name', $post_id );
+      $policy = powerup_theme_get_policy_page_content( $post_slug );
+      if ( ! empty( $policy['description'] ) ) {
+        $context['description'] = (string) $policy['description'];
+        return $context;
+      }
+      if ( isset( $page_descriptions[ $post_slug ] ) ) {
+        $context['description'] = $page_descriptions[ $post_slug ];
+        return $context;
+      }
+
       $excerpt = get_the_excerpt( $post_id );
       if ( ! $excerpt ) {
         $excerpt = wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) );
       }
-      $context['description'] = wp_trim_words( $excerpt, 30, '...' );
+      $context['description'] = powerup_theme_build_meta_description( $excerpt );
 
       if ( '' === trim( (string) $context['description'] ) ) {
         $context['description'] = __( 'PowerUp provides practical cordless tool solutions for home and jobsite use.', 'powerup-theme' );
@@ -626,7 +962,7 @@ function powerup_theme_get_sitewide_seo_context() {
     if ( $post_id > 0 ) {
       $context['canonical'] = get_permalink( $post_id );
       $context['image']     = powerup_theme_get_seo_meta_image_url( $post_id );
-      $context['description'] = wp_trim_words( wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) ), 30, '...' );
+      $context['description'] = powerup_theme_build_meta_description( (string) get_post_field( 'post_content', $post_id ) );
 
       if ( '' === trim( (string) $context['description'] ) ) {
         $context['description'] = __( 'PowerUp provides practical cordless tool solutions for home and jobsite use.', 'powerup-theme' );
@@ -724,6 +1060,96 @@ function powerup_theme_render_home_organization_schema() {
 }
 add_action( 'wp_head', 'powerup_theme_render_home_organization_schema', 4 );
 
+function powerup_theme_render_chainsaw_series_faq_schema() {
+  if ( ! is_page( 'chainsaw-series' ) ) {
+    return;
+  }
+
+  $faq_items = array(
+    array(
+      'question' => __( 'What is the practical difference between the three models?', 'powerup-theme' ),
+      'answer'   => __( 'The 20V kit model is the easiest package for first-time buyers because it includes batteries and charger. The Dewalt and Milwaukee versions are tool-only models aimed at users who already own those battery platforms.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'When should I choose a tool-only chainsaw?', 'powerup-theme' ),
+      'answer'   => __( 'Choose a tool-only chainsaw when you already own a compatible battery and charger. This avoids buying a second battery bundle you may not need.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'Which model is easiest for a first-time buyer?', 'powerup-theme' ),
+      'answer'   => __( 'The complete 20V kit is the simplest starting point because it includes the chainsaw, batteries, and charger in one package.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'What should I check before ordering?', 'powerup-theme' ),
+      'answer'   => __( 'Check your battery platform, the included parts, and the guide bar size. Open the product page for the complete package list and intended use cases.', 'powerup-theme' ),
+    ),
+  );
+
+  $schema = array(
+    '@context'   => 'https://schema.org',
+    '@type'      => 'FAQPage',
+    'mainEntity' => array(),
+  );
+
+  foreach ( $faq_items as $faq_item ) {
+    $schema['mainEntity'][] = array(
+      '@type' => 'Question',
+      'name'  => $faq_item['question'],
+      'acceptedAnswer' => array(
+        '@type' => 'Answer',
+        'text'  => $faq_item['answer'],
+      ),
+    );
+  }
+
+  echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'powerup_theme_render_chainsaw_series_faq_schema', 6 );
+
+function powerup_theme_render_battery_compatibility_faq_schema() {
+  if ( ! is_page( 'battery-compatibility' ) ) {
+    return;
+  }
+
+  $faq_items = array(
+    array(
+      'question' => __( 'Do PowerUp tool-only chainsaws include a battery or charger?', 'powerup-theme' ),
+      'answer'   => __( 'No. Tool-only chainsaws do not include a battery or charger unless the product page explicitly says otherwise. Choose a complete kit when you want a ready-to-run package.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'Which PowerUp chainsaws work with DeWalt batteries?', 'powerup-theme' ),
+      'answer'   => __( 'Selected PowerUp tool-only chainsaws are designed for compatible DeWalt 20V MAX or 60V style battery packs. Check the individual product page before ordering.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'Which PowerUp chainsaws work with Milwaukee batteries?', 'powerup-theme' ),
+      'answer'   => __( 'Selected PowerUp tool-only and compact chainsaw models are designed for compatible Milwaukee M18 style battery packs. Check the individual product page before ordering.', 'powerup-theme' ),
+    ),
+    array(
+      'question' => __( 'Does compatibility mean PowerUp is affiliated with DeWalt or Milwaukee?', 'powerup-theme' ),
+      'answer'   => __( 'No. Compatibility describes battery fit only. PowerUp is not affiliated with, sponsored by, or endorsed by DeWalt or Milwaukee.', 'powerup-theme' ),
+    ),
+  );
+
+  $schema = array(
+    '@context'   => 'https://schema.org',
+    '@type'      => 'FAQPage',
+    'mainEntity' => array(),
+  );
+
+  foreach ( $faq_items as $faq_item ) {
+    $schema['mainEntity'][] = array(
+      '@type' => 'Question',
+      'name'  => $faq_item['question'],
+      'acceptedAnswer' => array(
+        '@type' => 'Answer',
+        'text'  => $faq_item['answer'],
+      ),
+    );
+  }
+
+  echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'powerup_theme_render_battery_compatibility_faq_schema', 6 );
+
 function powerup_theme_render_product_schema_json_ld() {
   if ( is_admin() || ! function_exists( 'is_product' ) || ! is_product() || ! class_exists( 'WooCommerce' ) ) {
     return;
@@ -803,7 +1229,6 @@ function powerup_theme_render_product_schema_json_ld() {
 
   echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 }
-add_action( 'wp_head', 'powerup_theme_render_product_schema_json_ld', 5 );
 
 function powerup_theme_render_product_support_faq_schema_json_ld() {
   if ( is_admin() || ! function_exists( 'is_product' ) || ! is_product() || ! class_exists( 'WooCommerce' ) ) {
@@ -819,7 +1244,7 @@ function powerup_theme_render_product_support_faq_schema_json_ld() {
 
   $shipping_text = trim( (string) get_post_meta( $product_id, '_powerup_shipping_delivery', true ) );
   if ( '' === $shipping_text ) {
-    $shipping_text = __( 'Orders are typically processed within 1-2 business days, with standard shipping in 3-7 business days depending on destination.', 'powerup-theme' );
+    $shipping_text = powerup_theme_get_official_shipping_policy_summary();
   }
 
   $product_name = strtolower( wp_strip_all_tags( $product->get_name() ) );
@@ -849,7 +1274,7 @@ function powerup_theme_render_product_support_faq_schema_json_ld() {
       'name'  => __( 'What is the return and warranty policy?', 'powerup-theme' ),
       'acceptedAnswer' => array(
         '@type' => 'Answer',
-        'text'  => __( 'Returns are supported within 30 days according to our return policy. Standard warranty support is 12 months from purchase date unless otherwise noted.', 'powerup-theme' ),
+        'text'  => __( 'Returns are accepted within 30 days, and return shipping is covered by us. Warranty support is available for 180 days from purchase.', 'powerup-theme' ),
       ),
     ),
   );
@@ -862,21 +1287,31 @@ function powerup_theme_render_product_support_faq_schema_json_ld() {
 
   echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 }
-add_action( 'wp_head', 'powerup_theme_render_product_support_faq_schema_json_ld', 6 );
+
+function powerup_theme_hide_author_sitemap_provider( $provider, $name ) {
+  return 'users' === $name ? false : $provider;
+}
+add_filter( 'wp_sitemaps_add_provider', 'powerup_theme_hide_author_sitemap_provider', 10, 2 );
+
+function powerup_theme_noindex_draft_blog_page() {
+  if ( is_page( 'blog' ) || is_singular( 'post' ) ) {
+    echo '<meta name="robots" content="noindex,follow">' . "\n";
+  }
+}
 
 function powerup_theme_get_featured_blog_guide_faq_items() {
   return array(
     array(
-      'question' => 'Should I choose 20V or 40V cordless outdoor tools?',
-      'answer'   => '20V systems are suitable for light to medium yard tasks, while 40V systems are a better fit for heavier cutting, blowing, and mowing workloads.',
+      'question' => 'Should I choose a complete cordless chainsaw kit or a tool-only model?',
+      'answer'   => 'Choose a complete kit when you need a battery and charger. Choose a tool-only model when you already own a compatible battery platform and charger.',
     ),
     array(
-      'question' => 'How can I extend lithium-ion battery runtime and lifespan?',
-      'answer'   => 'Keep batteries in a cool and dry place, avoid deep discharge, clean tools after use, and charge fully before long jobs with a spare battery on hand.',
+      'question' => 'Does battery compatibility mean PowerUp is affiliated with DeWalt or Milwaukee?',
+      'answer'   => 'No. Compatibility describes battery fit only. PowerUp is not affiliated with, sponsored by, or endorsed by DeWalt or Milwaukee.',
     ),
     array(
-      'question' => 'Can one battery platform be shared across multiple tools?',
-      'answer'   => 'Yes. Choosing one compatible battery platform allows you to run chainsaws, trimmers, blowers, and mowers with fewer chargers and lower total cost.',
+      'question' => 'What should I check before ordering a battery-compatible chainsaw?',
+      'answer'   => 'Confirm whether the listing is a complete kit or tool-only, check the supported battery platform and pack style, choose the bar size, and review the package contents.',
     ),
   );
 }
@@ -959,39 +1394,56 @@ function powerup_theme_get_related_posts_for_post( $post_id, $limit = 3 ) {
 function powerup_theme_get_related_blog_seed_payloads() {
   return array(
     array(
-      'title'      => '20V vs 40V Cordless Outdoor Tools: Which Battery Platform Should You Choose?',
-      'slug'       => '20v-vs-40v-cordless-outdoor-tools',
-      'excerpt'    => 'A practical comparison of 20V and 40V platforms for chainsaws, trimmers, blowers, and mowers.',
-      'cover_prompt'=> '20V and 40V cordless outdoor power tool batteries on a workbench with chainsaw and blower in orange black style',
-      'cover_asset'=> 'assets/images/blog-cover-20v-40v.svg',
-      'content'    => '<p>Choosing the right battery voltage is one of the biggest decisions for cordless yard care. In general, 20V tools are ideal for light trimming and detail work, while 40V tools are better for heavier cutting, blowing, and mowing sessions.</p><p>If your workload includes regular branch cutting, dense hedges, or larger lawns, prioritize 40V for power consistency. If portability and lower tool weight matter most, 20V is often the better daily platform.</p>',
-      'categories' => array( 'Cordless Tools', 'DIY Yard Care' ),
-      'tags'       => array( 'battery platform', '20v', '40v', 'cordless tools' ),
-    ),
-    array(
-      'title'      => 'Cordless Chainsaw Maintenance Checklist: Keep Cutting Performance at Peak Level',
-      'slug'       => 'cordless-chainsaw-maintenance-checklist',
-      'excerpt'    => 'A step-by-step maintenance routine for chain tension, lubrication, battery care, and safe storage.',
-      'cover_prompt'=> 'person maintaining cordless chainsaw chain and bar with tools on outdoor workbench orange black branding',
+      'title'      => 'Tool-Only vs Complete Chainsaw Kit: Which One Should You Buy?',
+      'slug'       => 'tool-only-vs-complete-cordless-chainsaw-kit',
+      'excerpt'    => 'Compare tool-only cordless chainsaws with ready-to-run kits before deciding which battery path fits your yard work.',
+      'cover_prompt'=> 'cordless chainsaw complete kit and tool only chainsaw compared side by side on a clean workshop bench',
       'cover_asset'=> 'assets/images/blog-cover-chainsaw-maintenance.svg',
-      'content'    => '<p>Consistent chainsaw performance depends on routine maintenance. Check chain tension before every session, keep bar oil topped up, and clean chips from the sprocket and bar groove after use.</p><p>For battery health, avoid full discharge, store packs in a dry and moderate environment, and recharge before long jobs. A simple weekly checklist significantly improves cutting speed, safety, and service life.</p>',
-      'categories' => array( 'Outdoor Power Equipment', 'DIY Yard Care' ),
-      'tags'       => array( 'chainsaw guide', 'maintenance', 'battery care', 'yard tools' ),
+      'content'    => '<p>A cordless chainsaw purchase starts with a simple decision: do you need a complete package, or do you already own a compatible battery and charger? A complete kit is the clearest choice for first-time buyers because it provides the chainsaw, battery, and charger in one box. A tool-only chainsaw can be the more efficient choice when you already use a compatible battery platform.</p><h2>Choose a complete kit when you want a ready-to-run setup</h2><p>The PowerUp 12-inch 20V kit is intended for shoppers who want a straightforward starting point. It includes batteries and a charger, so there is no need to compare an existing pack before the first cut. This route works well for regular pruning, storm cleanup, and light wood cutting around a home.</p><h2>Choose tool-only when you already own a compatible battery</h2><p>Selected PowerUp chainsaws are designed for compatible DeWalt 20V MAX or 60V style batteries and Milwaukee M18 style batteries. A tool-only listing does not include a battery or charger. Confirm the exact product page before ordering, because compatibility describes battery fit and does not imply affiliation with another battery brand.</p><h2>Use bar size and workload as the second filter</h2><p>A 12-inch bar is a practical choice for recurring branch cutting and light wood work. Compact 8-inch saws are easier to handle for lighter pruning and quick garden jobs. Start with your battery path, then select the bar size that matches the work you expect most often.</p><h2>Quick buying checklist</h2><ul><li>Check whether the listing is a complete kit or tool-only.</li><li>Confirm your battery style before ordering a compatible model.</li><li>Choose a compact saw for lighter pruning or a 12-inch model for regular cleanup.</li><li>Review the package contents and replacement-part notes on the product page.</li></ul><p>Use the PowerUp chainsaw selector when you want a faster recommendation based on the battery setup you already have.</p>',
+      'categories' => array( 'Cordless Chainsaw Guides', 'Product Comparisons' ),
+      'tags'       => array( 'tool-only chainsaw', 'cordless chainsaw kit', 'battery compatibility', 'chainsaw comparison' ),
     ),
     array(
-      'title'      => 'Leaf Blower Buying Basics: Airflow, Runtime, and Weight Explained',
-      'slug'       => 'leaf-blower-buying-basics-airflow-runtime-weight',
-      'excerpt'    => 'How to evaluate cordless blower specs and pick the right model for patios, lawns, and seasonal cleanup.',
-      'cover_prompt'=> 'cordless leaf blower and batteries on patio with leaves in motion orange black outdoor equipment style',
-      'cover_asset'=> 'assets/images/blog-cover-leaf-blower.svg',
-      'content'    => '<p>When comparing cordless leaf blowers, focus on airflow balance rather than peak numbers alone. Higher airflow improves debris movement, but runtime and weight determine how practical a blower feels over longer sessions.</p><p>For compact properties, lightweight handheld models are often enough. For larger areas or wet leaves, choose stronger airflow, a larger battery pack, and variable speed control for better efficiency.</p>',
-      'categories' => array( 'Outdoor Power Equipment', 'Cordless Tools' ),
-      'tags'       => array( 'leaf blower', 'runtime', 'tool comparison', 'lithium-ion' ),
+      'title'      => 'How to Choose Between an 8-Inch and 12-Inch Cordless Chainsaw',
+      'slug'       => '8-inch-vs-12-inch-cordless-chainsaw',
+      'excerpt'    => 'Compare compact 8-inch and practical 12-inch cordless chainsaws by workload, handling, and battery setup.',
+      'cover_prompt'=> 'compact 8 inch cordless chainsaw and 12 inch cordless chainsaw comparison on white workbench',
+      'cover_asset'=> 'assets/images/blog-cover-20v-40v.svg',
+      'content'    => '<p>Bar size changes how a cordless chainsaw feels in daily use. A compact 8-inch saw is designed for lighter pruning and quick garden jobs. A 12-inch saw gives you more reach for regular branch cutting, cleanup, and light wood work. The better size depends on the branches you handle most often, not simply on choosing the largest tool.</p><h2>When an 8-inch cordless chainsaw makes sense</h2><p>Choose a compact model when easy handling matters most. An 8-inch saw is useful for trimming smaller branches, maintaining shrubs, and completing short tasks around a garden. Compact models are also easier to carry between jobs and store between seasons.</p><h2>When a 12-inch cordless chainsaw is the better fit</h2><p>A 12-inch chainsaw is the more versatile choice for homeowners who expect recurring pruning, branch cleanup, or occasional light wood cutting. The longer bar offers more working range while staying manageable for routine property maintenance.</p><h2>Do not ignore the package format</h2><p>Size is only one decision. Check whether the saw is a complete kit or a tool-only model designed for a compatible battery platform. A complete 20V kit is easier for first-time buyers. Tool-only DeWalt-compatible and Milwaukee-compatible paths are intended for shoppers who already own a suitable pack and charger.</p><h2>Simple size guide</h2><ul><li>Choose 8 inches for lighter pruning and quick garden maintenance.</li><li>Choose 12 inches for recurring branch cutting and broader yard cleanup.</li><li>Confirm the battery path before ordering.</li><li>Match future replacement bars and chains to the original saw size.</li></ul>',
+      'categories' => array( 'Cordless Chainsaw Guides', 'Product Comparisons' ),
+      'tags'       => array( '8 inch chainsaw', '12 inch chainsaw', 'chainsaw size guide', 'pruning chainsaw' ),
+    ),
+    array(
+      'title'      => 'How to Match a Chainsaw Guide Bar and Replacement Chain',
+      'slug'       => 'how-to-match-chainsaw-guide-bar-and-replacement-chain',
+      'excerpt'    => 'Learn which guide bar and chain specifications to check before ordering replacement parts for an electric chainsaw.',
+      'cover_prompt'=> 'chainsaw guide bar and replacement chain laid out with measurement labels on a workshop table',
+      'cover_asset'=> 'assets/images/blog-cover-chainsaw-maintenance.svg',
+      'content'    => '<p>A replacement chain or guide bar should never be chosen by appearance alone. Before ordering a maintenance part, compare the specifications on your existing saw and bar. The bar length, chain pitch, gauge, and drive-link count all matter.</p><h2>Start with the guide bar length</h2><p>Measure the cutting length that extends from the saw body. PowerUp currently offers compact and 12-inch guide bar options for compatible saws. Match the original size unless the product page specifically supports another configuration.</p><h2>Check chain pitch and gauge</h2><p>Pitch describes the spacing between chain components. Gauge describes the thickness of the drive links that fit inside the guide bar groove. A chain and bar need matching specifications to run correctly. For example, selected PowerUp replacement parts use a 1/4-inch pitch and 1.1 mm setup.</p><h2>Confirm the drive-link count</h2><p>Two chains can share a similar length while using a different number of drive links. The drive-link count must match the guide bar and saw setup. The PowerUp 12-inch replacement chain pack lists 62 drive links so buyers can compare before checkout.</p><h2>Replacement-part checklist</h2><ol><li>Confirm the guide bar length.</li><li>Match pitch and gauge.</li><li>Verify the drive-link count.</li><li>Check that the replacement part is listed for a compatible saw.</li><li>Inspect chain tension and lubrication before every cutting session.</li></ol><p>When in doubt, contact PowerUp support with the saw model and a photo of the existing guide bar markings.</p>',
+      'categories' => array( 'Maintenance Tips', 'Replacement Parts' ),
+      'tags'       => array( 'chainsaw guide bar', 'replacement chain', 'chain pitch', 'drive links' ),
     ),
   );
 }
 
 function powerup_theme_sync_related_blog_seed_posts_once() {
+  foreach ( array(
+    '20v-vs-40v-cordless-outdoor-tools',
+    'cordless-chainsaw-maintenance-checklist',
+    'leaf-blower-buying-basics-airflow-runtime-weight',
+    'complete-guide-lithium-ion-cordless-outdoor-power-tools',
+  ) as $legacy_slug ) {
+    $legacy_post = get_page_by_path( $legacy_slug, OBJECT, 'post' );
+    if ( $legacy_post instanceof WP_Post && 'draft' !== $legacy_post->post_status ) {
+      wp_update_post(
+        array(
+          'ID'          => $legacy_post->ID,
+          'post_status' => 'draft',
+        )
+      );
+    }
+  }
+
   $payloads = powerup_theme_get_related_blog_seed_payloads();
   if ( empty( $payloads ) || ! is_array( $payloads ) ) {
     return;
@@ -1231,6 +1683,21 @@ function powerup_theme_render_post_schema_json_ld() {
         );
       }
     }
+  }
+
+  if ( 'how-to-match-chainsaw-guide-bar-and-replacement-chain' === get_post_field( 'post_name', $post_id ) ) {
+    $graph[] = array(
+      '@type'       => 'HowTo',
+      'name'        => 'How to match a chainsaw guide bar and replacement chain',
+      'description' => 'Check the bar length, pitch, gauge, drive-link count, and saw compatibility before ordering replacement chainsaw parts.',
+      'step'        => array(
+        array( '@type' => 'HowToStep', 'name' => 'Confirm the guide bar length', 'text' => 'Measure the original cutting length and match the replacement guide bar size.' ),
+        array( '@type' => 'HowToStep', 'name' => 'Match pitch and gauge', 'text' => 'Compare the pitch and gauge printed on the original chain or guide bar.' ),
+        array( '@type' => 'HowToStep', 'name' => 'Verify the drive-link count', 'text' => 'Count or confirm the required number of drive links for the guide bar setup.' ),
+        array( '@type' => 'HowToStep', 'name' => 'Check saw compatibility', 'text' => 'Confirm that the replacement part is listed for a compatible chainsaw model.' ),
+        array( '@type' => 'HowToStep', 'name' => 'Inspect tension and lubrication', 'text' => 'Check chain tension and fill the oil reservoir before the next cutting session.' ),
+      ),
+    );
   }
 
   $schema = array(
@@ -2556,6 +3023,45 @@ add_action( 'admin_post_nopriv_powerup_pdp_callback_submit', 'powerup_theme_hand
 
 function powerup_theme_get_featured_blog_guide_payload() {
   return array(
+    'title'   => 'Cordless Chainsaw Battery Compatibility Guide: PowerUp, DeWalt, and Milwaukee Options',
+    'slug'    => 'cordless-chainsaw-battery-compatibility-guide',
+    'excerpt' => 'Compare complete PowerUp chainsaw kits with selected tool-only options designed for compatible DeWalt and Milwaukee battery styles.',
+    'cover_asset' => 'assets/images/blog-cover-complete-guide.svg',
+    'cover_prompt' => 'cordless chainsaw battery compatibility comparison with complete kit Dewalt style and Milwaukee M18 style batteries on a workshop table',
+    'toc'     => array(
+      array( 'id' => 'start-with-battery-path', 'label' => 'Start With Your Battery Path' ),
+      array( 'id' => 'complete-kit-path', 'label' => 'Complete PowerUp Kit Path' ),
+      array( 'id' => 'dewalt-compatible-path', 'label' => 'DeWalt-Compatible Path' ),
+      array( 'id' => 'milwaukee-compatible-path', 'label' => 'Milwaukee-Compatible Path' ),
+      array( 'id' => 'compatibility-checklist', 'label' => 'Compatibility Checklist' ),
+    ),
+    'content' => implode(
+      "\n\n",
+      array(
+        '<p>Battery compatibility is one of the most important decisions when choosing a cordless chainsaw. The right starting point depends on whether you need a complete ready-to-run package or already own a compatible battery and charger.</p>',
+        '<p>PowerUp offers a complete 20V chainsaw kit and selected tool-only chainsaws designed for compatible DeWalt and Milwaukee battery styles. Compatibility describes battery fit only. PowerUp is not affiliated with, sponsored by, or endorsed by DeWalt or Milwaukee.</p>',
+        '<h2 id="start-with-battery-path">Start With Your Battery Path</h2>',
+        '<p>Begin by checking the batteries already in your workshop. If you do not own a suitable pack, a complete kit is the simplest option. If you already use a compatible DeWalt or Milwaukee-style battery, a tool-only model may help you avoid buying a second battery bundle.</p>',
+        '<h2 id="complete-kit-path">Complete PowerUp Kit Path</h2>',
+        '<p>The PowerUp 12-inch 20V cordless chainsaw kit includes batteries and a charger. It is intended for first-time buyers and shoppers who want a ready-to-run package for pruning, branch cleanup, and light wood cutting.</p>',
+        '<h2 id="dewalt-compatible-path">DeWalt-Compatible Path</h2>',
+        '<p>Selected PowerUp tool-only chainsaws are designed for compatible DeWalt 20V MAX or 60V style battery packs. Open the individual product page to confirm the supported pack style and whether the listing is tool-only. Compact 8-inch options are also available for lighter pruning jobs.</p>',
+        '<h2 id="milwaukee-compatible-path">Milwaukee-Compatible Path</h2>',
+        '<p>Selected PowerUp tool-only and compact chainsaw models are designed for compatible Milwaukee M18 style battery packs. A tool-only listing does not include a battery or charger unless the product page explicitly says otherwise.</p>',
+        '<h2 id="compatibility-checklist">Compatibility Checklist</h2>',
+        '<ul><li>Confirm whether the listing is a complete kit or tool-only.</li><li>Check the supported battery platform and pack style.</li><li>Choose an 8-inch saw for lighter pruning or a 12-inch saw for broader yard work.</li><li>Review the package contents before checkout.</li><li>Contact support when your battery pack is not clearly listed.</li></ul>',
+        '<h2>Battery Compatibility FAQ</h2>',
+        '<h3>Should I choose a complete cordless chainsaw kit or a tool-only model?</h3><p>Choose a complete kit when you need a battery and charger. Choose a tool-only model when you already own a compatible battery platform and charger.</p>',
+        '<h3>Does battery compatibility mean PowerUp is affiliated with DeWalt or Milwaukee?</h3><p>No. Compatibility describes battery fit only. PowerUp is not affiliated with, sponsored by, or endorsed by DeWalt or Milwaukee.</p>',
+        '<h3>What should I check before ordering a battery-compatible chainsaw?</h3><p>Confirm whether the listing is a complete kit or tool-only, check the supported battery platform and pack style, choose the bar size, and review the package contents.</p>',
+        '<p>Use the PowerUp Battery Compatibility Center and Chainsaw Selector to compare these paths before ordering.</p>',
+      )
+    ),
+    'categories' => array( 'Cordless Chainsaw Guides', 'Battery Compatibility' ),
+    'tags'       => array( 'cordless chainsaw', 'battery compatibility', 'dewalt compatible chainsaw', 'milwaukee compatible chainsaw', 'tool-only chainsaw' ),
+  );
+
+  return array(
     'title'   => 'The Complete Guide to Lithium-Ion Cordless Outdoor Power Tools: Chainsaws, Hedge Trimmers, Blowers, Lawn Mowers & More',
     'slug'    => 'complete-guide-lithium-ion-cordless-outdoor-power-tools',
     'excerpt' => 'A practical guide to choosing, using, and maintaining lithium-ion cordless outdoor power tools, including chainsaws, hedge trimmers, leaf blowers, lawn mowers, and pruning tools.',
@@ -2800,6 +3306,14 @@ function powerup_theme_exclude_shop_from_wc_coming_soon( $exclude ) {
   }
 
   if ( function_exists( 'is_product_tag' ) && is_product_tag() ) {
+    return true;
+  }
+
+  if ( function_exists( 'is_cart' ) && is_cart() ) {
+    return true;
+  }
+
+  if ( function_exists( 'is_checkout' ) && is_checkout() ) {
     return true;
   }
 
@@ -3949,11 +4463,11 @@ function powerup_theme_get_shipping_guarantee_defaults() {
   return array(
     'heading' => 'Shipping & Guarantee',
     'item_1_title' => 'Free Shipping',
-    'item_1_desc' => 'Orders over $59 ship free.',
-    'item_2_title' => '1 Year Warranty',
-    'item_2_desc' => 'Quality issues covered with replacement support.',
-    'item_3_title' => 'Secure Checkout',
-    'item_3_desc' => 'Encrypted payment and buyer protection.',
+    'item_1_desc' => 'Free U.S. shipping with estimated delivery in 2-5 days.',
+    'item_2_title' => '180-Day Warranty',
+    'item_2_desc' => 'Warranty support is available for 180 days from purchase.',
+    'item_3_title' => '30-Day Returns',
+    'item_3_desc' => 'Return shipping is covered by us within 30 days.',
   );
 }
 
@@ -3970,7 +4484,14 @@ function powerup_theme_get_shipping_guarantee_content( $product_id ) {
     $meta_key = '_powerup_shipping_guarantee_' . $key;
     $value    = get_post_meta( $product_id, $meta_key, true );
     $value    = is_string( $value ) ? trim( $value ) : '';
-    $content[ $key ] = '' !== $value ? $value : $default_value;
+    $legacy_values = array(
+      'Orders over $59 ship free.',
+      '1 Year Warranty',
+      'Quality issues covered with replacement support.',
+      'Secure Checkout',
+      'Encrypted payment and buyer protection.',
+    );
+    $content[ $key ] = '' !== $value && ! in_array( $value, $legacy_values, true ) ? $value : $default_value;
   }
 
   return $content;
@@ -5127,8 +5648,7 @@ function powerup_theme_render_marketplace_buttons_fallback() {
   }
 
   echo '<div class="powerup-marketplace-box">';
-  echo '<p class="powerup-marketplace-title">' . esc_html__( 'Buy on Marketplace', 'powerup-theme' ) . '</p>';
-  echo '<p class="powerup-marketplace-note">' . esc_html__( 'Fallback links are shown because the marketplace plugin is currently unavailable.', 'powerup-theme' ) . '</p>';
+  echo '<p class="powerup-marketplace-title">' . esc_html__( 'Buy on Amazon', 'powerup-theme' ) . '</p>';
   echo '<div class="powerup-marketplace-links">';
 
   foreach ( $platform_links as $platform ) {
@@ -5231,9 +5751,9 @@ function powerup_theme_render_pdp_shipping_guarantee() {
   echo '<section class="powerup-pdp-shipping-guarantee" aria-label="Shipping and guarantee">';
   echo '<h3>' . esc_html( $content['heading'] ) . '</h3>';
   echo '<ul class="powerup-pdp-guarantee-list">';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--ship" aria-hidden="true">FS</span><strong>' . esc_html( $content['item_1_title'] ) . '</strong><span>' . esc_html( $content['item_1_desc'] ) . '</span></li>';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--warranty" aria-hidden="true">WR</span><strong>' . esc_html( $content['item_2_title'] ) . '</strong><span>' . esc_html( $content['item_2_desc'] ) . '</span></li>';
-  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--secure" aria-hidden="true">SC</span><strong>' . esc_html( $content['item_3_title'] ) . '</strong><span>' . esc_html( $content['item_3_desc'] ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--ship" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3z"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><strong>' . esc_html( $content['item_1_title'] ) . '</strong><span>' . esc_html( $content['item_1_desc'] ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--warranty" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-5"/></svg></span><strong>' . esc_html( $content['item_2_title'] ) . '</strong><span>' . esc_html( $content['item_2_desc'] ) . '</span></li>';
+  echo '<li class="powerup-pdp-guarantee-item"><span class="powerup-pdp-guarantee-icon powerup-pdp-guarantee-icon--secure" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/><path d="M12 14v2"/></svg></span><strong>' . esc_html( $content['item_3_title'] ) . '</strong><span>' . esc_html( $content['item_3_desc'] ) . '</span></li>';
   echo '</ul>';
   echo '</section>';
 }
@@ -5513,6 +6033,30 @@ function powerup_theme_ensure_reference_series_page() {
 }
 add_action( 'init', 'powerup_theme_ensure_reference_series_page', 18 );
 
+function powerup_theme_ensure_battery_compatibility_page() {
+  $existing = get_page_by_path( 'battery-compatibility', OBJECT, 'page' );
+  $page_args = array(
+    'post_type'    => 'page',
+    'post_status'  => 'publish',
+    'post_title'   => 'Battery Compatibility',
+    'post_name'    => 'battery-compatibility',
+    'post_content' => '',
+  );
+
+  if ( $existing instanceof WP_Post ) {
+    $page_id = (int) $existing->ID;
+  } else {
+    $page_id = wp_insert_post( $page_args, true );
+    if ( is_wp_error( $page_id ) || ! $page_id ) {
+      return;
+    }
+    $page_id = (int) $page_id;
+  }
+
+  update_post_meta( $page_id, '_wp_page_template', 'page-battery-compatibility.php' );
+}
+add_action( 'init', 'powerup_theme_ensure_battery_compatibility_page', 19 );
+
 function powerup_theme_prioritize_reference_series_related_products( $related_posts, $product_id, $args ) {
   $series_ids = powerup_theme_get_reference_series_product_ids();
   if ( count( $series_ids ) < 2 ) {
@@ -5752,10 +6296,7 @@ function powerup_theme_render_shipping_delivery_tab() {
     return;
   }
 
-  $content = get_post_meta( $product->get_id(), '_powerup_shipping_delivery', true );
-  if ( ! is_string( $content ) || '' === trim( $content ) ) {
-    $content = __( 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.', 'powerup-theme' );
-  }
+  $content = powerup_theme_get_public_shipping_delivery_text( (int) $product->get_id() );
 
   echo '<div class="powerup-pdp-shipping-tab">' . wpautop( esc_html( $content ) ) . '</div>';
 }
@@ -5784,7 +6325,7 @@ function powerup_theme_get_reference_product_payload_29474() {
       'Multiple safety protection: includes safety hand guard and double-button start to reduce accidental activation risk.',
       'Automatic oiling and tool-less adjustment: 0.15 qt (140 ml) oil tank, auto lubrication, and easy tension dial for smoother cuts.',
     ),
-    'shipping_text'  => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'     => array(
       'https://sopowerpro.com/wp-content/uploads/2026/03/71j-ADcAUoL.jpg',
       'https://sopowerpro.com/wp-content/uploads/2026/03/81e02eBhrxL._AC_SL1500_.jpg',
@@ -5820,7 +6361,7 @@ function powerup_theme_get_reference_product_payload_123() {
       'Quick and secure installation: tool-free chain tension adjustment with double-nut guide plate fixing for easier maintenance.',
       'Lightweight and user-friendly: weighs about 5 lbs, reaches 13 m/s chain speed, and includes storage bag, gloves, two 12-inch chains, and a protective cover.',
     ),
-    'shipping_text'  => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'     => array(
       'https://sopowerpro.com/wp-content/uploads/2026/03/71WgfIqcIVL._AC_SL1500_.jpg',
       'https://m.media-amazon.com/images/S/aplus-media-library-service-media/3a112489-9c17-4e94-b7f9-34461ad0b082.__CR0,0,300,300_PT0_SX220_V1___.jpg',
@@ -5856,7 +6397,7 @@ function powerup_theme_get_reference_product_payload_4567() {
       'Quick and secure installation: tool-free chain tension adjustment with double-nut guide plate fixing for easier maintenance.',
       'Lightweight and user-friendly: weighs about 5 lbs, reaches 13 m/s chain speed, and includes storage bag, gloves, two 12-inch chains, and a protective cover.',
     ),
-    'shipping_text'   => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'      => array(
       'https://sopowerpro.com/wp-content/uploads/2026/03/71Z5FRZgOwL._AC_SL1500_.jpg',
       'https://sopowerpro.com/wp-content/uploads/2026/03/81XmvW50kqL._AC_SL1500_.jpg',
@@ -5892,7 +6433,7 @@ function powerup_theme_get_reference_product_payload_makita() {
       'Quick and secure installation: tool-free chain tension adjustment with double-nut guide plate fixing for easier maintenance.',
       'Lightweight and user-friendly: weighs about 5 lbs, reaches 13 m/s chain speed, and includes storage bag, gloves, two 12-inch chains, and a protective cover.',
     ),
-    'shipping_text'   => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'      => array(),
   );
 }
@@ -5918,7 +6459,7 @@ function powerup_theme_get_reference_product_payload_paint_sprayer_dewalt() {
       'Adjustable spray pattern and flow control for primer, stain, and finishing coats.',
       'Detachable nozzle assembly for faster cleaning and easier maintenance after each use.',
     ),
-    'shipping_text'   => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'      => array(),
   );
 }
@@ -5944,7 +6485,7 @@ function powerup_theme_get_reference_product_payload_paint_sprayer_milwaukee() {
       'Adjustable spray pattern and flow control for primer, stain, and finishing coats.',
       'Detachable nozzle assembly for faster cleaning and easier maintenance after each use.',
     ),
-    'shipping_text'   => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'      => array(),
   );
 }
@@ -5970,7 +6511,7 @@ function powerup_theme_get_reference_product_payload_paint_sprayer_makita() {
       'Adjustable spray pattern and flow control for primer, stain, and finishing coats.',
       'Detachable nozzle assembly for faster cleaning and easier maintenance after each use.',
     ),
-    'shipping_text'   => 'Orders are typically processed within 1-2 business days. Standard shipping takes 3-7 business days depending on destination. Expedited options may be available at checkout. Warranty support is provided for 12 months from purchase date.',
+    'shipping_text'  => powerup_theme_get_official_shipping_policy_summary(),
     'image_urls'      => array(),
   );
 }

@@ -367,6 +367,16 @@
   color: #25633c;
 }
 
+.powerup-pdp-guarantee-icon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
 .powerup-pdp-guarantee-list strong {
   font-size: 13px;
   color: #1f1f1f;

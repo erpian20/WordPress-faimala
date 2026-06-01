@@ -19,6 +19,7 @@
   $about_url      = function_exists( 'powerup_theme_get_about_page_url' ) ? powerup_theme_get_about_page_url() : home_url( '/about-us/' );
   $contact_url    = function_exists( 'powerup_theme_get_contact_page_url' ) ? powerup_theme_get_contact_page_url() : home_url( '/contact-us/' );
   $blog_url       = function_exists( 'powerup_theme_get_blog_page_url' ) ? powerup_theme_get_blog_page_url() : home_url( '/blog/' );
+  $battery_url    = function_exists( 'powerup_theme_get_battery_compatibility_page_url' ) ? powerup_theme_get_battery_compatibility_page_url() : home_url( '/battery-compatibility/' );
   $language_items = function_exists( 'powerup_theme_get_language_switcher_items' ) ? powerup_theme_get_language_switcher_items() : array();
   $currency_items = function_exists( 'powerup_theme_get_currency_switcher_items' ) ? powerup_theme_get_currency_switcher_items() : array();
 
@@ -48,6 +49,9 @@
 
           <?php $is_shop_active = ( function_exists( 'is_shop' ) && is_shop() ) || ( function_exists( 'is_product' ) && is_product() ) || ( function_exists( 'is_product_category' ) && is_product_category() ) || ( function_exists( 'is_product_tag' ) && is_product_tag() ) || is_page( 'shop' ); ?>
           <li class="<?php echo $is_shop_active ? 'current-menu-item' : ''; ?>"><a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Shop', 'powerup-theme' ); ?></a></li>
+
+          <?php $is_battery_active = is_page( 'battery-compatibility' ) || is_page( 'chainsaw-series' ); ?>
+          <li class="<?php echo $is_battery_active ? 'current-menu-item' : ''; ?>"><a href="<?php echo esc_url( $battery_url ); ?>"><?php esc_html_e( 'Battery Guide', 'powerup-theme' ); ?></a></li>
 
           <?php $is_about_active = $about_page_id > 0 ? is_page( $about_page_id ) : is_page( 'about-us' ); ?>
           <li class="<?php echo $is_about_active ? 'current-menu-item' : ''; ?>"><a href="<?php echo esc_url( $about_url ); ?>"><?php esc_html_e( 'About Us', 'powerup-theme' ); ?></a></li>

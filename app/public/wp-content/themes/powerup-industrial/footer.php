@@ -10,6 +10,7 @@ $support_emails = function_exists( 'powerup_theme_get_support_email_recipients' 
   : array( (string) powerup_theme_get_config_value( 'contact.support_email', 'randian5757@gmail.com' ) );
 $whatsapp_number = (string) powerup_theme_get_config_value( 'contact.whatsapp_number', '' );
 $whatsapp_qr_url = (string) powerup_theme_get_config_value( 'contact.whatsapp_qr_image_url', '' );
+$support_hours   = (string) powerup_theme_get_config_value( 'contact.support_hours', '24/7 Customer Support' );
 
 $whatsapp_digits = preg_replace( '/\D+/', '', $whatsapp_number );
 $whatsapp_chat_url = '';
@@ -40,6 +41,7 @@ if ( '' === $whatsapp_qr_url ) {
         <div class="footer-support-copy">
           <h3><?php esc_html_e( 'After-sales Support', 'powerup-theme' ); ?></h3>
           <p><?php esc_html_e( 'We provide customer service via instant chat tools.', 'powerup-theme' ); ?></p>
+          <p><strong><?php esc_html_e( 'Hours', 'powerup-theme' ); ?>:</strong> <?php echo esc_html( $support_hours ); ?></p>
           <p><span class="email-icon" aria-hidden="true">&#9993;</span> <strong><?php esc_html_e( 'Email', 'powerup-theme' ); ?>:</strong>
             <?php if ( ! empty( $support_emails ) ) : ?>
               <?php foreach ( $support_emails as $index => $support_email ) : ?>
@@ -57,6 +59,13 @@ if ( '' === $whatsapp_qr_url ) {
           <img class="footer-support-qr" src="<?php echo esc_url( $whatsapp_qr_url ); ?>" alt="<?php esc_attr_e( 'WhatsApp support QR code', 'powerup-theme' ); ?>" loading="lazy">
         </div>
       </div>
+      <nav class="footer-policy-nav" aria-label="<?php esc_attr_e( 'Store policies', 'powerup-theme' ); ?>">
+        <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'shipping-policy' ) ); ?>"><?php esc_html_e( 'Shipping Policy', 'powerup-theme' ); ?></a>
+        <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'returns-policy' ) ); ?>"><?php esc_html_e( 'Returns Policy', 'powerup-theme' ); ?></a>
+        <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'warranty-policy' ) ); ?>"><?php esc_html_e( 'Warranty Policy', 'powerup-theme' ); ?></a>
+        <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'privacy-policy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'powerup-theme' ); ?></a>
+        <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'terms-conditions' ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'powerup-theme' ); ?></a>
+      </nav>
       <p style="margin-top: 32px; color: rgba(255,255,255,.6);">&copy; <?php echo date_i18n( 'Y' ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'powerup-theme' ); ?></p>
     </div>
   </footer>

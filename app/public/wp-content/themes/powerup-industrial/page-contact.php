@@ -11,7 +11,7 @@ $whatsapp_qr_url = (string) powerup_theme_get_config_value( 'contact.whatsapp_qr
 $support_emails = function_exists( 'powerup_theme_get_support_email_recipients' )
   ? powerup_theme_get_support_email_recipients()
   : array( (string) powerup_theme_get_config_value( 'contact.support_email', 'randian5757@gmail.com' ) );
-$support_hours = powerup_theme_get_config_value( 'contact.support_hours', '9:00 - 18:00' );
+$support_hours = powerup_theme_get_config_value( 'contact.support_hours', '24/7 Customer Support' );
 
 $whatsapp_digits = preg_replace( '/\D+/', '', $whatsapp_number );
 $whatsapp_chat_url = '';
@@ -27,7 +27,7 @@ if ( '' === $whatsapp_qr_url ) {
   <div class="site-inner">
     <div class="section-heading">
       <h1><?php esc_html_e( 'Contact Us', 'powerup-theme' ); ?></h1>
-      <p><?php esc_html_e( 'Send us a message for product inquiries, support or cooperation.', 'powerup-theme' ); ?></p>
+      <p><?php esc_html_e( 'Send us a message for product fit, order, setup, or after-sales questions.', 'powerup-theme' ); ?></p>
     </div>
     <div class="section-grid contact-legacy-grid">
       <form class="feature-card contact-legacy-card" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
@@ -46,7 +46,7 @@ if ( '' === $whatsapp_qr_url ) {
       </form>
       <aside class="feature-card contact-legacy-card">
         <h2><?php esc_html_e( 'Live Chat Support', 'powerup-theme' ); ?></h2>
-        <p><?php esc_html_e( 'Scan the WhatsApp QR code for instant customer support. We currently handle support via chat tools only.', 'powerup-theme' ); ?></p>
+        <p><?php esc_html_e( 'Scan the WhatsApp QR code to ask about battery compatibility, replacement parts, orders, or product support.', 'powerup-theme' ); ?></p>
         <p class="whatsapp-qr-label"><span class="whatsapp-icon" aria-hidden="true">&#128172;</span> <?php esc_html_e( 'WhatsApp', 'powerup-theme' ); ?></p>
         <div class="contact-whatsapp-qr-wrap">
           <img class="contact-whatsapp-qr" src="<?php echo esc_url( $whatsapp_qr_url ); ?>" alt="<?php esc_attr_e( 'WhatsApp support QR code', 'powerup-theme' ); ?>" loading="lazy">

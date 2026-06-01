@@ -7,4 +7,4 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /my-account/
 
-Sitemap: https://powerup.local/wp-sitemap.xml
+Sitemap: https://faimala.com/wp-sitemap.xml

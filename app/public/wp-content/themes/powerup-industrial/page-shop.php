@@ -263,7 +263,7 @@ $price_ranges = array(
   <section class="shop-ref-hero" style="background-image: linear-gradient(90deg, rgba(15,15,15,0.92) 0%, rgba(20,20,20,0.72) 42%, rgba(20,20,20,0.16) 100%), url('<?php echo esc_url( $hero_image ); ?>');">
     <div class="shop-ref-hero-inner">
       <h1><?php esc_html_e( 'SHOP', 'powerup-theme' ); ?></h1>
-      <p><?php esc_html_e( 'Browse Our Collection', 'powerup-theme' ); ?></p>
+      <p><?php esc_html_e( 'Cordless Chainsaws, Guide Bars, and Replacement Chains', 'powerup-theme' ); ?></p>
       <div class="shop-ref-hero-actions">
         <a class="shop-ref-btn shop-ref-btn-primary" href="<?php echo esc_url( $shop_base_url ); ?>"><?php esc_html_e( 'SHOP NOW', 'powerup-theme' ); ?></a>
         <a class="shop-ref-btn shop-ref-btn-ghost" href="<?php echo esc_url( $about_page_url ); ?>"><?php esc_html_e( 'LEARN MORE', 'powerup-theme' ); ?></a>
@@ -371,7 +371,9 @@ $price_ranges = array(
                 $price_html = esc_html__( 'Request Quote', 'powerup-theme' );
               }
 
-              $excerpt      = wp_trim_words( get_the_excerpt(), 12, '...' );
+              $excerpt      = function_exists( 'powerup_theme_build_meta_description' )
+                ? powerup_theme_build_meta_description( get_the_excerpt() )
+                : wp_trim_words( get_the_excerpt(), 20, '...' );
               $average      = $product instanceof WC_Product ? (float) $product->get_average_rating() : 0.0;
               $review_count = $product instanceof WC_Product ? (int) $product->get_review_count() : 0;
               $rating_label = $review_count > 0 ? sprintf(
@@ -397,7 +399,7 @@ $price_ranges = array(
                   <p><?php echo esc_html( $excerpt ); ?></p>
                   <div class="shop-ref-actions">
                     <a class="shop-ref-read-btn" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
-                    <a class="shop-ref-secondary-btn" href="<?php echo esc_url( $shop_base_url ); ?>#shop-categories"><?php esc_html_e( 'Compare More', 'powerup-theme' ); ?></a>
+                    <a class="shop-ref-secondary-btn" href="<?php echo esc_url( $shop_base_url ); ?>#shop-categories"><?php esc_html_e( 'Browse Categories', 'powerup-theme' ); ?></a>
                   </div>
                 </div>
               </article>
@@ -459,7 +461,7 @@ $price_ranges = array(
         </article>
         <article>
           <h3><?php esc_html_e( 'Outdoor Tool Focus', 'powerup-theme' ); ?></h3>
-          <p><?php esc_html_e( 'The catalog is organized around common outdoor jobs, making it easier to compare chainsaws and cordless tools.', 'powerup-theme' ); ?></p>
+          <p><?php esc_html_e( 'The catalog is organized around chainsaws, guide bars, and replacement chains for common outdoor cutting jobs.', 'powerup-theme' ); ?></p>
         </article>
         <article>
           <h3><?php esc_html_e( 'Checkout Confidence', 'powerup-theme' ); ?></h3>
@@ -469,19 +471,6 @@ $price_ranges = array(
     </div>
   </section>
 
-  <section class="shop-ref-newsletter">
-    <div class="shop-ref-newsletter-inner">
-      <h2><?php esc_html_e( 'SUBSCRIBE TO OUR NEWSLETTER', 'powerup-theme' ); ?></h2>
-      <p><?php esc_html_e( 'Get latest updates and special deals.', 'powerup-theme' ); ?></p>
-      <?php if ( function_exists( 'powerup_render_form_notice' ) ) { powerup_render_form_notice( 'subscribe', 'is-inline-dark' ); } ?>
-      <form class="shop-ref-newsletter-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-        <?php wp_nonce_field( 'powerup_subscribe_submit', 'powerup_subscribe_nonce' ); ?>
-        <input type="email" name="subscriber_email" placeholder="<?php esc_attr_e( 'Enter your email address', 'powerup-theme' ); ?>" required>
-        <input type="hidden" name="action" value="powerup_subscribe">
-        <button type="submit"><?php esc_html_e( 'SUBSCRIBE', 'powerup-theme' ); ?></button>
-      </form>
-    </div>
-  </section>
 </main>
 
 <script>

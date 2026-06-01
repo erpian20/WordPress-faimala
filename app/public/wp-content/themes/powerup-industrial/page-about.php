@@ -4,71 +4,76 @@
  *
  * @package PowerUp_Theme
  */
-get_header(); ?>
-<?php
-$shop_url    = home_url('/shop/');
-$contact_url = home_url('/contact-us/');
+get_header();
 
-$about_mission_prompt = powerup_theme_get_config_value( 'about.prompts.mission', 'three men working with power tools and laptops in a workshop' );
-$about_team_prompt = powerup_theme_get_config_value( 'about.prompts.team', 'professional team in business attire posing for a photo' );
-$about_chainsaw_prompt = powerup_theme_get_config_value( 'about.prompts.chainsaw', 'chainsaw with orange and black design' );
-$about_hedge_prompt = powerup_theme_get_config_value( 'about.prompts.hedge_trimmer', 'hedge trimmer with orange and black design' );
-$about_string_prompt = powerup_theme_get_config_value( 'about.prompts.string_trimmer', 'string trimmer with orange and black design' );
-$about_blower_prompt = powerup_theme_get_config_value( 'about.prompts.leaf_blower', 'leaf blower with orange and black design' );
-$about_image_fallback = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
+$shop_url    = home_url( '/shop/' );
+$contact_url = home_url( '/contact-us/' );
 
 $mission_image = get_template_directory_uri() . '/assets/images/about-highlight-custom.jpg';
+$team_image    = get_template_directory_uri() . '/assets/images/about-team-custom.jpg';
 
-$team_image = get_template_directory_uri() . '/assets/images/about-team-custom.jpg';
+$about_product_cards = array(
+  array(
+    'slug'        => '12-inch-20v-cordless-electric-chainsaw-kit-b0ffgspwws',
+    'label'       => '12-Inch Chainsaws',
+    'description' => 'Ready-to-cut kits and tool-only options for trimming, cleanup, and light wood cutting.',
+  ),
+  array(
+    'slug'        => '8-inch-brushless-chainsaw-kit-for-dewalt-20v-max-battery-b0ggtkhn4g',
+    'label'       => 'Compact Chainsaw Kits',
+    'description' => 'Lightweight 8-inch options for pruning and quick jobs around the yard.',
+  ),
+  array(
+    'slug'        => '12-inch-chainsaw-guide-bar-1-4-inch-pitch-b0fw3rlqy9',
+    'label'       => 'Chainsaw Guide Bars',
+    'description' => 'Replacement bars sized for compatible PowerUp compact and 12-inch saws.',
+  ),
+  array(
+    'slug'        => '12-inch-chainsaw-chain-replacement-2-pack-b0fqnycrh2',
+    'label'       => 'Replacement Chains',
+    'description' => 'Matching replacement chains to help keep regular maintenance simple.',
+  ),
+);
 
-$chainsaw_image = function_exists( 'powerup_theme_get_generated_image_url' )
-  ? powerup_theme_get_generated_image_url( $about_chainsaw_prompt, 'square' )
-  : $about_image_fallback;
+foreach ( $about_product_cards as $index => $about_product_card ) {
+  $product_post  = get_page_by_path( $about_product_card['slug'], OBJECT, 'product' );
+  $product_image = $product_post instanceof WP_Post ? get_the_post_thumbnail_url( $product_post->ID, 'full' ) : '';
 
-$hedge_image = function_exists( 'powerup_theme_get_generated_image_url' )
-  ? powerup_theme_get_generated_image_url( $about_hedge_prompt, 'square' )
-  : $about_image_fallback;
-
-$string_trimmer_image = function_exists( 'powerup_theme_get_generated_image_url' )
-  ? powerup_theme_get_generated_image_url( $about_string_prompt, 'square' )
-  : $about_image_fallback;
-
-$blower_image = function_exists( 'powerup_theme_get_generated_image_url' )
-  ? powerup_theme_get_generated_image_url( $about_blower_prompt, 'square' )
-  : $about_image_fallback;
+  $about_product_cards[ $index ]['image'] = $product_image ? $product_image : get_template_directory_uri() . '/assets/images/product-placeholder.svg';
+  $about_product_cards[ $index ]['url']   = $product_post instanceof WP_Post ? get_permalink( $product_post->ID ) : $shop_url;
+}
 ?>
 
-<!-- Hero Section -->
 <section class="hero-section about-hero about-hero-main-bg">
   <div class="site-inner about-inner">
-    <h1 class="about-title">ABOUT US</h1>
-    <h2 class="about-subtitle">Unrivaled Power &amp; Portability for Every Cut</h2>
+    <p class="about-eyebrow">ABOUT POWERUP</p>
+    <h1 class="about-title">Cordless chainsaws made easier to choose</h1>
+    <p class="about-subtitle">PowerUp helps homeowners find practical chainsaws, compatible battery options, and replacement parts for everyday yard work.</p>
     <div class="about-hero-actions">
-      <a href="<?php echo esc_url($shop_url); ?>" class="about-hero-btn about-hero-btn-primary">SHOP NOW</a>
-      <a href="<?php echo esc_url(home_url('/blog/')); ?>" class="about-hero-btn about-hero-btn-outline">LEARN MORE</a>
+      <a href="<?php echo esc_url( $shop_url ); ?>" class="about-hero-btn about-hero-btn-primary">SHOP CHAINSAWS</a>
+      <a href="<?php echo esc_url( $contact_url ); ?>" class="about-hero-btn about-hero-btn-outline">CONTACT SUPPORT</a>
     </div>
   </div>
 </section>
 
-<!-- Features Icons -->
-<section class="about-feature-band">
+<section class="about-feature-band" aria-label="PowerUp service highlights">
   <div class="site-inner about-inner">
     <div class="about-feature-grid">
       <div class="about-feature-item">
-        <div class="about-feature-icon">🔋</div>
-        <p>High-Density Lithium Platform</p>
+        <strong>Clear battery choices</strong>
+        <p>Complete kits and tool-only models</p>
       </div>
       <div class="about-feature-item">
-        <div class="about-feature-icon">🔧</div>
-        <p>Long Runtime, Fast Charging</p>
+        <strong>U.S. fulfillment</strong>
+        <p>Free shipping with estimated delivery in 2-5 days</p>
       </div>
       <div class="about-feature-item">
-        <div class="about-feature-icon">⚙️</div>
-        <p>Brushless Motor Efficiency</p>
+        <strong>Practical maintenance</strong>
+        <p>Replacement guide bars and chains</p>
       </div>
       <div class="about-feature-item">
-        <div class="about-feature-icon">✅</div>
-        <p>Built for Real-World Durability</p>
+        <strong>Responsive support</strong>
+        <p>30-day returns and a 180-day warranty</p>
       </div>
     </div>
   </div>
@@ -76,100 +81,70 @@ $blower_image = function_exists( 'powerup_theme_get_generated_image_url' )
 
 <main class="site-section about-main">
   <div class="site-inner about-inner">
-    <div class="about-highlight-area">
-    <!-- Our Mission -->
     <section class="about-section about-section--mission">
-      <h2 class="about-section-title">OUR MISSION</h2>
       <div class="about-mission-layout">
         <div class="about-mission-left">
-          <img src="<?php echo esc_url( $mission_image ); ?>" alt="Our Mission" width="960" height="720" loading="lazy" decoding="async" class="about-media">
+          <img src="<?php echo esc_url( $mission_image ); ?>" alt="PowerUp team reviewing cordless tool options" width="960" height="720" loading="lazy" decoding="async" class="about-media">
         </div>
 
         <div class="about-mission-right">
-          <div class="about-review-card">
-            <div class="about-stars">★★★★★</div>
-            <h3 class="about-subheading">Powerful and easy to use</h3>
-            <p class="about-copy">Built for daily cutting work, our lithium tools combine fast startup, stable torque, and comfortable handling. You get consistent performance with lower maintenance and less noise compared with fuel tools.</p>
-          </div>
-
-          <div class="about-history-card">
-            <h2 class="about-section-title about-history-title">OUR HISTORY</h2>
-            <p class="about-copy about-copy-gap">From our first battery platform to a full cordless lineup, we have focused on reliability, safety, and practical innovation for real jobsite use.</p>
-            <ul class="about-list about-history-list">
-              <li>2018: First 40V battery system and brushless chainsaw prototype.</li>
-              <li>2020: Expanded into hedge trimmers, string trimmers, and blowers.</li>
-              <li>2023: Upgraded BMS and launched fast charging ecosystem.</li>
-              <li>Today: Scaling global retail and distribution partnerships.</li>
-            </ul>
-          </div>
+          <p class="about-eyebrow about-eyebrow--dark">OUR FOCUS</p>
+          <h2 class="about-section-title">Useful tools for the jobs that happen at home</h2>
+          <p class="about-copy">PowerUp is focused on cordless chainsaws and the parts that keep them working. Our catalog is built around the jobs homeowners return to throughout the year: pruning branches, clearing storm debris, preparing firewood, and maintaining a property without the upkeep of a gas saw.</p>
+          <p class="about-copy">We keep the buying process straightforward. Each product page explains what is included, which battery platform fits, and which replacement bar or chain to choose later.</p>
+          <ul class="about-list about-history-list">
+            <li>Complete chainsaw kits with batteries and a charger for a ready-to-cut setup.</li>
+            <li>Tool-only options for compatible DeWalt and Milwaukee battery platforms.</li>
+            <li>Replacement guide bars and chains for regular maintenance.</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- Our Values -->
-    <section class="about-section">
+    <section class="about-section about-section--service">
+      <p class="about-eyebrow about-eyebrow--dark">WHAT YOU CAN EXPECT</p>
+      <h2 class="about-section-title">A clearer path from product choice to after-sales support</h2>
       <div class="about-values-with-team">
         <div class="about-values-left">
-          <h2 class="about-section-title">OUR VALUES</h2>
           <div class="about-values-grid">
             <div class="about-value-card">
-              <div class="about-value-icon">🌱</div>
-              <h3>Sustainable Performance</h3>
-              <p>Lower emissions, less maintenance, and longer product life through better design.</p>
+              <span class="about-value-number">01</span>
+              <h3>Choose with confidence</h3>
+              <p>Clear compatibility notes help you compare full kits, tool-only models, and replacement parts before ordering.</p>
             </div>
             <div class="about-value-card">
-              <div class="about-value-icon">🔄</div>
-              <h3>Platform Compatibility</h3>
-              <p>One battery system across multiple tools to simplify inventory and field operations.</p>
+              <span class="about-value-number">02</span>
+              <h3>Work without gas-tool upkeep</h3>
+              <p>Cordless tools provide quick startup, easier storage, and a practical fit for routine property maintenance.</p>
             </div>
             <div class="about-value-card">
-              <div class="about-value-icon">🛡️</div>
-              <h3>Quality &amp; Safety First</h3>
-              <p>Strict testing for battery protection, thermal control, and long-cycle reliability.</p>
+              <span class="about-value-number">03</span>
+              <h3>Get help after delivery</h3>
+              <p>Our support team is available 24/7 for fit, setup, returns, and warranty questions.</p>
             </div>
           </div>
         </div>
         <div class="about-values-right">
-          <img src="<?php echo esc_url( $team_image ); ?>" alt="Our Team" width="960" height="720" loading="lazy" decoding="async" class="about-media about-team-photo">
+          <img src="<?php echo esc_url( $team_image ); ?>" alt="PowerUp team supporting cordless chainsaw customers" width="960" height="720" loading="lazy" decoding="async" class="about-media about-team-photo">
         </div>
       </div>
     </section>
-    </div>
 
-    <!-- Featured Reviews -->
     <section class="about-section about-section--featured-reviews">
-      <h2 class="about-section-title about-section-title--center">FEATURED REVIEWS</h2>
+      <p class="about-eyebrow">SHOP THE RANGE</p>
+      <h2 class="about-section-title">Start with the chainsaw or replacement part that fits your work</h2>
       <div class="about-products-grid">
-        <div class="about-product-item">
-          <img src="<?php echo esc_url( $chainsaw_image ); ?>" alt="Chainsaw" width="800" height="800" loading="lazy" decoding="async" class="about-media">
-          <p>Cordless Chainsaws</p>
-        </div>
-        <div class="about-product-item">
-          <img src="<?php echo esc_url( $hedge_image ); ?>" alt="Hedge Trimmer" width="800" height="800" loading="lazy" decoding="async" class="about-media">
-          <p>Hedge Trimmers</p>
-        </div>
-        <div class="about-product-item">
-          <img src="<?php echo esc_url( $string_trimmer_image ); ?>" alt="String Trimmer" width="800" height="800" loading="lazy" decoding="async" class="about-media">
-          <p>String Trimmers</p>
-        </div>
-        <div class="about-product-item">
-          <img src="<?php echo esc_url( $blower_image ); ?>" alt="Leaf Blower" width="800" height="800" loading="lazy" decoding="async" class="about-media">
-          <p>Leaf Blowers</p>
-        </div>
+        <?php foreach ( $about_product_cards as $about_product_card ) : ?>
+          <a href="<?php echo esc_url( $about_product_card['url'] ); ?>" class="about-product-item">
+            <img src="<?php echo esc_url( $about_product_card['image'] ); ?>" alt="<?php echo esc_attr( $about_product_card['label'] ); ?>" width="800" height="800" loading="lazy" decoding="async" class="about-media">
+            <span class="about-product-item__content">
+              <strong><?php echo esc_html( $about_product_card['label'] ); ?></strong>
+              <span><?php echo esc_html( $about_product_card['description'] ); ?></span>
+              <em>View products</em>
+            </span>
+          </a>
+        <?php endforeach; ?>
       </div>
-    </section>
-
-    <!-- Newsletter -->
-    <section class="about-newsletter">
-      <h2>SUBSCRIBE TO OUR NEWSLETTER</h2>
-      <p>Get product launches, battery care tips, and dealer offers in your inbox.</p>
-      <?php if ( function_exists( 'powerup_render_form_notice' ) ) { powerup_render_form_notice( 'subscribe', 'is-inline-dark' ); } ?>
-      <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="about-newsletter-form">
-        <input type="email" name="subscriber_email" placeholder="Enter your email address" class="about-newsletter-input" required>
-        <?php wp_nonce_field( 'powerup_subscribe_submit', 'powerup_subscribe_nonce' ); ?>
-        <button type="submit" class="about-newsletter-btn">SUBSCRIBE</button>
-        <input type="hidden" name="action" value="powerup_subscribe">
-      </form>
     </section>
   </div>
 </main>

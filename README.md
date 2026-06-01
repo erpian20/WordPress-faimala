@@ -68,7 +68,7 @@ logs/                      # 运行时日志（gitignore，不上传）
 
 运行预检脚本：
 ```bash
-bash deployment/check-site-health.sh
+bash app/public/deployment/check-site-health.sh
 ```
 
 这会验证：
@@ -112,7 +112,6 @@ bash deployment/check-site-health.sh
 
 **系统文件**:
 - `.git/` — 版本控制元数据
-- `.gitignore` — 忽略规则
 - 任何 `.venv/` 或 Python 虚拟环境
 
 ## 关键配置说明
@@ -141,25 +140,15 @@ bash deployment/check-site-health.sh
 
 ## 维护和更新流程
 
-### 添加新主题或插件
-1. 在 WordPress 后台安装（推荐）或在 `wp-content/themes/` 或 `wp-content/plugins/` 下手动添加
-2. 激活并测试
-3. 提交到 Git：
-   ```bash
-   git add app/public/wp-content/
-   git commit -m "Add [plugin/theme name]"
-   git push
-   ```
+### 本地验收后统一发布
+1. 所有修改先在 `http://powerup.local/` 完成。
+2. 在本地检查受影响页面的桌面端和手机端显示。
+3. 等待站点负责人明确回复 `确认发布`。
+4. 收到许可后，再将已验收文件提交并推送到 GitHub `main` 分支。
+5. GitHub Actions 自动同步到 Cloudways，随后复查线上页面。
 
-### 修改主题代码
-1. 编辑 `app/public/wp-content/themes/powerup-industrial/` 下的文件
-2. 在本地浏览器验证
-3. 测试无误后提交：
-   ```bash
-   git add app/public/wp-content/themes/powerup-industrial/
-   git commit -m "Update: [具体改动描述]"
-   git push
-   ```
+日常维护不得跳过本地验收，也不得直接上传文件到 Cloudways。完整规则见
+`app/public/deployment/LOCAL_FIRST_RELEASE.md`。
 
 ### 更新 WordPress 或插件
 1. 在 Local 或 WordPress 后台执行更新
@@ -169,6 +158,7 @@ bash deployment/check-site-health.sh
 ## 部署到生产环境
 
 部署前的必读文档：
+- `app/public/deployment/LOCAL_FIRST_RELEASE.md` — 本地验收与生产发布门禁
 - `app/public/deployment/CLOUD_LAUNCH_CHECKLIST.md` — 云部署清单
 - `app/public/deployment/FREEZE_POLICY_20260419.md` — 冻结政策说明
 
@@ -199,6 +189,8 @@ config: Adjust nginx cache headers for product pages
 ```
 
 ### 推送和同步
+仅在站点负责人明确回复 `确认发布` 后执行：
+
 ```bash
 git pull origin main      # 同步最新更改
 git status                # 检查未跟踪的改动
@@ -225,7 +217,7 @@ bash app/public/deployment/clear-fastcgi-cache.sh  # 清缓存后再备份
 A: openclaw 应该遵循以下规则：
 - **可改**: 主题代码、插件文件、部署脚本
 - **不可改**: WordPress 核心、wp-config.php、conf/ 配置
-- 每次改动后推送 Git 提交
+- 本地验收后等待明确的 `确认发布`，再推送 Git 提交
 - 定期运行 `check-site-health.sh` 验证部署状态
 
 ## 联系和支持

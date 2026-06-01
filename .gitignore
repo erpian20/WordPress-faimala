@@ -6,3 +6,11 @@ logs/
 
 # Local database dumps (sensitive, machine-specific)
 app/sql/*.sql
+
+# Local recovery snapshots and WordPress temporary backups
+backups/
+deployment/private/
+app/public/wp-content/upgrade-temp-backup/
+
+# Source contact-card export retained locally after extracting the public QR code
+app/public/wp-content/themes/powerup-industrial/assets/images/whatsapp-contact-card-original.jpg
