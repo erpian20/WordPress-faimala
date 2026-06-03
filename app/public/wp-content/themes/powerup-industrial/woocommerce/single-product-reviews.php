@@ -16,9 +16,10 @@ if ( ! comments_open() ) {
 }
 
 $commenter         = wp_get_current_commenter();
-$rating_count      = $product ? $product->get_rating_count() : 0;
-$review_count      = $product ? $product->get_review_count() : 0;
-$average           = $product ? $product->get_average_rating() : 0;
+$rating_count      = 0;
+$review_count      = 0;
+$rating_total      = 0;
+$average           = 0;
 $ratings_breakdown = array();
 
 for ( $star = 5; $star >= 1; $star-- ) {
@@ -26,15 +27,24 @@ for ( $star = 5; $star >= 1; $star-- ) {
 }
 
 $approved_reviews = get_approved_comments( $product->get_id() );
+$approved_product_reviews = array();
 foreach ( $approved_reviews as $review_comment ) {
   if ( 'review' !== $review_comment->comment_type ) {
     continue;
   }
 
+  $approved_product_reviews[] = $review_comment;
+  $review_count++;
   $review_rating = (int) get_comment_meta( $review_comment->comment_ID, 'rating', true );
   if ( $review_rating >= 1 && $review_rating <= 5 ) {
     $ratings_breakdown[ $review_rating ]++;
+    $rating_count++;
+    $rating_total += $review_rating;
   }
+}
+
+if ( $rating_count > 0 ) {
+  $average = $rating_total / $rating_count;
 }
 ?>
 <div id="reviews" class="woocommerce-Reviews powerup-amz-reviews-wrap">
@@ -83,15 +93,16 @@ foreach ( $approved_reviews as $review_comment ) {
         ?>
       </h2>
 
-      <?php if ( have_comments() ) : ?>
+      <?php if ( ! empty( $approved_product_reviews ) ) : ?>
         <ol class="commentlist powerup-amz-review-list">
           <?php
           wp_list_comments(
             array(
               'callback' => 'powerup_theme_amazon_review_callback',
               'style'    => 'ol',
-              'type'     => 'comment',
-            )
+              'type'     => 'all',
+            ),
+            $approved_product_reviews
           );
           ?>
         </ol>
@@ -112,7 +123,7 @@ foreach ( $approved_reviews as $review_comment ) {
       <div id="review_form">
         <?php
         $comment_form = array(
-          'title_reply'          => have_comments() ? esc_html__( 'Review this product', 'powerup-theme' ) : sprintf( esc_html__( 'Be the first to review “%s”', 'powerup-theme' ), get_the_title() ),
+          'title_reply'          => ! empty( $approved_product_reviews ) ? esc_html__( 'Review this product', 'powerup-theme' ) : sprintf( esc_html__( 'Be the first to review “%s”', 'powerup-theme' ), get_the_title() ),
           'title_reply_to'       => esc_html__( 'Leave a Reply to %s', 'powerup-theme' ),
           'title_reply_before'   => '<span id="reply-title" class="comment-reply-title">',
           'title_reply_after'    => '</span>',
