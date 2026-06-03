@@ -101,11 +101,37 @@
 }
 
 .single-product .woocommerce-product-rating {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.55rem;
+  align-items: center;
   margin: 0 0 8px;
+  line-height: 1.1;
 }
 
 .single-product .star-rating {
   color: #ffb400;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  opacity: 1;
+}
+
+.single-product .woocommerce-review-link {
+  color: #182234 !important;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 800;
+  line-height: 1.15;
+  opacity: 1 !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-shadow: none;
+}
+
+.single-product .woocommerce-review-link:hover,
+.single-product .woocommerce-review-link:focus {
+  color: #b34700 !important;
 }
 
 .single-product .price {
