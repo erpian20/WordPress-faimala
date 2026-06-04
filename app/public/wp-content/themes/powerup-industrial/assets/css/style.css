@@ -5656,7 +5656,8 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
   }
 
   .home-why-banner__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 0.5rem;
   }
 
   .home-page .feature-cards {
@@ -5684,23 +5685,33 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
   }
 
   .home-why-banner__item h3 {
-    font-size: 1.3rem;
+    font-size: 1.05rem;
+    line-height: 1.05;
+  }
+
+  .home-why-banner__item p {
+    font-size: 0.86rem;
+    line-height: 1.15;
+    max-width: 11rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .home-why-banner__icon {
-    width: var(--why-icon-frame-mobile);
-    height: var(--why-icon-frame-mobile);
+    width: 58px;
+    height: 58px;
+    margin-bottom: 0.35rem;
   }
 
   .home-why-banner__svg {
-    width: var(--why-icon-size-mobile);
-    height: var(--why-icon-size-mobile);
-    stroke-width: 3.2;
+    width: 46px;
+    height: 46px;
+    stroke-width: 3;
   }
 
   .home-why-banner__icon-image {
-    width: var(--why-icon-size-mobile);
-    height: var(--why-icon-size-mobile);
+    width: 46px;
+    height: 46px;
   }
 }
 
@@ -6763,4 +6774,44 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
     padding: 0 0.7rem;
     font-size: 0.88rem;
   }
+}
+/* Product summary rating: custom plain-star row avoids WooCommerce star float issues. */
+.single-product .summary.entry-summary .powerup-summary-rating {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 1rem;
+  line-height: 1;
+}
+
+.single-product .summary.entry-summary .powerup-summary-rating__stars {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  color: #f5a400;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.single-product .summary.entry-summary .powerup-summary-rating__link,
+.single-product .summary.entry-summary .powerup-summary-rating__link:visited {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  color: #111827 !important;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 1 !important;
+  white-space: nowrap;
+  text-decoration-color: rgba(17, 24, 39, 0.45);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.single-product .summary.entry-summary .powerup-summary-rating__link:hover,
+.single-product .summary.entry-summary .powerup-summary-rating__link:focus {
+  color: #b34700 !important;
 }

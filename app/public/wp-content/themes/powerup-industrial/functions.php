@@ -5773,6 +5773,49 @@ function powerup_theme_render_marketplace_buttons_fallback() {
 }
 add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_marketplace_buttons_fallback', 31 );
 
+function powerup_theme_use_custom_single_product_rating() {
+  if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+    return;
+  }
+
+  remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+  add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_single_product_rating', 10 );
+}
+add_action( 'wp', 'powerup_theme_use_custom_single_product_rating' );
+
+function powerup_theme_render_single_product_rating() {
+  global $product;
+
+  if ( ! $product instanceof WC_Product || ! post_type_supports( 'product', 'comments' ) ) {
+    return;
+  }
+
+  $rating_count = (int) $product->get_rating_count();
+  $review_count = (int) $product->get_review_count();
+  $average      = (float) $product->get_average_rating();
+
+  if ( $rating_count <= 0 ) {
+    return;
+  }
+
+  $review_link = '#reviews';
+  ?>
+  <div class="woocommerce-product-rating powerup-summary-rating" aria-label="<?php echo esc_attr( sprintf( __( 'Rated %1$s out of 5 based on %2$s customer ratings', 'powerup-theme' ), number_format_i18n( $average, 2 ), number_format_i18n( $rating_count ) ) ); ?>">
+    <span class="powerup-summary-rating__stars" aria-hidden="true"><?php echo esc_html( powerup_theme_render_star_icons( (int) round( $average ) ) ); ?></span>
+    <?php if ( comments_open() ) : ?>
+      <a href="<?php echo esc_url( $review_link ); ?>" class="woocommerce-review-link powerup-summary-rating__link" rel="nofollow">
+        <?php
+        printf(
+          esc_html( _n( '(%s customer review)', '(%s customer reviews)', $review_count, 'powerup-theme' ) ),
+          esc_html( number_format_i18n( $review_count ) )
+        );
+        ?>
+      </a>
+    <?php endif; ?>
+  </div>
+  <?php
+}
+
 function powerup_theme_enqueue_pdp_reference_assets() {
   if ( ! function_exists( 'is_product' ) || ! is_product() ) {
     return;
