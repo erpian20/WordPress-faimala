@@ -5686,14 +5686,6 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
   $review_video   = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_url', true );
   $review_video_mime = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_mime', true );
   $review_title   = powerup_theme_build_amazon_review_title( $comment->comment_content );
-  $review_country = function_exists( 'wc_get_base_location' ) ? wc_get_base_location() : array( 'country' => '' );
-  $country_code   = isset( $review_country['country'] ) ? $review_country['country'] : '';
-  $country_name   = $country_code ? WC()->countries->countries[ $country_code ] : '';
-
-  $verified = false;
-  if ( function_exists( 'wc_customer_bought_product' ) ) {
-    $verified = wc_customer_bought_product( $comment->comment_author_email, $comment->user_id, $comment->comment_post_ID );
-  }
   $initial = function_exists( 'mb_substr' ) ? mb_substr( $comment->comment_author, 0, 1 ) : substr( $comment->comment_author, 0, 1 );
   ?>
   <li <?php comment_class( 'powerup-amz-review-item' ); ?> id="li-comment-<?php comment_ID(); ?>">
@@ -5705,9 +5697,8 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
           <p class="powerup-amz-review-meta">
             <?php
             printf(
-              /* translators: 1: country, 2: date. */
-              esc_html__( 'Reviewed in %1$s on %2$s', 'powerup-theme' ),
-              $country_name ? esc_html( $country_name ) : esc_html__( 'your region', 'powerup-theme' ),
+              /* translators: %s: review date. */
+              esc_html__( 'Customer review · %s', 'powerup-theme' ),
               esc_html( get_comment_date( get_option( 'date_format' ), $comment ) )
             );
             ?>
@@ -5719,10 +5710,6 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
         <span class="powerup-amz-review-stars" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'powerup-theme' ), $rating ) ); ?>"><?php echo esc_html( powerup_theme_render_star_icons( $rating ) ); ?></span>
         <strong class="powerup-amz-review-title"><?php echo esc_html( $review_title ); ?></strong>
       </div>
-
-      <?php if ( $verified ) : ?>
-        <p class="powerup-amz-review-verified"><?php esc_html_e( 'Verified Purchase', 'powerup-theme' ); ?></p>
-      <?php endif; ?>
 
       <div class="powerup-amz-review-content"><?php comment_text(); ?></div>
 
