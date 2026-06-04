@@ -324,6 +324,28 @@
   background: #fff;
 }
 
+.powerup-amz-review-form-wrap .comment-form-cookies-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.powerup-amz-review-form-wrap .comment-form-cookies-consent input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 4px 0 0;
+  padding: 0;
+  border-radius: 4px;
+  accent-color: #ff6b00;
+}
+
+.powerup-amz-review-form-wrap .comment-form-cookies-consent label {
+  display: inline;
+  margin: 0;
+  line-height: 1.35;
+}
+
 .powerup-amz-review-form-wrap .comment-form-powerup-review-video input[type="file"] {
   padding: 8px;
 }
