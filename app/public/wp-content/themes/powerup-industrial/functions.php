@@ -5664,10 +5664,25 @@ function powerup_theme_render_star_icons( $rating ) {
   return $icons;
 }
 
+function powerup_theme_get_review_image_ids( $comment_id ) {
+  $image_ids = get_comment_meta( $comment_id, 'powerup_review_image_ids', true );
+
+  if ( is_string( $image_ids ) ) {
+    $image_ids = array_filter( array_map( 'trim', explode( ',', $image_ids ) ) );
+  }
+
+  if ( ! is_array( $image_ids ) ) {
+    return array();
+  }
+
+  return array_values( array_unique( array_filter( array_map( 'absint', $image_ids ) ) ) );
+}
+
 function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
   $GLOBALS['comment'] = $comment;
 
   $rating         = (int) get_comment_meta( $comment->comment_ID, 'rating', true );
+  $review_images  = powerup_theme_get_review_image_ids( $comment->comment_ID );
   $review_video   = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_url', true );
   $review_video_mime = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_mime', true );
   $review_title   = powerup_theme_build_amazon_review_title( $comment->comment_content );
@@ -5710,6 +5725,33 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
       <?php endif; ?>
 
       <div class="powerup-amz-review-content"><?php comment_text(); ?></div>
+
+      <?php if ( ! empty( $review_images ) ) : ?>
+        <div class="powerup-amz-review-media-grid" aria-label="<?php esc_attr_e( 'Customer review photos', 'powerup-theme' ); ?>">
+          <?php foreach ( $review_images as $image_id ) : ?>
+            <?php
+            $full_image = wp_get_attachment_image_url( $image_id, 'large' );
+            if ( ! $full_image ) {
+              continue;
+            }
+            ?>
+            <a class="powerup-amz-review-image-link" href="<?php echo esc_url( $full_image ); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php esc_attr_e( 'Open customer review photo', 'powerup-theme' ); ?>">
+              <?php
+              echo wp_get_attachment_image(
+                $image_id,
+                'medium',
+                false,
+                array(
+                  'class'   => 'powerup-amz-review-image',
+                  'loading' => 'lazy',
+                  'alt'     => esc_attr__( 'Customer review photo', 'powerup-theme' ),
+                )
+              );
+              ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
 
       <?php if ( '' !== $review_video ) : ?>
         <div class="powerup-amz-review-video">

@@ -15,6 +15,18 @@ if ( ! comments_open() ) {
   return;
 }
 
+if ( ! function_exists( 'powerup_theme_review_has_customer_media' ) ) {
+  function powerup_theme_review_has_customer_media( $comment_id ) {
+    $image_ids = get_comment_meta( $comment_id, 'powerup_review_image_ids', true );
+    if ( is_array( $image_ids ) && ! empty( array_filter( array_map( 'absint', $image_ids ) ) ) ) {
+      return true;
+    }
+
+    $video_url = (string) get_comment_meta( $comment_id, 'powerup_review_video_url', true );
+    return '' !== trim( $video_url );
+  }
+}
+
 $commenter         = wp_get_current_commenter();
 $rating_count      = 0;
 $review_count      = 0;
@@ -42,6 +54,23 @@ foreach ( $approved_reviews as $review_comment ) {
     $rating_total += $review_rating;
   }
 }
+
+usort(
+  $approved_product_reviews,
+  function ( $left_review, $right_review ) {
+    $left_has_media  = powerup_theme_review_has_customer_media( $left_review->comment_ID );
+    $right_has_media = powerup_theme_review_has_customer_media( $right_review->comment_ID );
+
+    if ( $left_has_media !== $right_has_media ) {
+      return $left_has_media ? -1 : 1;
+    }
+
+    $left_time  = strtotime( (string) $left_review->comment_date_gmt );
+    $right_time = strtotime( (string) $right_review->comment_date_gmt );
+
+    return $right_time <=> $left_time;
+  }
+);
 
 if ( $rating_count > 0 ) {
   $average = $rating_total / $rating_count;
