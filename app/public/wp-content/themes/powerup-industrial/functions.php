@@ -3342,6 +3342,13 @@ function powerup_theme_scripts() {
   wp_enqueue_style( 'powerup-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap', array(), null );
   if ( function_exists( 'is_product' ) && is_product() ) {
     wp_enqueue_style( 'powerup-amazon-reviews', get_template_directory_uri() . '/assets/css/amazon-reviews.css', array( 'powerup-main-style' ), $asset_version( 'assets/css/amazon-reviews.css' ) );
+    wp_enqueue_script(
+      'powerup-review-actions',
+      get_template_directory_uri() . '/assets/js/review-actions.js',
+      array(),
+      $asset_version( 'assets/js/review-actions.js' ),
+      true
+    );
   }
   wp_enqueue_script( 'powerup-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), $asset_version( 'assets/js/navigation.js' ), true );
 
@@ -5749,8 +5756,9 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
       <?php endif; ?>
 
       <footer class="powerup-amz-review-actions">
-        <button type="button" class="powerup-amz-helpful-btn" disabled><?php esc_html_e( 'Helpful', 'powerup-theme' ); ?></button>
-        <span class="powerup-amz-report"><?php esc_html_e( 'Report', 'powerup-theme' ); ?></span>
+        <button type="button" class="powerup-amz-helpful-btn" data-review-id="<?php echo esc_attr( (string) $comment->comment_ID ); ?>"><?php esc_html_e( 'Helpful', 'powerup-theme' ); ?></button>
+        <button type="button" class="powerup-amz-report" data-review-id="<?php echo esc_attr( (string) $comment->comment_ID ); ?>"><?php esc_html_e( 'Report', 'powerup-theme' ); ?></button>
+        <span class="powerup-amz-review-action-status" role="status" aria-live="polite"></span>
       </footer>
     </article>
   </li>

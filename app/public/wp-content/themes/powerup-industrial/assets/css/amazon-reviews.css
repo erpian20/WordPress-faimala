@@ -237,6 +237,7 @@
 .powerup-amz-review-actions {
   margin-top: 12px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
@@ -249,11 +250,43 @@
   font-size: 12px;
   line-height: 1;
   padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
 }
 
 .powerup-amz-report {
+  border: 0;
+  background: transparent;
   color: #2162a1;
   font-size: 12px;
+  line-height: 1;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.powerup-amz-helpful-btn:hover,
+.powerup-amz-helpful-btn:focus {
+  border-color: #ff6b00;
+  background: #fff7ed;
+}
+
+.powerup-amz-helpful-btn.is-marked {
+  border-color: #b7d7b7;
+  background: #f0f8f0;
+  color: #1f6b2b;
+}
+
+.powerup-amz-report:hover,
+.powerup-amz-report:focus {
+  color: #c45500;
+  text-decoration: underline;
+}
+
+.powerup-amz-review-action-status {
+  flex: 1 1 180px;
+  color: #565959;
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .powerup-amz-review-pagination {
