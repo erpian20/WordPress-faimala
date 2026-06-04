@@ -1,0 +1,41 @@
+name: Clear Cloudways Cache
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: cloudways-cache-clear
+  cancel-in-progress: false
+
+jobs:
+  clear-cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Configure Cloudways SSH key
+        env:
+          CLOUDWAYS_SSH_KEY: ${{ secrets.CLOUDWAYS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$CLOUDWAYS_SSH_KEY" > "$HOME/.ssh/cloudways_deploy"
+          chmod 600 "$HOME/.ssh/cloudways_deploy"
+          ssh-keyscan -H "66.135.1.115" >> "$HOME/.ssh/known_hosts"
+
+      - name: Clear WordPress and Breeze cache
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/cloudways_deploy" -o IdentitiesOnly=yes \
+            "master_qefuhpxtkf@66.135.1.115" \
+            "APP='/home/master/applications/uzwpaedhhg/public_html' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP"
+
+          wp cache flush || true
+          wp eval 'do_action( "breeze_clear_all_cache" ); if ( class_exists( "Breeze_PurgeCache" ) ) { Breeze_PurgeCache::breeze_cache_flush( true, true, true ); }' || true
+          wp rewrite flush || true
+
+          curl -ksS -o /dev/null -w 'Homepage HTTP %{http_code}\n' "https://faimala.com/?cache-clear=$(date +%s)"
+          echo "Cloudways/Breeze cache cleared."
+          REMOTE
