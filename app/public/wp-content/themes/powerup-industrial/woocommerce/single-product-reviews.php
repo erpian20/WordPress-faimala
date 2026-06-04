@@ -46,6 +46,29 @@ foreach ( $approved_reviews as $review_comment ) {
 if ( $rating_count > 0 ) {
   $average = $rating_total / $rating_count;
 }
+
+$reviews_per_page_options = array( 20, 50, 100 );
+$reviews_per_page         = isset( $_GET['reviews_per_page'] ) ? absint( wp_unslash( $_GET['reviews_per_page'] ) ) : 20;
+if ( ! in_array( $reviews_per_page, $reviews_per_page_options, true ) ) {
+  $reviews_per_page = 20;
+}
+
+$total_review_pages = $review_count > 0 ? (int) ceil( $review_count / $reviews_per_page ) : 1;
+$current_review_page = isset( $_GET['review_page'] ) ? absint( wp_unslash( $_GET['review_page'] ) ) : 1;
+if ( $current_review_page < 1 ) {
+  $current_review_page = 1;
+}
+if ( $current_review_page > $total_review_pages ) {
+  $current_review_page = $total_review_pages;
+}
+
+$review_offset = ( $current_review_page - 1 ) * $reviews_per_page;
+$visible_product_reviews = array_slice( $approved_product_reviews, $review_offset, $reviews_per_page );
+$visible_review_start    = $review_count > 0 ? $review_offset + 1 : 0;
+$visible_review_end      = min( $review_offset + $reviews_per_page, $review_count );
+
+$reviews_base_url = remove_query_arg( array( 'review_page', 'reviews_per_page' ) );
+$reviews_base_url = $reviews_base_url ? $reviews_base_url : get_permalink( $product->get_id() );
 ?>
 <div id="reviews" class="woocommerce-Reviews powerup-amz-reviews-wrap">
   <div id="comments" class="powerup-amz-reviews-grid">
@@ -94,6 +117,36 @@ if ( $rating_count > 0 ) {
       </h2>
 
       <?php if ( ! empty( $approved_product_reviews ) ) : ?>
+        <div class="powerup-amz-review-toolbar">
+          <p class="powerup-amz-review-range">
+            <?php
+            printf(
+              esc_html__( 'Showing %1$s-%2$s of %3$s reviews', 'powerup-theme' ),
+              esc_html( number_format_i18n( $visible_review_start ) ),
+              esc_html( number_format_i18n( $visible_review_end ) ),
+              esc_html( number_format_i18n( $review_count ) )
+            );
+            ?>
+          </p>
+          <form class="powerup-amz-review-per-page" method="get" action="<?php echo esc_url( $reviews_base_url ); ?>#reviews">
+            <?php foreach ( $_GET as $query_key => $query_value ) : ?>
+              <?php
+              if ( in_array( $query_key, array( 'review_page', 'reviews_per_page' ), true ) || is_array( $query_value ) ) {
+                continue;
+              }
+              ?>
+              <input type="hidden" name="<?php echo esc_attr( sanitize_key( $query_key ) ); ?>" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $query_value ) ) ); ?>">
+            <?php endforeach; ?>
+            <input type="hidden" name="review_page" value="1">
+            <label for="powerup-reviews-per-page"><?php esc_html_e( 'Reviews per page', 'powerup-theme' ); ?></label>
+            <select id="powerup-reviews-per-page" name="reviews_per_page" onchange="this.form.submit()">
+              <?php foreach ( $reviews_per_page_options as $option ) : ?>
+                <option value="<?php echo esc_attr( (string) $option ); ?>" <?php selected( $reviews_per_page, $option ); ?>><?php echo esc_html( (string) $option ); ?></option>
+              <?php endforeach; ?>
+            </select>
+          </form>
+        </div>
+
         <ol class="commentlist powerup-amz-review-list">
           <?php
           wp_list_comments(
@@ -102,14 +155,28 @@ if ( $rating_count > 0 ) {
               'style'    => 'ol',
               'type'     => 'all',
             ),
-            $approved_product_reviews
+            $visible_product_reviews
           );
           ?>
         </ol>
 
-        <?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
-          <nav class="woocommerce-pagination">
-            <?php paginate_comments_links( apply_filters( 'woocommerce_comment_pagination_args', array( 'prev_text' => '&larr;', 'next_text' => '&rarr;', 'type' => 'list' ) ) ); ?>
+        <?php if ( $total_review_pages > 1 ) : ?>
+          <nav class="powerup-amz-review-pagination" aria-label="<?php esc_attr_e( 'Review pagination', 'powerup-theme' ); ?>">
+            <?php if ( $current_review_page > 1 ) : ?>
+              <a class="powerup-amz-review-page-link powerup-amz-review-page-link--prev" href="<?php echo esc_url( add_query_arg( array( 'review_page' => $current_review_page - 1, 'reviews_per_page' => $reviews_per_page ), $reviews_base_url ) . '#reviews' ); ?>"><?php esc_html_e( 'Previous', 'powerup-theme' ); ?></a>
+            <?php endif; ?>
+
+            <?php for ( $page_number = 1; $page_number <= $total_review_pages; $page_number++ ) : ?>
+              <?php if ( $page_number === $current_review_page ) : ?>
+                <span class="powerup-amz-review-page-link is-current" aria-current="page"><?php echo esc_html( number_format_i18n( $page_number ) ); ?></span>
+              <?php else : ?>
+                <a class="powerup-amz-review-page-link" href="<?php echo esc_url( add_query_arg( array( 'review_page' => $page_number, 'reviews_per_page' => $reviews_per_page ), $reviews_base_url ) . '#reviews' ); ?>"><?php echo esc_html( number_format_i18n( $page_number ) ); ?></a>
+              <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ( $current_review_page < $total_review_pages ) : ?>
+              <a class="powerup-amz-review-page-link powerup-amz-review-page-link--next" href="<?php echo esc_url( add_query_arg( array( 'review_page' => $current_review_page + 1, 'reviews_per_page' => $reviews_per_page ), $reviews_base_url ) . '#reviews' ); ?>"><?php esc_html_e( 'Next', 'powerup-theme' ); ?></a>
+            <?php endif; ?>
           </nav>
         <?php endif; ?>
       <?php else : ?>

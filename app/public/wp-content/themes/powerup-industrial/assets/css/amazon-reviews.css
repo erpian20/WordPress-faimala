@@ -78,6 +78,48 @@
   list-style: none;
 }
 
+.powerup-amz-review-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid #e3e6e6;
+  border-radius: 10px;
+  background: #f8fafa;
+}
+
+.powerup-amz-review-range {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.powerup-amz-review-per-page {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.powerup-amz-review-per-page select {
+  width: auto;
+  min-width: 76px;
+  min-height: 36px;
+  border: 1px solid #a6a6a6;
+  border-radius: 8px;
+  padding: 0 30px 0 10px;
+  background-color: #fff;
+  color: #0f1111;
+  font-weight: 700;
+}
+
 .powerup-amz-review-item {
   margin: 0;
   padding: 0;
@@ -183,6 +225,44 @@
   font-size: 12px;
 }
 
+.powerup-amz-review-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 0;
+}
+
+.powerup-amz-review-page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #d5d9d9;
+  border-radius: 999px;
+  background: #fff;
+  color: #0f1111;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.powerup-amz-review-page-link:hover,
+.powerup-amz-review-page-link:focus,
+.powerup-amz-review-page-link.is-current {
+  border-color: #ff6b00;
+  background: #ff6b00;
+  color: #111827;
+}
+
+.powerup-amz-review-page-link--prev,
+.powerup-amz-review-page-link--next {
+  min-width: 86px;
+}
+
 .powerup-amz-review-form-wrap {
   margin-top: 18px;
   border-top: 1px solid #eaeded;
@@ -238,5 +318,49 @@
   .powerup-amz-reviews-grid {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .powerup-amz-review-toolbar {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .powerup-amz-review-range,
+  .powerup-amz-review-per-page {
+    font-size: 12px;
+  }
+
+  .powerup-amz-review-per-page {
+    flex: 0 0 auto;
+  }
+
+  .powerup-amz-review-per-page label {
+    max-width: 72px;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  .powerup-amz-review-per-page select {
+    min-width: 66px;
+    min-height: 34px;
+  }
+
+  .powerup-amz-review-pagination {
+    gap: 6px;
+  }
+
+  .powerup-amz-review-page-link {
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .powerup-amz-review-page-link--prev,
+  .powerup-amz-review-page-link--next {
+    min-width: 76px;
   }
 }
