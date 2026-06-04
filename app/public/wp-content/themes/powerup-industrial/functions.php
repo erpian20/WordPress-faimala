@@ -3349,6 +3349,14 @@ function powerup_theme_scripts() {
       $asset_version( 'assets/js/review-actions.js' ),
       true
     );
+    wp_localize_script(
+      'powerup-review-actions',
+      'powerupReviewActionsConfig',
+      array(
+        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+        'nonce'   => wp_create_nonce( 'powerup_review_helpful' ),
+      )
+    );
   }
   wp_enqueue_script( 'powerup-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), $asset_version( 'assets/js/navigation.js' ), true );
 
@@ -5755,8 +5763,9 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
         </div>
       <?php endif; ?>
 
+      <?php $helpful_count = max( 0, (int) get_comment_meta( $comment->comment_ID, 'powerup_review_helpful_count', true ) ); ?>
       <footer class="powerup-amz-review-actions">
-        <button type="button" class="powerup-amz-helpful-btn" data-review-id="<?php echo esc_attr( (string) $comment->comment_ID ); ?>"><?php esc_html_e( 'Helpful', 'powerup-theme' ); ?></button>
+        <button type="button" class="powerup-amz-helpful-btn" data-review-id="<?php echo esc_attr( (string) $comment->comment_ID ); ?>" data-helpful-count="<?php echo esc_attr( (string) $helpful_count ); ?>"><?php echo esc_html( powerup_theme_get_helpful_button_label( $helpful_count, false ) ); ?></button>
         <button type="button" class="powerup-amz-report" data-review-id="<?php echo esc_attr( (string) $comment->comment_ID ); ?>"><?php esc_html_e( 'Report', 'powerup-theme' ); ?></button>
         <span class="powerup-amz-review-action-status" role="status" aria-live="polite"></span>
       </footer>
@@ -5764,6 +5773,64 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
   </li>
   <?php
 }
+
+function powerup_theme_get_helpful_button_label( $count, $marked = false ) {
+  $count      = max( 0, (int) $count );
+  $base_label = $marked ? __( 'Marked helpful', 'powerup-theme' ) : __( 'Helpful', 'powerup-theme' );
+
+  if ( $count < 1 ) {
+    return $base_label;
+  }
+
+  return sprintf(
+    /* translators: 1: helpful label, 2: helpful count. */
+    __( '%1$s (%2$s)', 'powerup-theme' ),
+    $base_label,
+    number_format_i18n( $count )
+  );
+}
+
+function powerup_theme_is_public_product_review( $comment ) {
+  if ( ! $comment instanceof WP_Comment ) {
+    return false;
+  }
+
+  if ( '1' !== (string) $comment->comment_approved || 'review' !== (string) $comment->comment_type ) {
+    return false;
+  }
+
+  return 'product' === get_post_type( (int) $comment->comment_post_ID );
+}
+
+function powerup_theme_handle_review_helpful() {
+  check_ajax_referer( 'powerup_review_helpful', 'nonce' );
+
+  $comment_id = isset( $_POST['comment_id'] ) ? absint( wp_unslash( $_POST['comment_id'] ) ) : 0;
+  $comment    = $comment_id > 0 ? get_comment( $comment_id ) : null;
+
+  if ( ! powerup_theme_is_public_product_review( $comment ) ) {
+    wp_send_json_error(
+      array(
+        'message' => __( 'This review cannot be marked helpful.', 'powerup-theme' ),
+      ),
+      400
+    );
+  }
+
+  $count = max( 0, (int) get_comment_meta( $comment_id, 'powerup_review_helpful_count', true ) );
+  $count++;
+  update_comment_meta( $comment_id, 'powerup_review_helpful_count', $count );
+
+  wp_send_json_success(
+    array(
+      'count'       => $count,
+      'label'       => powerup_theme_get_helpful_button_label( $count, true ),
+      'publicLabel' => powerup_theme_get_helpful_button_label( $count, false ),
+    )
+  );
+}
+add_action( 'wp_ajax_powerup_review_helpful', 'powerup_theme_handle_review_helpful' );
+add_action( 'wp_ajax_nopriv_powerup_review_helpful', 'powerup_theme_handle_review_helpful' );
 
 function powerup_theme_render_marketplace_buttons_fallback() {
   if ( class_exists( 'PowerUp_B2C_Marketplace' ) ) {
