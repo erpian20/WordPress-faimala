@@ -1301,6 +1301,33 @@ function powerup_theme_render_product_schema_json_ld() {
         'returnMethod'         => 'https://schema.org/ReturnByMail',
         'returnFees'           => 'https://schema.org/FreeReturn',
       ),
+      'shippingDetails' => array(
+        '@type' => 'OfferShippingDetails',
+        'shippingDestination' => array(
+          '@type'          => 'DefinedRegion',
+          'addressCountry' => 'US',
+        ),
+        'shippingRate' => array(
+          '@type'    => 'MonetaryAmount',
+          'value'    => '0',
+          'currency' => get_woocommerce_currency(),
+        ),
+        'deliveryTime' => array(
+          '@type' => 'ShippingDeliveryTime',
+          'handlingTime' => array(
+            '@type'    => 'QuantitativeValue',
+            'minValue' => 0,
+            'maxValue' => 1,
+            'unitCode' => 'DAY',
+          ),
+          'transitTime' => array(
+            '@type'    => 'QuantitativeValue',
+            'minValue' => 2,
+            'maxValue' => 5,
+            'unitCode' => 'DAY',
+          ),
+        ),
+      ),
     );
 
     $schema['offers'] = $offers;
@@ -1324,7 +1351,68 @@ function powerup_theme_render_product_schema_json_ld() {
     );
   }
 
+  $schema_reviews = powerup_theme_get_product_schema_reviews( $product_id, 3 );
+  if ( ! empty( $schema_reviews ) ) {
+    $schema['review'] = $schema_reviews;
+  }
+
   echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+}
+
+function powerup_theme_get_product_schema_reviews( $product_id, $limit = 3 ) {
+  $product_id = (int) $product_id;
+  $limit      = max( 1, min( 5, (int) $limit ) );
+
+  if ( $product_id <= 0 ) {
+    return array();
+  }
+
+  $comments = get_comments(
+    array(
+      'post_id' => $product_id,
+      'status'  => 'approve',
+      'type'    => 'review',
+      'number'  => $limit,
+      'orderby' => 'comment_date_gmt',
+      'order'   => 'DESC',
+    )
+  );
+
+  $reviews = array();
+
+  foreach ( $comments as $comment ) {
+    if ( ! $comment instanceof WP_Comment ) {
+      continue;
+    }
+
+    $rating = (int) get_comment_meta( $comment->comment_ID, 'rating', true );
+    if ( $rating < 1 || $rating > 5 ) {
+      continue;
+    }
+
+    $body = wp_trim_words( wp_strip_all_tags( (string) $comment->comment_content ), 42, '...' );
+    if ( '' === trim( $body ) ) {
+      continue;
+    }
+
+    $reviews[] = array(
+      '@type'         => 'Review',
+      'author'        => array(
+        '@type' => 'Person',
+        'name'  => wp_strip_all_tags( (string) $comment->comment_author ),
+      ),
+      'datePublished' => mysql2date( 'Y-m-d', $comment->comment_date, false ),
+      'reviewBody'    => $body,
+      'reviewRating'  => array(
+        '@type'       => 'Rating',
+        'ratingValue' => (string) $rating,
+        'bestRating'  => '5',
+        'worstRating' => '1',
+      ),
+    );
+  }
+
+  return $reviews;
 }
 
 function powerup_theme_render_product_support_faq_schema_json_ld() {
@@ -6018,6 +6106,164 @@ function powerup_theme_render_pdp_shipping_guarantee() {
   echo '</section>';
 }
 add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_pdp_shipping_guarantee', 36 );
+
+function powerup_theme_get_product_decision_guide( $product ) {
+  if ( ! $product instanceof WC_Product ) {
+    return array();
+  }
+
+  $name        = strtolower( wp_strip_all_tags( $product->get_name() ) );
+  $description = strtolower( wp_strip_all_tags( $product->get_short_description() . ' ' . $product->get_description() ) );
+  $text        = $name . ' ' . $description . ' ' . strtolower( (string) $product->get_sku() );
+
+  $is_chain     = false !== strpos( $text, 'chain replacement' ) || false !== strpos( $text, 'replacement chain' );
+  $is_guide_bar = false !== strpos( $text, 'guide bar' ) || false !== strpos( $text, 'guide plate' );
+  $is_8_inch    = false !== strpos( $text, '8 inch' ) || false !== strpos( $text, '8-inch' );
+  $is_12_inch   = false !== strpos( $text, '12 inch' ) || false !== strpos( $text, '12-inch' );
+  $is_milwaukee = false !== strpos( $text, 'milwaukee' ) || false !== strpos( $text, 'm18' );
+  $is_dewalt    = false !== strpos( $text, 'dewalt' ) || false !== strpos( $text, '20v max' ) || false !== strpos( $text, '60v' );
+  $is_tool_only = false !== strpos( $text, 'tool only' ) || false !== strpos( $text, 'tool-only' );
+
+  if ( $is_chain ) {
+    return array(
+      'label' => __( 'Replacement chain buyer guide', 'powerup-theme' ),
+      'title' => __( 'Check chain fit before ordering', 'powerup-theme' ),
+      'intro' => __( 'This replacement chainsaw chain set is for shoppers maintaining compatible electric chainsaws. Confirm the bar length, pitch, and drive-link count before checkout.', 'powerup-theme' ),
+      'cards' => array(
+        array(
+          'heading' => __( 'Best for', 'powerup-theme' ),
+          'items'   => array(
+            __( 'Keeping spare chains ready for regular yard cleanup.', 'powerup-theme' ),
+            __( 'Replacing a dull or worn chain when cutting speed drops.', 'powerup-theme' ),
+          ),
+        ),
+        array(
+          'heading' => __( 'Confirm before buying', 'powerup-theme' ),
+          'items'   => array(
+            __( 'Match 12 inch bar length, 1/4 inch pitch, and 62 drive links.', 'powerup-theme' ),
+            __( 'Check your existing saw and guide bar specifications.', 'powerup-theme' ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  if ( $is_guide_bar ) {
+    $size_label = $is_8_inch ? '8 inch' : ( $is_12_inch ? '12 inch' : 'matching' );
+
+    return array(
+      'label' => __( 'Guide bar buyer guide', 'powerup-theme' ),
+      'title' => sprintf( __( 'Choose this %s guide bar for compatible saw maintenance', 'powerup-theme' ), $size_label ),
+      'intro' => __( 'This accessory is intended for shoppers replacing or keeping a spare guide bar for compatible compact electric chainsaws.', 'powerup-theme' ),
+      'cards' => array(
+        array(
+          'heading' => __( 'Best for', 'powerup-theme' ),
+          'items'   => array(
+            __( 'Replacing worn bars that cause drag, uneven cutting, or poor chain tracking.', 'powerup-theme' ),
+            __( 'Building a small maintenance kit with matching replacement chains.', 'powerup-theme' ),
+          ),
+        ),
+        array(
+          'heading' => __( 'Confirm before buying', 'powerup-theme' ),
+          'items'   => array(
+            __( 'Match the bar length and chain specification to your chainsaw.', 'powerup-theme' ),
+            __( 'This listing is for the guide bar only unless the product page states otherwise.', 'powerup-theme' ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  $platform = __( 'PowerUp battery system', 'powerup-theme' );
+  if ( $is_dewalt ) {
+    $platform = __( 'compatible DeWalt-style battery platform', 'powerup-theme' );
+  } elseif ( $is_milwaukee ) {
+    $platform = __( 'compatible Milwaukee M18-style battery platform', 'powerup-theme' );
+  }
+
+  $size_copy = $is_8_inch
+    ? __( 'compact 8 inch pruning and garden cleanup', 'powerup-theme' )
+    : __( '12 inch branch cutting, pruning, and light wood cleanup', 'powerup-theme' );
+
+  $package_copy = $is_tool_only
+    ? __( 'This is a tool-only path for buyers who already own a compatible battery and charger.', 'powerup-theme' )
+    : __( 'This kit path is designed for buyers who want a more complete ready-to-run setup.', 'powerup-theme' );
+
+  return array(
+    'label' => __( 'Cordless chainsaw buyer guide', 'powerup-theme' ),
+    'title' => __( 'Choose this model when the battery path and bar size fit your work', 'powerup-theme' ),
+    'intro' => sprintf(
+      /* translators: 1: size/use copy, 2: platform copy. */
+      __( 'This cordless chainsaw is positioned for %1$s, with a buying path built around the %2$s.', 'powerup-theme' ),
+      $size_copy,
+      $platform
+    ),
+    'cards' => array(
+      array(
+        'heading' => __( 'Best for', 'powerup-theme' ),
+        'items'   => array(
+          $is_8_inch ? __( 'Lighter pruning, small branches, and quick garden jobs.', 'powerup-theme' ) : __( 'Routine branch trimming, storm cleanup, and light firewood prep.', 'powerup-theme' ),
+          __( 'Homeowners who want cordless cutting without gas maintenance.', 'powerup-theme' ),
+        ),
+      ),
+      array(
+        'heading' => __( 'Battery path', 'powerup-theme' ),
+        'items'   => array(
+          $package_copy,
+          __( 'Compatibility describes battery fit only and does not imply affiliation with another brand.', 'powerup-theme' ),
+        ),
+      ),
+      array(
+        'heading' => __( 'Before checkout', 'powerup-theme' ),
+        'items'   => array(
+          __( 'Review the package contents so you know whether battery and charger are included.', 'powerup-theme' ),
+          __( 'Confirm guide bar size and maintenance accessories for future replacement needs.', 'powerup-theme' ),
+        ),
+      ),
+    ),
+  );
+}
+
+function powerup_theme_render_pdp_decision_guide() {
+  if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+    return;
+  }
+
+  global $product;
+  if ( ! $product instanceof WC_Product ) {
+    return;
+  }
+
+  $guide = powerup_theme_get_product_decision_guide( $product );
+  if ( empty( $guide['cards'] ) ) {
+    return;
+  }
+
+  echo '<section class="powerup-pdp-decision-guide" aria-label="' . esc_attr__( 'Product buying guide', 'powerup-theme' ) . '">';
+  echo '<span class="powerup-pdp-decision-guide__label">' . esc_html( $guide['label'] ) . '</span>';
+  echo '<h2>' . esc_html( $guide['title'] ) . '</h2>';
+  echo '<p>' . esc_html( $guide['intro'] ) . '</p>';
+  echo '<div class="powerup-pdp-decision-guide__grid">';
+
+  foreach ( $guide['cards'] as $card ) {
+    echo '<article class="powerup-pdp-decision-guide__card">';
+    echo '<h3>' . esc_html( $card['heading'] ) . '</h3>';
+    echo '<ul>';
+    foreach ( $card['items'] as $item ) {
+      echo '<li>' . esc_html( $item ) . '</li>';
+    }
+    echo '</ul>';
+    echo '</article>';
+  }
+
+  echo '</div>';
+  echo '<div class="powerup-pdp-decision-guide__links">';
+  echo '<a href="' . esc_url( powerup_theme_get_battery_compatibility_page_url() ) . '">' . esc_html__( 'Compare battery paths', 'powerup-theme' ) . '</a>';
+  echo '<a href="' . esc_url( powerup_theme_get_reference_series_page_url() ) . '">' . esc_html__( 'Open chainsaw selector', 'powerup-theme' ) . '</a>';
+  echo '</div>';
+  echo '</section>';
+}
+add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_pdp_decision_guide', 37 );
 
 function powerup_theme_render_pdp_tier_pricing() {
   if ( ! function_exists( 'is_product' ) || ! is_product() ) {

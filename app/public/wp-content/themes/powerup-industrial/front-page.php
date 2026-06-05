@@ -12,18 +12,44 @@ $wrench_url   = function_exists( 'powerup_get_product_url' ) ? powerup_get_produ
 $shop_url     = function_exists( 'powerup_theme_get_shop_url' ) ? powerup_theme_get_shop_url() : home_url( '/shop/' );
 $series_url   = function_exists( 'powerup_theme_get_reference_series_page_url' ) ? powerup_theme_get_reference_series_page_url() : home_url( '/chainsaw-series/' );
 $placeholder_image_url = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
-$home_recent_reviews = class_exists( 'WooCommerce' )
-  ? get_comments(
+$home_recent_reviews = array();
+
+if ( class_exists( 'WooCommerce' ) ) {
+  $home_review_product_groups = array(
+    array( '12-inch-20v-cordless-electric-chainsaw-kit-b0ffgspwws' ),
     array(
-      'status'    => 'approve',
-      'type'      => 'review',
-      'number'    => 3,
-      'post_type' => 'product',
-      'orderby'   => 'comment_date_gmt',
-      'order'     => 'DESC',
-    )
-  )
-  : array();
+      '8-inch-brushless-chainsaw-kit-for-dewalt-20v-max-battery-b0ggtkhn4g',
+      '8-inch-brushless-chainsaw-kit-for-milwaukee-m18-battery-b0ggtdwrnn',
+    ),
+    array( '12-inch-chainsaw-chain-replacement-2-pack-b0fqnycrh2' ),
+  );
+
+  foreach ( $home_review_product_groups as $home_review_product_slugs ) {
+    foreach ( $home_review_product_slugs as $home_review_product_slug ) {
+      $home_review_product_post = get_page_by_path( $home_review_product_slug, OBJECT, 'product' );
+
+      if ( ! $home_review_product_post instanceof WP_Post ) {
+        continue;
+      }
+
+      $home_product_reviews = get_comments(
+        array(
+          'status'  => 'approve',
+          'type'    => 'review',
+          'number'  => 1,
+          'post_id' => (int) $home_review_product_post->ID,
+          'orderby' => 'comment_date_gmt',
+          'order'   => 'DESC',
+        )
+      );
+
+      if ( ! empty( $home_product_reviews ) ) {
+        $home_recent_reviews[] = $home_product_reviews[0];
+        break;
+      }
+    }
+  }
+}
 
 $home_series_items = function_exists( 'powerup_theme_get_reference_series_nav_items' ) ? powerup_theme_get_reference_series_nav_items() : array();
 $home_series_slugs = function_exists( 'powerup_theme_get_reference_series_product_slugs' ) ? powerup_theme_get_reference_series_product_slugs() : array();
