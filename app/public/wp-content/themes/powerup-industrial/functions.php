@@ -3916,6 +3916,59 @@ function powerup_theme_get_product_marketplace_links( $product_id ) {
   return $links;
 }
 
+function powerup_theme_get_product_amazon_purchase_url( $product ) {
+  if ( ! $product instanceof WC_Product ) {
+    return home_url( '/shop/' );
+  }
+
+  $marketplace_links = powerup_theme_get_product_marketplace_links( (int) $product->get_id() );
+  foreach ( $marketplace_links as $marketplace_link ) {
+    if ( isset( $marketplace_link['platform'] ) && 'amazon' === $marketplace_link['platform'] && ! empty( $marketplace_link['url'] ) ) {
+      return (string) $marketplace_link['url'];
+    }
+  }
+
+  $amazon_url = get_post_meta( (int) $product->get_id(), '_powerup_amazon_url', true );
+  if ( is_string( $amazon_url ) && '' !== trim( $amazon_url ) ) {
+    return trim( $amazon_url );
+  }
+
+  $query = rawurlencode( preg_replace( '/\s+/', ' ', trim( wp_strip_all_tags( $product->get_name() ) ) ) );
+  return 'https://www.amazon.com/s?k=' . $query;
+}
+
+function powerup_theme_get_whatsapp_chat_url( $message = '' ) {
+  $whatsapp_number = (string) powerup_theme_get_config_value( 'contact.whatsapp_number', '' );
+  $whatsapp_digits = preg_replace( '/\D+/', '', $whatsapp_number );
+
+  if ( '' === $whatsapp_digits ) {
+    return home_url( '/contact-us/' );
+  }
+
+  $url = 'https://wa.me/' . $whatsapp_digits;
+  if ( '' !== trim( (string) $message ) ) {
+    $url = add_query_arg( 'text', (string) $message, $url );
+  }
+
+  return $url;
+}
+
+function powerup_theme_get_support_mailto_url( $subject = 'PowerUp Support Request' ) {
+  $support_emails = powerup_theme_get_support_email_recipients();
+  $primary_email  = ! empty( $support_emails ) ? (string) $support_emails[0] : 'randian5757@gmail.com';
+  $cc_emails      = array_slice( $support_emails, 1 );
+
+  $args = array(
+    'subject' => (string) $subject,
+  );
+
+  if ( ! empty( $cc_emails ) ) {
+    $args['cc'] = implode( ',', array_map( 'sanitize_email', $cc_emails ) );
+  }
+
+  return 'mailto:' . sanitize_email( $primary_email ) . '?' . http_build_query( $args, '', '&', PHP_QUERY_RFC3986 );
+}
+
 function powerup_theme_add_marketplace_meta_box() {
   add_meta_box(
     'powerup-marketplace-links',
@@ -5964,6 +6017,36 @@ function powerup_theme_render_marketplace_buttons_fallback() {
   echo '</div>';
 }
 add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_marketplace_buttons_fallback', 31 );
+
+function powerup_theme_render_out_of_stock_availability_card() {
+  if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+    return;
+  }
+
+  global $product;
+  if ( ! $product instanceof WC_Product || $product->is_in_stock() ) {
+    return;
+  }
+
+  $product_name = trim( wp_strip_all_tags( $product->get_name() ) );
+  $message      = sprintf(
+    'Hi, I would like to check availability for %s.',
+    '' !== $product_name ? $product_name : 'this PowerUp product'
+  );
+  ?>
+  <section class="powerup-stock-card" aria-label="<?php esc_attr_e( 'Product availability', 'powerup-theme' ); ?>">
+    <span class="powerup-stock-card__status"><?php esc_html_e( 'Temporarily out of stock', 'powerup-theme' ); ?></span>
+    <h3><?php esc_html_e( 'Contact for Availability', 'powerup-theme' ); ?></h3>
+    <p><?php esc_html_e( 'This product is not available for direct checkout right now. You can still check Amazon or contact support to confirm availability and buying options.', 'powerup-theme' ); ?></p>
+    <div class="powerup-stock-card__actions">
+      <a class="powerup-stock-card__btn powerup-stock-card__btn--amazon" href="<?php echo esc_url( powerup_theme_get_product_amazon_purchase_url( $product ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Shop on Amazon', 'powerup-theme' ); ?></a>
+      <a class="powerup-stock-card__btn" href="<?php echo esc_url( powerup_theme_get_whatsapp_chat_url( $message ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'powerup-theme' ); ?></a>
+      <a class="powerup-stock-card__link" href="<?php echo esc_url( powerup_theme_get_support_mailto_url( 'PowerUp availability question' ) ); ?>"><?php esc_html_e( 'Email Support', 'powerup-theme' ); ?></a>
+    </div>
+  </section>
+  <?php
+}
+add_action( 'woocommerce_single_product_summary', 'powerup_theme_render_out_of_stock_availability_card', 30 );
 
 function powerup_theme_use_custom_single_product_rating() {
   if ( ! function_exists( 'is_product' ) || ! is_product() ) {

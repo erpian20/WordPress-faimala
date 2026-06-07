@@ -1657,6 +1657,18 @@ button, input, textarea {
   line-height: 1.2;
 }
 
+.blog-ref-feature-link {
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.blog-ref-feature-link:hover,
+.blog-ref-feature-link:focus-visible {
+  background: #ffffff;
+  color: #1f2937;
+  transform: translateY(-1px);
+}
+
 .blog-ref-feature-icon {
   width: 1.12rem;
   height: 1.12rem;
@@ -1684,6 +1696,18 @@ button, input, textarea {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0.01em;
+}
+
+.blog-ref-feature-copy {
+  display: grid;
+  gap: 0.14rem;
+}
+
+.blog-ref-feature-copy > span:last-child {
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .blog-ref-feature-item:last-child {
@@ -1921,6 +1945,23 @@ button, input, textarea {
   padding: 0.78rem 0.82rem 0.94rem;
 }
 
+.blog-ref-category-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 0.45rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid #f0c08c;
+  border-radius: 999px;
+  background: #fff7ea;
+  color: #9a4b0d;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
 .blog-ref-card-copy h3,
 .blog-ref-card-copy h4 {
   margin: 0 0 0.5rem;
@@ -2008,16 +2049,42 @@ button, input, textarea {
 }
 
 .blog-ref-cat-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   border-bottom: 1px solid #efefef;
-  padding: 0.2rem 0;
+  padding: 0;
+}
+
+.blog-ref-cat-list a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.28rem 0.5rem;
+  padding: 0.55rem 0;
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.blog-ref-cat-list a:hover strong,
+.blog-ref-cat-list a:focus-visible strong {
+  color: #c45b09;
 }
 
 .blog-ref-cat-list li span {
+  grid-row: span 2;
+  margin-top: 0.08rem;
   color: #6b6b6b;
   font-size: 0.75rem;
+}
+
+.blog-ref-cat-list strong {
+  color: #2f3440;
+  font-size: 0.92rem;
+  line-height: 1.18;
+}
+
+.blog-ref-cat-list em {
+  color: #6b7280;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  font-style: normal;
 }
 
 .blog-ref-tags {
@@ -2191,6 +2258,7 @@ button, input, textarea {
   .blog-ref-feature-item {
     min-height: 58px;
     font-size: 0.94rem;
+    justify-content: flex-start;
   }
 
   .blog-ref-feature-label {
@@ -3541,6 +3609,7 @@ button, input, textarea {
 .shop-ref-product-image {
   display: block;
   background: #f4f4f4;
+  position: relative;
 }
 
 .shop-ref-product-image img {
@@ -3549,6 +3618,26 @@ button, input, textarea {
   object-fit: contain;
   background: #f4f4f4;
   padding: 0.5rem;
+}
+
+.shop-ref-stock-badge {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.55rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100% - 1.1rem);
+  padding: 0.24rem 0.48rem;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
 .shop-ref-product-copy {
@@ -5721,6 +5810,85 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   background: #fff;
+}
+
+.single-product div.product.outofstock form.cart,
+.single-product div.product.product-type-simple.outofstock form.cart {
+  display: none;
+}
+
+.single-product .powerup-stock-card {
+  margin: 0.85rem 0 0.75rem;
+  padding: 0.95rem;
+  border: 1px solid #f0d8c4;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff7ea 0%, #ffffff 100%);
+  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.08);
+}
+
+.single-product .powerup-stock-card__status {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 0.45rem;
+  padding: 0.22rem 0.58rem;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.single-product .powerup-stock-card h3 {
+  margin: 0 0 0.35rem;
+  color: #111827;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  line-height: 1.12;
+}
+
+.single-product .powerup-stock-card p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.single-product .powerup-stock-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.single-product .powerup-stock-card__btn,
+.single-product .powerup-stock-card__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.single-product .powerup-stock-card__btn {
+  background: #111827;
+  color: #ffffff;
+}
+
+.single-product .powerup-stock-card__btn--amazon {
+  background: #ff6a00;
+  color: #111827;
+}
+
+.single-product .powerup-stock-card__link {
+  border: 1px solid rgba(17, 24, 39, 0.18);
+  background: #ffffff;
+  color: #1f2937;
 }
 
 .single-product .powerup-marketplace-title {

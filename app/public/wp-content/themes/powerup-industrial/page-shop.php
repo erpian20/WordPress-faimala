@@ -376,6 +376,7 @@ $price_ranges = array(
                 : wp_trim_words( get_the_excerpt(), 20, '...' );
               $average      = $product instanceof WC_Product ? (float) $product->get_average_rating() : 0.0;
               $review_count = $product instanceof WC_Product ? (int) $product->get_review_count() : 0;
+              $is_in_stock  = $product instanceof WC_Product ? $product->is_in_stock() : true;
               $rating_label = $review_count > 0 ? sprintf(
                 /* translators: 1: rating, 2: review count. */
                 __( '%1$s out of 5 from %2$s reviews', 'powerup-theme' ),
@@ -385,6 +386,9 @@ $price_ranges = array(
               ?>
               <article class="shop-ref-product-card">
                 <a class="shop-ref-product-image" href="<?php the_permalink(); ?>">
+                  <?php if ( ! $is_in_stock ) : ?>
+                    <span class="shop-ref-stock-badge"><?php esc_html_e( 'Temporarily out of stock', 'powerup-theme' ); ?></span>
+                  <?php endif; ?>
                   <img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" loading="lazy">
                 </a>
                 <div class="shop-ref-product-copy">
@@ -398,7 +402,7 @@ $price_ranges = array(
                   </div>
                   <p><?php echo esc_html( $excerpt ); ?></p>
                   <div class="shop-ref-actions">
-                    <a class="shop-ref-read-btn" href="<?php the_permalink(); ?>"><?php esc_html_e( 'View Details', 'powerup-theme' ); ?></a>
+                    <a class="shop-ref-read-btn" href="<?php the_permalink(); ?>"><?php echo esc_html( $is_in_stock ? __( 'View Details', 'powerup-theme' ) : __( 'Check Availability', 'powerup-theme' ) ); ?></a>
                     <a class="shop-ref-secondary-btn" href="<?php echo esc_url( $shop_base_url ); ?>#shop-categories"><?php esc_html_e( 'Browse Categories', 'powerup-theme' ); ?></a>
                   </div>
                 </div>

@@ -14,6 +14,32 @@ if ( file_exists( $hero_image_path ) ) {
 $fallback_image  = get_template_directory_uri() . '/assets/images/product-placeholder.svg';
 $fallback_images = array_fill( 0, 8, $fallback_image );
 $blog_is_draft   = false;
+$blog_guide_links = array(
+  array(
+    'label'       => __( 'Battery Guide', 'powerup-theme' ),
+    'title'       => __( 'Battery compatibility', 'powerup-theme' ),
+    'description' => __( 'Compare complete kits and battery-compatible tool-only paths.', 'powerup-theme' ),
+    'url'         => home_url( '/battery-compatibility/' ),
+  ),
+  array(
+    'label'       => __( 'Buying Guide', 'powerup-theme' ),
+    'title'       => __( 'Choose the right chainsaw', 'powerup-theme' ),
+    'description' => __( 'Review bar size, package contents, and common yard-work use cases.', 'powerup-theme' ),
+    'url'         => home_url( '/cordless-chainsaw-battery-compatibility-guide/' ),
+  ),
+  array(
+    'label'       => __( 'Maintenance', 'powerup-theme' ),
+    'title'       => __( 'Care and setup tips', 'powerup-theme' ),
+    'description' => __( 'Find practical guidance for chain care, oiling, and routine use.', 'powerup-theme' ),
+    'url'         => add_query_arg( 's', rawurlencode( 'maintenance chainsaw' ), home_url( '/' ) ),
+  ),
+  array(
+    'label'       => __( 'Accessories', 'powerup-theme' ),
+    'title'       => __( 'Guide bars and chains', 'powerup-theme' ),
+    'description' => __( 'Compare replacement chains and guide bars for ongoing upkeep.', 'powerup-theme' ),
+    'url'         => add_query_arg( 'pcat', array( 'chainsaw-guide-bar', 'chainsaw-chain' ), home_url( '/shop/' ) ),
+  ),
+);
 
 $featured_guide_post = function_exists( 'powerup_theme_get_featured_blog_guide_post' ) ? powerup_theme_get_featured_blog_guide_post() : null;
 $featured_guide_id   = $featured_guide_post instanceof WP_Post ? (int) $featured_guide_post->ID : 0;
@@ -40,13 +66,24 @@ if ($blog_query->have_posts()) {
     $blog_query->the_post();
     $reading_data = function_exists( 'powerup_theme_get_post_reading_time_data' ) ? powerup_theme_get_post_reading_time_data( get_the_ID() ) : array();
     $thumb_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
+    if ( ! $thumb_url ) {
+      $cover_url = get_post_meta( get_the_ID(), '_powerup_cover_image_url', true );
+      $thumb_url = is_string( $cover_url ) ? trim( $cover_url ) : '';
+    }
+    $primary_category = null;
+    $post_categories  = get_the_category( get_the_ID() );
+    if ( ! empty( $post_categories ) && $post_categories[0] instanceof WP_Term ) {
+      $primary_category = $post_categories[0];
+    }
     $posts_data[] = array(
-      'title'   => get_the_title(),
-      'excerpt' => wp_trim_words(get_the_excerpt(), 18, '...'),
-      'url'     => get_permalink(),
-      'image'   => $thumb_url ? $thumb_url : $fallback_images[$image_index % count($fallback_images)],
-      'date'    => powerup_theme_format_english_post_date( get_the_ID() ),
-      'reading' => isset( $reading_data['label'] ) ? (string) $reading_data['label'] : __( '1 min read', 'powerup-theme' ),
+      'title'        => get_the_title(),
+      'excerpt'      => wp_trim_words(get_the_excerpt(), 18, '...'),
+      'url'          => get_permalink(),
+      'image'        => $thumb_url ? $thumb_url : $fallback_images[$image_index % count($fallback_images)],
+      'date'         => powerup_theme_format_english_post_date( get_the_ID() ),
+      'reading'      => isset( $reading_data['label'] ) ? (string) $reading_data['label'] : __( '1 min read', 'powerup-theme' ),
+      'category'     => $primary_category instanceof WP_Term ? (string) $primary_category->name : __( 'Guide', 'powerup-theme' ),
+      'category_url' => $primary_category instanceof WP_Term ? get_category_link( $primary_category ) : home_url( '/blog/' ),
     );
     $image_index++;
   }
@@ -74,10 +111,25 @@ if ( $blog_is_draft ) {
   </section>
 
   <section class="blog-ref-feature-strip">
-    <div class="blog-ref-feature-item"><span class="blog-ref-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="1.5"></rect><path d="M22 10v4"></path><path d="M6 10h4"></path></svg></span><span class="blog-ref-feature-label"><?php esc_html_e('Battery Fit', 'powerup-theme'); ?></span></div>
-    <div class="blog-ref-feature-item"><span class="blog-ref-feature-icon" aria-hidden="true">⚙</span><span class="blog-ref-feature-label"><?php esc_html_e('Maintenance Tips', 'powerup-theme'); ?></span></div>
-    <div class="blog-ref-feature-item"><span class="blog-ref-feature-icon" aria-hidden="true">⨂</span><span class="blog-ref-feature-label"><?php esc_html_e('Replacement Parts', 'powerup-theme'); ?></span></div>
-    <div class="blog-ref-feature-item"><span class="blog-ref-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"></path><path d="M9.5 12l1.8 1.8L14.8 10"></path></svg></span><span class="blog-ref-feature-label"><?php esc_html_e('Safer Operation', 'powerup-theme'); ?></span></div>
+    <?php foreach ( $blog_guide_links as $index => $guide_link ) : ?>
+      <a class="blog-ref-feature-item blog-ref-feature-link" href="<?php echo esc_url( $guide_link['url'] ); ?>">
+        <span class="blog-ref-feature-icon" aria-hidden="true">
+          <?php if ( 0 === $index ) : ?>
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="10" rx="1.5"></rect><path d="M22 10v4"></path><path d="M6 10h4"></path></svg>
+          <?php elseif ( 1 === $index ) : ?>
+            <svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M7 12h10"></path><path d="M10 17h4"></path></svg>
+          <?php elseif ( 2 === $index ) : ?>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a8 8 0 000-6"></path><path d="M4.6 9a8 8 0 000 6"></path></svg>
+          <?php else : ?>
+            <svg viewBox="0 0 24 24"><path d="M5 7h14"></path><path d="M7 7l1 12h8l1-12"></path><path d="M9 11h6"></path></svg>
+          <?php endif; ?>
+        </span>
+        <span class="blog-ref-feature-copy">
+          <span class="blog-ref-feature-label"><?php echo esc_html( $guide_link['label'] ); ?></span>
+          <span><?php echo esc_html( $guide_link['title'] ); ?></span>
+        </span>
+      </a>
+    <?php endforeach; ?>
   </section>
 
   <section class="blog-ref-content">
@@ -148,6 +200,7 @@ if ( $blog_is_draft ) {
               <img src="<?php echo esc_url($posts_data[0]['image']); ?>" alt="<?php echo esc_attr($posts_data[0]['title']); ?>" loading="lazy" decoding="async">
             </a>
             <div class="blog-ref-card-copy">
+              <a class="blog-ref-category-chip" href="<?php echo esc_url($posts_data[0]['category_url']); ?>"><?php echo esc_html($posts_data[0]['category']); ?></a>
               <h3><a href="<?php echo esc_url($posts_data[0]['url']); ?>"><?php echo esc_html($posts_data[0]['title']); ?></a></h3>
               <p><?php echo esc_html($posts_data[0]['excerpt']); ?></p>
               <div class="blog-ref-card-meta">
@@ -164,6 +217,7 @@ if ( $blog_is_draft ) {
                   <img src="<?php echo esc_url($posts_data[$i]['image']); ?>" alt="<?php echo esc_attr($posts_data[$i]['title']); ?>" loading="lazy" decoding="async">
                 </a>
                 <div class="blog-ref-card-copy">
+                  <a class="blog-ref-category-chip" href="<?php echo esc_url($posts_data[$i]['category_url']); ?>"><?php echo esc_html($posts_data[$i]['category']); ?></a>
                   <h4><a href="<?php echo esc_url($posts_data[$i]['url']); ?>"><?php echo esc_html($posts_data[$i]['title']); ?></a></h4>
                   <div class="blog-ref-card-meta">
                     <a class="blog-ref-read-btn" href="<?php echo esc_url($posts_data[$i]['url']); ?>"><?php esc_html_e('Read More', 'powerup-theme'); ?></a>
@@ -182,6 +236,7 @@ if ( $blog_is_draft ) {
                 <img src="<?php echo esc_url($posts_data[$i]['image']); ?>" alt="<?php echo esc_attr($posts_data[$i]['title']); ?>" loading="lazy" decoding="async">
               </a>
               <div class="blog-ref-card-copy">
+                <a class="blog-ref-category-chip" href="<?php echo esc_url($posts_data[$i]['category_url']); ?>"><?php echo esc_html($posts_data[$i]['category']); ?></a>
                 <h3><a href="<?php echo esc_url($posts_data[$i]['url']); ?>"><?php echo esc_html($posts_data[$i]['title']); ?></a></h3>
                 <p><?php echo esc_html($posts_data[$i]['excerpt']); ?></p>
                 <div class="blog-ref-card-meta">
@@ -202,10 +257,15 @@ if ( $blog_is_draft ) {
             <input type="search" placeholder="<?php esc_attr_e('Search', 'powerup-theme'); ?>" name="s" value="">
           </form>
           <ul class="blog-ref-cat-list">
-            <li><span>▸</span><?php esc_html_e('Cordless Chainsaw Guides', 'powerup-theme'); ?></li>
-            <li><span>▸</span><?php esc_html_e('Battery Maintenance', 'powerup-theme'); ?></li>
-            <li><span>▸</span><?php esc_html_e('Product Comparisons', 'powerup-theme'); ?></li>
-            <li><span>▸</span><?php esc_html_e('DIY & Landscaping Tips', 'powerup-theme'); ?></li>
+            <?php foreach ( $blog_guide_links as $guide_link ) : ?>
+              <li>
+                <a href="<?php echo esc_url( $guide_link['url'] ); ?>">
+                  <span>▸</span>
+                  <strong><?php echo esc_html( $guide_link['label'] ); ?></strong>
+                  <em><?php echo esc_html( $guide_link['description'] ); ?></em>
+                </a>
+              </li>
+            <?php endforeach; ?>
           </ul>
           <h4><?php esc_html_e('POPULAR TAGS', 'powerup-theme'); ?></h4>
           <p class="blog-ref-tags"><?php esc_html_e('cordless chainsaw, replacement chain, guide bar, battery compatibility, maintenance', 'powerup-theme'); ?></p>
