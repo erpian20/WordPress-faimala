@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PowerUp WooCommerce Readability Fix
  * Description: Improves text contrast for WooCommerce cart, checkout, and account pages.
- * Version: 2026.05.31.3
+ * Version: 2026.06.08.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -50,6 +50,37 @@ function powerup_checkout_readability_fix_output() {
 		.woocommerce-cart .wc-block-cart-item__remove-link,
 		.woocommerce-cart .wc-block-components-totals-item__description {
 			color: #4b5563;
+		}
+
+		.woocommerce-cart .wc-block-cart-item__image {
+			width: 112px;
+			min-width: 112px;
+			padding-right: 1rem;
+			vertical-align: top;
+		}
+
+		.woocommerce-cart .wc-block-cart-item__image a {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 96px;
+			height: 96px;
+			padding: 5px;
+			background: #ffffff;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			overflow: hidden;
+		}
+
+		.woocommerce-cart .wc-block-cart-item__image img {
+			display: block;
+			width: 100% !important;
+			height: 100% !important;
+			max-width: 100% !important;
+			max-height: 100% !important;
+			object-fit: contain !important;
+			object-position: center center !important;
+			border-radius: 0;
 		}
 
 		.woocommerce-cart .wc-block-components-button.wc-block-cart__submit-button {
@@ -178,10 +209,58 @@ function powerup_checkout_readability_fix_output() {
 				flex: 1 1 100%;
 			}
 		}
+
+		@media (max-width: 700px) {
+			.woocommerce-cart .wc-block-cart-item__image {
+				width: 92px;
+				min-width: 92px;
+				padding-right: 0.75rem;
+			}
+
+			.woocommerce-cart .wc-block-cart-item__image a {
+				width: 78px;
+				height: 78px;
+				padding: 4px;
+			}
+		}
 	</style>
 	<?php
 }
 add_action( 'wp_head', 'powerup_checkout_readability_fix_output', 35 );
+
+function powerup_cart_block_use_uncropped_item_images( $product_images ) {
+	if ( ! is_array( $product_images ) ) {
+		return $product_images;
+	}
+
+	foreach ( $product_images as $image ) {
+		if ( ! is_object( $image ) || empty( $image->id ) ) {
+			continue;
+		}
+
+		$attachment_id = (int) $image->id;
+		$display_image = wp_get_attachment_image_src( $attachment_id, 'medium_large' );
+
+		if ( ! is_array( $display_image ) || empty( $display_image[0] ) ) {
+			$display_image = wp_get_attachment_image_src( $attachment_id, 'large' );
+		}
+
+		if ( ! is_array( $display_image ) || empty( $display_image[0] ) ) {
+			$display_image = wp_get_attachment_image_src( $attachment_id, 'full' );
+		}
+
+		if ( ! is_array( $display_image ) || empty( $display_image[0] ) ) {
+			continue;
+		}
+
+		$image->thumbnail        = $display_image[0];
+		$image->thumbnail_srcset = (string) wp_get_attachment_image_srcset( $attachment_id, 'medium_large' );
+		$image->thumbnail_sizes  = '96px';
+	}
+
+	return $product_images;
+}
+add_filter( 'woocommerce_store_api_cart_item_images', 'powerup_cart_block_use_uncropped_item_images', 20 );
 
 function powerup_checkout_payment_pending_notice_output() {
 	if ( ! is_checkout() || ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) ) {
