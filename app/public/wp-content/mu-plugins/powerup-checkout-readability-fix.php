@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PowerUp WooCommerce Readability Fix
  * Description: Improves text contrast for WooCommerce cart, checkout, and account pages.
- * Version: 2026.06.08.1
+ * Version: 2026.06.08.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -320,3 +320,64 @@ function powerup_checkout_payment_pending_notice_output() {
 	<?php
 }
 add_action( 'wp_footer', 'powerup_checkout_payment_pending_notice_output', 30 );
+
+function powerup_is_frontend_cart_request() {
+	if ( is_admin() || ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) ) {
+		return false;
+	}
+
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return false;
+	}
+
+	return true;
+}
+
+function powerup_cart_post_needs_clean_redirect() {
+	if ( ! powerup_is_frontend_cart_request() ) {
+		return false;
+	}
+
+	if ( 'POST' !== strtoupper( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		return false;
+	}
+
+	$cart_post_keys = array(
+		'apply_coupon',
+		'coupon_code',
+		'update_cart',
+		'woocommerce-cart-nonce',
+		'cart',
+	);
+
+	foreach ( $cart_post_keys as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function powerup_redirect_clean_cart_after_cart_post() {
+	if ( ! function_exists( 'is_cart' ) || ! is_cart() || ! powerup_cart_post_needs_clean_redirect() ) {
+		return;
+	}
+
+	wp_safe_redirect( function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/cart/' ) );
+	exit;
+}
+add_action( 'template_redirect', 'powerup_redirect_clean_cart_after_cart_post', 99 );
+
+function powerup_redirect_add_to_cart_to_clean_cart( $url ) {
+	if ( ! powerup_is_frontend_cart_request() ) {
+		return $url;
+	}
+
+	if ( 'POST' !== strtoupper( $_SERVER['REQUEST_METHOD'] ?? '' ) || empty( $_REQUEST['add-to-cart'] ) ) {
+		return $url;
+	}
+
+	return function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/cart/' );
+}
+add_filter( 'woocommerce_add_to_cart_redirect', 'powerup_redirect_add_to_cart_to_clean_cart', 20 );
