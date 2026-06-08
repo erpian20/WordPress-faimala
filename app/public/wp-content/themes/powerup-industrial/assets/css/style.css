@@ -5048,12 +5048,48 @@ body.page-template-page-contact .site-footer .footer-support-qr-wrap {
 .woocommerce .woocommerce-message,
 .woocommerce .woocommerce-error,
 .woocommerce .woocommerce-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
   border-radius: var(--radius);
   background: rgba(255,106,0,.12);
   color: var(--text-light);
   border: 1px solid rgba(255,106,0,.18);
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.25rem 1rem 3.4rem;
   margin-bottom: 1.5rem;
+}
+
+.woocommerce .woocommerce-message::before,
+.woocommerce .woocommerce-error::before,
+.woocommerce .woocommerce-info::before {
+  top: 50%;
+  left: 1.2rem;
+  transform: translateY(-50%);
+}
+
+.woocommerce .woocommerce-message .button,
+.woocommerce .woocommerce-error .button,
+.woocommerce .woocommerce-info .button {
+  float: none;
+  align-self: center;
+  margin: 0 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .woocommerce .woocommerce-message,
+  .woocommerce .woocommerce-error,
+  .woocommerce .woocommerce-info {
+    flex-wrap: wrap;
+    padding: .95rem 1rem .95rem 3rem;
+  }
+
+  .woocommerce .woocommerce-message .button,
+  .woocommerce .woocommerce-error .button,
+  .woocommerce .woocommerce-info .button {
+    margin: .65rem 0 0;
+  }
 }
 
 .woocommerce table.shop_table,
