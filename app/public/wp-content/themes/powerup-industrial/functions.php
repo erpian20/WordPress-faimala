@@ -5809,6 +5809,17 @@ function powerup_theme_build_amazon_review_title( $comment_content ) {
   return wp_html_excerpt( $title, 72, '...' );
 }
 
+function powerup_theme_get_amazon_review_title( $comment ) {
+  $comment_id = isset( $comment->comment_ID ) ? (int) $comment->comment_ID : 0;
+  $meta_title = $comment_id ? trim( (string) get_comment_meta( $comment_id, 'powerup_review_title', true ) ) : '';
+
+  if ( '' !== $meta_title ) {
+    return wp_html_excerpt( wp_strip_all_tags( $meta_title ), 72, '...' );
+  }
+
+  return powerup_theme_build_amazon_review_title( $comment->comment_content ?? '' );
+}
+
 function powerup_theme_render_star_icons( $rating ) {
   $rating = max( 0, min( 5, (int) $rating ) );
   $icons  = '';
@@ -5841,7 +5852,7 @@ function powerup_theme_amazon_review_callback( $comment, $args, $depth ) {
   $review_images  = powerup_theme_get_review_image_ids( $comment->comment_ID );
   $review_video   = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_url', true );
   $review_video_mime = (string) get_comment_meta( $comment->comment_ID, 'powerup_review_video_mime', true );
-  $review_title   = powerup_theme_build_amazon_review_title( $comment->comment_content );
+  $review_title   = powerup_theme_get_amazon_review_title( $comment );
   $initial = function_exists( 'mb_substr' ) ? mb_substr( $comment->comment_author, 0, 1 ) : substr( $comment->comment_author, 0, 1 );
   ?>
   <li <?php comment_class( 'powerup-amz-review-item' ); ?> id="li-comment-<?php comment_ID(); ?>">

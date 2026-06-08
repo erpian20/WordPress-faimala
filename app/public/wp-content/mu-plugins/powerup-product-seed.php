@@ -116,7 +116,7 @@ function powerup_seed_launch_reviews() {
 		return;
 	}
 
-	$review_seed_version = '2026.06.03.2';
+	$review_seed_version = '2026.06.03.3';
 
 	if ( get_option( 'powerup_review_seed_version' ) === $review_seed_version ) {
 		return;
@@ -197,6 +197,10 @@ function powerup_seed_upsert_product_review( $product_id, array $review ) {
 	update_comment_meta( $comment_id, '_powerup_review_source', 'Amazon review screenshot rewritten for independent store' );
 	update_comment_meta( $comment_id, '_powerup_review_source_asin', sanitize_text_field( (string) $review['asin'] ) );
 	update_comment_meta( $comment_id, '_powerup_review_source_note', sanitize_text_field( (string) $review['source_note'] ) );
+
+	if ( ! empty( $review['title'] ) ) {
+		update_comment_meta( $comment_id, 'powerup_review_title', sanitize_text_field( (string) $review['title'] ) );
+	}
 
 	return (int) $comment_id;
 }
@@ -541,6 +545,7 @@ function powerup_seed_review_data() {
 	return array(
 		array(
 			'source_id'   => 'b0ffgspwws-michael-javier-20260511',
+			'title'       => 'Great product!',
 			'asin'        => 'B0FFGSPWWS',
 			'author'      => 'Michael J.',
 			'email'       => 'reviews-b0ffgspwws-01@faimala.local',
@@ -551,6 +556,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ffgspwws-mrj-20260402',
+			'title'       => 'Lightweight And Easy To Put Together/Use',
 			'asin'        => 'B0FFGSPWWS',
 			'author'      => 'MrJ',
 			'email'       => 'reviews-b0ffgspwws-02@faimala.local',
@@ -561,6 +567,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ffgspwws-ray-rawlins-20260521',
+			'title'       => 'Nice saw',
 			'asin'        => 'B0FFGSPWWS',
 			'author'      => 'Ray R.',
 			'email'       => 'reviews-b0ffgspwws-03@faimala.local',
@@ -571,6 +578,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ffgspwws-customer-20260430',
+			'title'       => 'Super lightweight, easy to use safely',
 			'asin'        => 'B0FFGSPWWS',
 			'author'      => 'PowerUp Customer',
 			'email'       => 'reviews-b0ffgspwws-04@faimala.local',
@@ -581,6 +589,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ffgspwws-earnest-tullis-20260530',
+			'title'       => 'What a great little chainsaw this is it',
 			'asin'        => 'B0FFGSPWWS',
 			'author'      => 'Earnest T.',
 			'email'       => 'reviews-b0ffgspwws-05@faimala.local',
@@ -591,6 +600,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcm6hxvx-tw-20260503',
+			'title'       => 'Totally Worth It',
 			'asin'        => 'B0FCM6HXVX',
 			'author'      => 'TW',
 			'email'       => 'reviews-b0fcm6hxvx-01@faimala.local',
@@ -601,6 +611,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcm6hxvx-dave-20260507',
+			'title'       => 'Log ripper!',
 			'asin'        => 'B0FCM6HXVX',
 			'author'      => 'Dave',
 			'email'       => 'reviews-b0fcm6hxvx-02@faimala.local',
@@ -611,6 +622,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcm6hxvx-john-oseguera-20260529',
+			'title'       => 'John\'s what to know :)',
 			'asin'        => 'B0FCM6HXVX',
 			'author'      => 'John O.',
 			'email'       => 'reviews-b0fcm6hxvx-03@faimala.local',
@@ -621,6 +633,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcm6hxvx-amazon-customer-20250805',
+			'title'       => 'Cordless chainsaw',
 			'asin'        => 'B0FCM6HXVX',
 			'author'      => 'PowerUp Customer',
 			'email'       => 'reviews-b0fcm6hxvx-04@faimala.local',
@@ -631,6 +644,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcly4dc1-retired-guy-20260204',
+			'title'       => 'I would buy it again',
 			'asin'        => 'B0FCLY4DC1',
 			'author'      => 'Retired G.',
 			'email'       => 'reviews-b0fcly4dc1-01@faimala.local',
@@ -641,6 +655,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcly4dc1-rpm-investments-20250827',
+			'title'       => 'Light weight inexpensive saw',
 			'asin'        => 'B0FCLY4DC1',
 			'author'      => 'RPM',
 			'email'       => 'reviews-b0fcly4dc1-02@faimala.local',
@@ -651,6 +666,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcly4dc1-doktorij-20260110',
+			'title'       => 'Quiet and Light Tool',
 			'asin'        => 'B0FCLY4DC1',
 			'author'      => 'Doktorij',
 			'email'       => 'reviews-b0fcly4dc1-03@faimala.local',
@@ -661,6 +677,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcly4dc1-amazon-customer-20260521',
+			'title'       => 'Incredibly powerful saw!',
 			'asin'        => 'B0FCLY4DC1',
 			'author'      => 'PowerUp Customer',
 			'email'       => 'reviews-b0fcly4dc1-04@faimala.local',
@@ -671,6 +688,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fcly4dc1-pete-nakhabenko-20260531',
+			'title'       => '5 Stars-Way More Saw Than I Expected',
 			'asin'        => 'B0FCLY4DC1',
 			'author'      => 'Pete N.',
 			'email'       => 'reviews-b0fcly4dc1-05@faimala.local',
@@ -681,6 +699,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fqnycrh2-confident-88-20260414',
+			'title'       => 'Tough',
 			'asin'        => 'B0FQNYCRH2',
 			'author'      => 'Confident 88',
 			'email'       => 'reviews-b0fqnycrh2-01@faimala.local',
@@ -691,6 +710,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fqnycrh2-thomas-hirtleman-20260205',
+			'title'       => 'Worth the price',
 			'asin'        => 'B0FQNYCRH2',
 			'author'      => 'Thomas H.',
 			'email'       => 'reviews-b0fqnycrh2-02@faimala.local',
@@ -701,6 +721,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0fqnycrh2-lindsey-20251224',
+			'title'       => 'Electric Chainsaw Chains 12" (2-Pack)',
 			'asin'        => 'B0FQNYCRH2',
 			'author'      => 'Lindsey',
 			'email'       => 'reviews-b0fqnycrh2-03@faimala.local',
@@ -711,6 +732,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ggtdwrnn-punkass-matteo-20260426',
+			'title'       => 'Versatile Powerhouse - A Must-Have for Property Maintenance!',
 			'asin'        => 'B0GGTDWRNN',
 			'author'      => 'Matteo',
 			'email'       => 'reviews-b0ggtdwrnn-01@faimala.local',
@@ -721,6 +743,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ggtkhn4g-nutner-20260419',
+			'title'       => 'Versatile and easy to use chain saw',
 			'asin'        => 'B0GGTKHN4G',
 			'author'      => 'Nutner',
 			'email'       => 'reviews-b0ggtkhn4g-01@faimala.local',
@@ -731,6 +754,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ggtkhn4g-bill-moses-20260416',
+			'title'       => '8-Inch Brushless Cordless Chainsaw',
 			'asin'        => 'B0GGTKHN4G',
 			'author'      => 'Bill M.',
 			'email'       => 'reviews-b0ggtkhn4g-02@faimala.local',
@@ -741,6 +765,7 @@ function powerup_seed_review_data() {
 		),
 		array(
 			'source_id'   => 'b0ggtkhn4g-natalia-ramos-20260515',
+			'title'       => 'Lightweight but very powerful',
 			'asin'        => 'B0GGTKHN4G',
 			'author'      => 'Natalia R.',
 			'email'       => 'reviews-b0ggtkhn4g-03@faimala.local',
