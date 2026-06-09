@@ -116,7 +116,7 @@ function powerup_seed_launch_reviews() {
 		return;
 	}
 
-	$review_seed_version = '2026.06.03.3';
+	$review_seed_version = '2026.06.03.5';
 
 	if ( get_option( 'powerup_review_seed_version' ) === $review_seed_version ) {
 		return;
@@ -551,7 +551,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ffgspwws-01@faimala.local',
 			'date'        => '2026-05-11 10:15:00',
 			'rating'      => 5,
-			'content'     => 'The battery runtime has been solid for regular yard jobs, and the saw gets through the task without feeling complicated to use.',
+			'content'     => 'Works great. The battery life is long enough for yard tasks, and the saw gets the job done without feeling complicated.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -562,7 +562,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ffgspwws-02@faimala.local',
 			'date'        => '2026-04-02 11:20:00',
 			'rating'      => 5,
-			'content'     => 'Setup was straightforward, and the included batteries, charger, and spare chains made it feel ready for real yard cleanup right out of the box.',
+			'content'     => 'Assembly was simple, with only the included wrench needed. It cut cleanly through a fallen branch around 3 inches thick and felt lightweight compared with gas saws.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -573,7 +573,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ffgspwws-03@faimala.local',
 			'date'        => '2026-05-21 09:45:00',
 			'rating'      => 5,
-			'content'     => 'This kit handled a pile of medium logs more easily than expected. It is light to carry and the extra chains add good value.',
+			'content'     => 'It handled a bunch of logs around 12 inches thick and was easy to use. The extra chains make the kit feel like a good bargain.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -584,7 +584,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ffgspwws-04@faimala.local',
 			'date'        => '2026-04-30 14:10:00',
 			'rating'      => 5,
-			'content'     => 'The saw felt lightweight and easy to control while trimming tree branches around the yard. Performance was strong for a cordless homeowner saw.',
+			'content'     => 'It trimmed a 30-foot live oak and felt lightweight, safe, and strong enough for the job.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -595,7 +595,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ffgspwws-05@faimala.local',
 			'date'        => '2026-05-30 12:35:00',
 			'rating'      => 5,
-			'content'     => 'For a compact 12-inch saw, it cuts impressively well. The blade stays sharp through pruning work and the batteries last long enough for a good session.',
+			'content'     => 'Compared with larger saws, this compact 12-inch model impressed me. The batteries last a long time, and the blade feels sharp for normal pruning.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -606,7 +606,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcm6hxvx-01@faimala.local',
 			'date'        => '2026-05-03 13:05:00',
 			'rating'      => 5,
-			'content'     => 'With an M18-style battery installed, this saw is light, quick, and easy to use for pruning and cutting smaller logs around the house.',
+			'content'     => 'With one compatible M18-style 5Ah battery, it made repeated cuts on a 10-inch log and stayed fast when maintained.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -617,7 +617,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcm6hxvx-02@faimala.local',
 			'date'        => '2026-05-07 10:30:00',
 			'rating'      => 5,
-			'content'     => 'Great value for a tool-only saw. It cuts fast through branches and small logs without the noise and hassle of a gas saw.',
+			'content'     => 'Great value and a real log ripper. It cuts through logs quickly.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -628,7 +628,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcm6hxvx-03@faimala.local',
 			'date'        => '2026-05-29 15:25:00',
 			'rating'      => 4,
-			'content'     => 'A good match for trimming when you already own compatible batteries. It works well on small trees and branch cleanup.',
+			'content'     => 'It is tool-only, but works well for trimming if you already own compatible batteries. It tackled small trees and branch cleanup better than expected.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 4-star feedback.',
 		),
 		array(
@@ -639,7 +639,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcm6hxvx-04@faimala.local',
 			'date'        => '2025-08-05 16:00:00',
 			'rating'      => 5,
-			'content'     => 'The saw has more power than its size suggests. It is lightweight, easy to handle, and useful for regular storm cleanup and yard work.',
+			'content'     => 'It has more power than expected, trims branches and storm debris well, and is light enough for regular yard work.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -650,7 +650,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcly4dc1-01@faimala.local',
 			'date'        => '2026-02-04 09:10:00',
 			'rating'      => 5,
-			'content'     => 'This little saw is surprisingly capable for yard branches and cleanup work. It is light enough to use comfortably and easy to recommend.',
+			'content'     => 'I used it for small jobs around the yard and even cut a large hardwood branch to clear a pathway. It is light, handy, and capable for its size.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -661,7 +661,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcly4dc1-02@faimala.local',
 			'date'        => '2025-08-27 12:05:00',
 			'rating'      => 5,
-			'content'     => 'A practical choice if you already use compatible DeWalt-style batteries. It makes weekend trimming and tree cleanup much easier.',
+			'content'     => 'It works well with compatible DeWalt-style batteries and avoids buying another battery setup. It is light enough for weekend trimming and cleanup work.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -672,7 +672,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcly4dc1-03@faimala.local',
 			'date'        => '2026-01-10 11:40:00',
 			'rating'      => 4,
-			'content'     => 'Quiet, light, and easy to control for smaller jobs. It is a good fit for pruning and quick cuts around the property.',
+			'content'     => 'Once the chain was seated correctly, it cut well, ran quietly, and felt lighter than a gas saw. It is a worthwhile tool for smaller jobs.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 4-star feedback.',
 		),
 		array(
@@ -683,7 +683,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcly4dc1-04@faimala.local',
 			'date'        => '2026-05-21 14:50:00',
 			'rating'      => 5,
-			'content'     => 'The DeWalt-compatible setup is convenient, and the saw has strong cutting power for a compact cordless tool. It is easy to carry and store.',
+			'content'     => 'This saw has strong cutting power for its size. It stayed useful through a long pile of branches and was easy to carry between cuts.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -694,7 +694,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fcly4dc1-05@faimala.local',
 			'date'        => '2026-05-31 10:55:00',
 			'rating'      => 5,
-			'content'     => 'It performs better than expected for its size. The portable kit format makes it easy to bring along for cleanup jobs and quick cuts.',
+			'content'     => 'It was much more capable than expected. It sliced through wood easily, cut logs in sections, and the carry bag made it easy to take along.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -705,7 +705,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fqnycrh2-01@faimala.local',
 			'date'        => '2026-04-14 09:25:00',
 			'rating'      => 5,
-			'content'     => 'These replacement chains feel tough and practical to keep on hand. I would buy another pack for future maintenance.',
+			'content'     => 'These chains feel tough and useful to keep on hand. I would buy more packs for future cutting jobs.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -716,7 +716,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fqnycrh2-02@faimala.local',
 			'date'        => '2026-02-05 13:45:00',
 			'rating'      => 5,
-			'content'     => 'Worth the price and useful for keeping the saw cutting cleanly. The chain stays sharp through normal yard work.',
+			'content'     => 'They are worth the price and stay sharp for normal yard cutting.',
 			'source_note' => 'Amazon screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -727,7 +727,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0fqnycrh2-03@faimala.local',
 			'date'        => '2025-12-24 15:15:00',
 			'rating'      => 5,
-			'content'     => 'The two-pack is easy to change out and cuts well. It is a good value for keeping a cordless chainsaw ready for the next job.',
+			'content'     => 'The two-pack was easy to change out, fit well, and cut wood smoothly. It works like the original chain and feels like a good value.',
 			'source_note' => 'Amazon Vine screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -738,7 +738,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ggtdwrnn-01@faimala.local',
 			'date'        => '2026-04-26 11:30:00',
 			'rating'      => 5,
-			'content'     => 'The 6-inch and 8-inch bars make this kit versatile for pruning and thicker branches. Automatic lubrication and tool-free tensioning make adjustments simple during yard work.',
+			'content'     => 'The 6-inch and 8-inch bars make the kit versatile from light pruning to thicker branches. Automatic lubrication and tool-free tensioning make adjustments easy during use.',
 			'source_note' => 'Amazon Vine screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -749,7 +749,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ggtkhn4g-01@faimala.local',
 			'date'        => '2026-04-19 10:05:00',
 			'rating'      => 4,
-			'content'     => 'A good value compact saw for light yard cutting. The dual bar setup and spare chains make it useful for tight spaces and regular pruning jobs.',
+			'content'     => 'It is light enough to use for longer trimming sessions, and the two bar sizes give it useful flexibility for tight spots.',
 			'source_note' => 'Amazon Vine screenshot candidate rewritten; positive 4-star feedback.',
 		),
 		array(
@@ -760,7 +760,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ggtkhn4g-02@faimala.local',
 			'date'        => '2026-04-16 12:20:00',
 			'rating'      => 5,
-			'content'     => 'This is a handy light-duty saw for pruning branches, trimming small trees, and general maintenance. It is easy to handle and beginner-friendly.',
+			'content'     => 'It works well for light-duty yard work such as pruning branches and trimming small trees. The brushless motor and dual guide plates make it approachable for home maintenance.',
 			'source_note' => 'Amazon Vine screenshot candidate rewritten; positive 5-star feedback.',
 		),
 		array(
@@ -771,7 +771,7 @@ function powerup_seed_review_data() {
 			'email'       => 'reviews-b0ggtkhn4g-03@faimala.local',
 			'date'        => '2026-05-15 14:40:00',
 			'rating'      => 5,
-			'content'     => 'Lightweight but still powerful for home gardening work. It cuts small trunks cleanly and makes yard tasks feel much easier.',
+			'content'     => 'It is lightweight but still powerful for home gardening work. It cut small trunks cleanly and made yard work faster.',
 			'source_note' => 'Amazon Spanish-language screenshot candidate translated and rewritten; positive 5-star feedback.',
 		),
 	);
