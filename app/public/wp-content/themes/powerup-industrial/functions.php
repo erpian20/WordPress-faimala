@@ -317,7 +317,7 @@ function powerup_theme_get_policy_page_content( $slug ) {
       'title'       => 'Returns Policy',
       'description' => 'Read the PowerUp 30-day returns policy, including return-shipping coverage and how to request return support.',
       'intro'       => 'A straightforward 30-day return process for PowerUp orders.',
-      'content'     => '<h2>30-Day Return Window</h2><p>You may request a return within 30 days of delivery.</p><h2>Return Shipping</h2><p>Return shipping costs are covered by us. Please contact our support team before sending a product back so we can provide the correct return instructions.</p><h2>Return Condition</h2><p>Please return the product with its included parts and accessories. If an item arrives damaged, incorrect, or incomplete, let us know when you contact support.</p><h2>Request A Return</h2><p>To start a return, contact ' . $support_email_html . ' and include your order number and the reason for the return.</p>',
+      'content'     => '<h2>30-Day Return Window</h2><p>You may request a return within 30 days of delivery.</p><h2>Return Shipping</h2><p>Return shipping costs are covered by us. Please contact our support team before sending a product back so we can provide the correct return instructions.</p><h2>Return Condition</h2><p>Please return the product with its included parts and accessories. If an item arrives damaged, incorrect, or incomplete, let us know when you contact support.</p><h2>Request A Return</h2><p>To start a return, submit the <a href="' . esc_url( home_url( '/return-request/' ) ) . '">Return Request form</a> or contact ' . $support_email_html . '. Include your order number and the reason for the return.</p>',
     ),
     'warranty-policy' => array(
       'title'       => 'Warranty Policy',
@@ -344,6 +344,10 @@ function powerup_theme_get_policy_page_content( $slug ) {
 
 function powerup_theme_get_policy_page_url( $slug ) {
   return home_url( '/' . sanitize_title( $slug ) . '/' );
+}
+
+function powerup_theme_get_return_request_page_url() {
+  return home_url( '/return-request/' );
 }
 
 function powerup_theme_ensure_policy_pages() {
@@ -379,6 +383,34 @@ function powerup_theme_ensure_policy_pages() {
   }
 }
 add_action( 'init', 'powerup_theme_ensure_policy_pages', 30 );
+
+function powerup_theme_ensure_return_request_page() {
+  if ( wp_installing() || wp_doing_ajax() ) {
+    return;
+  }
+
+  $page = get_page_by_path( 'return-request', OBJECT, 'page' );
+  $page_data = array(
+    'post_type'   => 'page',
+    'post_status' => 'publish',
+    'post_title'  => 'Return Request',
+    'post_name'   => 'return-request',
+  );
+
+  if ( $page instanceof WP_Post ) {
+    $page_data['ID'] = (int) $page->ID;
+    $page_id = wp_update_post( $page_data, true );
+  } else {
+    $page_data['post_content'] = '';
+    $page_id = wp_insert_post( $page_data, true );
+  }
+
+  if ( ! is_wp_error( $page_id ) ) {
+    update_post_meta( (int) $page_id, '_wp_page_template', 'page-return-request.php' );
+  }
+}
+add_action( 'init', 'powerup_theme_ensure_return_request_page', 31 );
+
 
 function powerup_theme_get_runtime_config_defaults() {
   $runtime_config = powerup_theme_get_runtime_config();

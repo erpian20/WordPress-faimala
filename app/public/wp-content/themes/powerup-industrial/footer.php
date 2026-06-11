@@ -62,6 +62,7 @@ if ( '' === $whatsapp_qr_url ) {
       <nav class="footer-policy-nav" aria-label="<?php esc_attr_e( 'Store policies', 'powerup-theme' ); ?>">
         <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'shipping-policy' ) ); ?>"><?php esc_html_e( 'Shipping Policy', 'powerup-theme' ); ?></a>
         <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'returns-policy' ) ); ?>"><?php esc_html_e( 'Returns Policy', 'powerup-theme' ); ?></a>
+        <a href="<?php echo esc_url( powerup_theme_get_return_request_page_url() ); ?>"><?php esc_html_e( 'Return Request', 'powerup-theme' ); ?></a>
         <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'warranty-policy' ) ); ?>"><?php esc_html_e( 'Warranty Policy', 'powerup-theme' ); ?></a>
         <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'privacy-policy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'powerup-theme' ); ?></a>
         <a href="<?php echo esc_url( powerup_theme_get_policy_page_url( 'terms-conditions' ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'powerup-theme' ); ?></a>

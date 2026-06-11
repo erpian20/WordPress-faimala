@@ -4551,7 +4551,8 @@ button, input, textarea {
 }
 
 /* Legacy Contact Us template compatibility */
-body.page-template-page-contact {
+body.page-template-page-contact,
+body.page-template-page-return-request {
   background-color: #5f3b22;
   background-image:
     linear-gradient(90deg, rgba(33, 20, 12, 0.44) 0%, rgba(33, 20, 12, 0.18) 38%, rgba(33, 20, 12, 0.42) 100%),
@@ -4562,56 +4563,72 @@ body.page-template-page-contact {
   background-attachment: fixed;
 }
 
-.page-template-page-contact .site-section {
+.page-template-page-contact .site-section,
+.page-template-page-return-request .site-section {
   padding: 3rem 0 4rem;
 }
 
-.page-template-page-contact .section-heading h1 {
+.page-template-page-contact .section-heading h1,
+.page-template-page-return-request .section-heading h1 {
   color: #f7efe4;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.page-template-page-contact .section-heading p {
+.page-template-page-contact .section-heading p,
+.page-template-page-return-request .section-heading p {
   color: rgba(247, 239, 228, 0.92);
 }
 
-.page-template-page-contact .feature-card {
+.page-template-page-contact .feature-card,
+.page-template-page-return-request .feature-card {
   background: #ffffff;
   color: #171717;
 }
 
 .page-template-page-contact .feature-card h2,
 .page-template-page-contact .feature-card label,
-.page-template-page-contact .feature-card strong {
+.page-template-page-contact .feature-card strong,
+.page-template-page-return-request .feature-card h2,
+.page-template-page-return-request .feature-card label,
+.page-template-page-return-request .feature-card strong {
   color: #171717;
 }
 
-.page-template-page-contact .feature-card p {
+.page-template-page-contact .feature-card p,
+.page-template-page-return-request .feature-card p,
+.page-template-page-return-request .feature-card li {
   color: #4a4a4a;
 }
 
-.page-template-page-contact .feature-card a {
+.page-template-page-contact .feature-card a,
+.page-template-page-return-request .feature-card a {
   color: #d35500;
 }
 
 .page-template-page-contact .feature-card input,
-.page-template-page-contact .feature-card textarea {
+.page-template-page-contact .feature-card textarea,
+.page-template-page-return-request .feature-card input,
+.page-template-page-return-request .feature-card select,
+.page-template-page-return-request .feature-card textarea {
   background: #ffffff;
   color: #171717;
   border-color: #d6d6d6;
 }
 
-.page-template-page-contact .contact-legacy-grid {
+.page-template-page-contact .contact-legacy-grid,
+.page-template-page-return-request .contact-legacy-grid {
   grid-template-columns: 1fr 1fr;
   gap: 32px;
   align-items: start;
 }
 
-.page-template-page-contact .contact-legacy-card {
+.page-template-page-contact .contact-legacy-card,
+.page-template-page-return-request .contact-legacy-card {
   padding: 1.4rem;
 }
 
-.page-template-page-contact .contact-legacy-input {
+.page-template-page-contact .contact-legacy-input,
+.page-template-page-return-request .contact-legacy-input {
   width: 100%;
   padding: 14px;
   margin: 10px 0 18px;
@@ -4619,7 +4636,8 @@ body.page-template-page-contact {
   border: 1px solid #ddd;
 }
 
-.page-template-page-contact .contact-legacy-textarea {
+.page-template-page-contact .contact-legacy-textarea,
+.page-template-page-return-request .contact-legacy-textarea {
   min-height: 170px;
 }
 
@@ -4646,8 +4664,17 @@ body.page-template-page-contact {
 }
 
 .page-template-page-contact .feature-card input::placeholder,
-.page-template-page-contact .feature-card textarea::placeholder {
+.page-template-page-contact .feature-card textarea::placeholder,
+.page-template-page-return-request .feature-card input::placeholder,
+.page-template-page-return-request .feature-card textarea::placeholder {
   color: #8a8a8a;
+}
+
+.page-template-page-return-request .return-request-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding-left: 1.15rem;
 }
 
 @media (max-width: 900px) {
@@ -4662,7 +4689,9 @@ body.page-template-page-contact {
   }
 
   .page-template-page-contact .section-grid,
-  .page-template-page-contact .contact-legacy-grid {
+  .page-template-page-contact .contact-legacy-grid,
+  .page-template-page-return-request .section-grid,
+  .page-template-page-return-request .contact-legacy-grid {
     grid-template-columns: 1fr !important;
   }
 }
